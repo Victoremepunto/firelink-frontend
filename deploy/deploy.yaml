@@ -1,0 +1,54 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: firelink-frontend-template
+objects:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: firelink-frontend
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: firelink-frontend
+    template:
+      metadata:
+        labels:
+          app: firelink-frontend
+      spec:
+        containers:
+        - name: firelink-frontend
+          image: ${IMAGE}:${IMAGE_TAG}
+          ports:
+          - containerPort: 8080
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: firelink-frontend-service
+  spec:
+    selector:
+      app: firelink-frontend
+    ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: firelink-frontend-route
+  spec:
+    to:
+      kind: Service
+      name: firelink-frontend-service
+    port:
+      targetPort: 8080
+    tls:
+      termination: edge
+parameters:
+  - name: IMAGE_TAG
+    required: true
+  - name: IMAGE
+    value: quay.io/cloudservices/firelink-frontend
