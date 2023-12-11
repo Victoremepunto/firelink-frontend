@@ -44,7 +44,7 @@ function App() {
           Deploy
         </NavItem>
       </NavExpandable>
-      <NavItem id="apps-list" onClick={() => navigate("/settings")} itemId={0} isActive={useMatch("/settings")}>
+      <NavItem id="settings" onClick={() => navigate("/settings")} itemId={0} isActive={useMatch("/settings")}>
         Settings
       </NavItem>
     </NavList>

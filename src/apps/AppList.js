@@ -31,10 +31,6 @@ function AppList() {
     //App list filter text
     const [filter, setFilter] = useState('')
 
-    if ( AppState.isAppsEmpty() ) {
-        AppState.getApps()
-    }
-
     //Filter app list when filter is updated
     useEffect(() => {
         const apps = [...AppState.apps]
@@ -50,6 +46,11 @@ function AppList() {
         setFilteredApps(AppState.apps)
     } ,[AppState.apps])
 
+    useEffect(() => {
+        if (AppState.isAppsEmpty()) {
+            AppState.getApps()
+        }
+    }, []);
   
     return <Page>
         <PageSection variant={PageSectionVariants.light}>
@@ -71,7 +72,8 @@ function AppList() {
                 <SplitItem>
                     <Button variant="primary" onClick={() => { 
                         AppState.update({apps: []}); 
-                        AppState.getApps() }} >
+                        AppState.getApps() 
+                    }} >
                             Refresh
                     </Button>
                 </SplitItem>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {useContext, useState} from 'react';
+import {useContext, useState, useEffect} from 'react';
 import {SplitItem, Title, TitleSizes} from '@patternfly/react-core';
 import Loading from '../shared/Loading';
 import { AppContext } from "../shared/ContextProvider"
@@ -22,9 +22,14 @@ function ReservationList() {
   const [AppState] = useContext(AppContext);
   const [showJustMyReservations, setShowJustMyReservations] = useState(false);
 
-  if ( AppState.isNamespacesEmpty() ) {
-    AppState.getNamespaces()
-  }
+
+
+  useEffect(() => {
+    // Your function logic here
+    if ( AppState.isNamespacesEmpty() ) {
+      AppState.getNamespaces()
+    }
+  }, []);
 
    let outputJSX = {}
 
