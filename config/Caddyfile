@@ -12,11 +12,9 @@
     root * /opt/app-root/src/build
     file_server
 
-    @notStatic {
-        file
-        not path /static/* /favicon.ico /asset-manifest.json /manifest.json /logo192.png /logo512.png /favicon.ico /robots.txt
-        try_files {path} /index.html
-    }
-    rewrite @notStatic /index.html
+    # Serve index.html for requests that do not match a file
+    try_files {path} /index.html
 
+    # Optional: Handle specific static files or paths directly if needed
+    # e.g., for serving assets, favicon, manifest, etc.
 }
