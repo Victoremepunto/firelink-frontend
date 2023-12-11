@@ -20,15 +20,15 @@ ReactDOM.render(
         <Route path="/" element={<App />}>
           <Route path="/" key="root-page" element={<Root />}/>
 
-          <Route key="namespace-list" path="/api/firelink/namespace/list" element={<NamespaceList />} />
-          <Route key="namespace-describe" path="/api/firelink/namespace/describe/:namespaceParam" element={<NamespaceDescribe />} />
-          <Route key="namespace-describe" path="/api/firelink/namespace/describe" element={<NamespaceDescribe />} />
-          <Route key="namespace-reserve" path="/api/firelink/namespace/reserve" element={<NamespaceReserve />} />
+          <Route key="namespace-list" path="/namespace/list" element={<NamespaceList />} />
+          <Route key="namespace-describe" path="/namespace/describe/:namespaceParam" element={<NamespaceDescribe />} />
+          <Route key="namespace-describe" path="/namespace/describe" element={<NamespaceDescribe />} />
+          <Route key="namespace-reserve" path="/namespace/reserve" element={<NamespaceReserve />} />
           <Route key="settings" path="/settings" element={<Settings />} />
 
-          <Route key="app-list" path="/api/firelink/apps/list" element={<AppList />} />
-          <Route key="app-deploy" path="/api/firelink/apps/deploy/:appParam" element={<AppDeploy />} />
-          <Route key="app-deploy" path="/api/firelink/apps/deploy" element={<AppDeploy />} />
+          <Route key="app-list" path="/apps/list" element={<AppList />} />
+          <Route key="app-deploy" path="/apps/deploy/:appParam" element={<AppDeploy />} />
+          <Route key="app-deploy" path="/apps/deploy" element={<AppDeploy />} />
 
         </Route>
       </Routes>
