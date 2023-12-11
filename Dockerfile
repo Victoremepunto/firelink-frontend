@@ -18,31 +18,19 @@ COPY . ./
 # Build the React app
 RUN npm run build
 
-# Stage 2: Serve the app using Nginx on Fedora
-FROM registry.access.redhat.com/ubi8/ubi:8.9-1028
+# Stage 2: Serve the app
+FROM quay.io/cloudservices/caddy-ubi:latest
 
-# Install Nginx
-RUN dnf -y update && \
-    dnf -y install nginx && \
-    dnf clean all
+ENV CADDY_TLS_MODE http_port 8000
 
-# Create a non-root user
-RUN useradd -m appuser
+COPY ./config/Caddyfile /opt/app-root/src/Caddyfile
 
-# Change ownership of necessary directories
-RUN chown -R appuser:appuser /usr/share/nginx /var/log/nginx /var/lib/nginx /run
+COPY --from=react-build /app/build /opt/app-root/src/build
 
-# Copy built static files from the build stage
-COPY --from=react-build /app/build /usr/share/nginx/html
+COPY ./package.json /opt/app-root/src
 
-# Copy custom Nginx configuration file
-COPY config/nginx.conf /etc/nginx/nginx.conf
+WORKDIR /opt/app-root/src
 
-# Switch to non-root user
-USER appuser
-
-# Expose port 8080 for Nginx
 EXPOSE 8000
 
-# Start Nginx in the foreground
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["caddy", "run", "--config", "/opt/app-root/src/Caddyfile"]

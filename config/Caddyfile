@@ -1,0 +1,14 @@
+{
+    {$CADDY_TLS_MODE}
+    auto_https disable_redirects
+    servers {
+      metrics
+    }
+}
+  
+:8000 {
+    {$CADDY_TLS_CERT}
+    log
+    root * /opt/app-root/src/build
+    file_server
+}
