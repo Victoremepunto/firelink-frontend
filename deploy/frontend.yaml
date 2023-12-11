@@ -1,0 +1,18 @@
+apiVersion: cloud.redhat.com/v1alpha1
+kind: Frontend
+metadata:
+  name: firelink-frontend
+spec:
+  API:
+    versions:
+      - v1
+  frontend:
+    paths:
+      - /
+  deploymentRepo: https://github.com/RedHatInsights/firelink-frontend
+  image: quay.io/rh_ee_addrew/firelink-frontend:latest
+  module:
+    config:
+      ssoUrl: 'https://'
+    manifestLocation: /apps/chrome/js/fed-mods.json
+  title: Firelink Frontend
