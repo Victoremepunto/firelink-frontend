@@ -20,3 +20,9 @@ To work on the app you'll need the backend running as well. You will need to clo
 $ docker build -t firelink-frontend:latest .
 $ docker run -p 8000:8000 firelink-frontend:latest
 ```
+
+## Deploying
+We provide an OpenShift template with a Frontend resource in `deploy/frontenend.yaml`. You can deploy it to any cluster running the [Frontend Operator](https://github.com/RedHatInsights/frontend-operator) like so:
+```bash
+$ oc process -f deploy/frontend.yaml -p IMAGE="quay.io/rh_ee_addrew/firelink-frontend" -p IMAGE_TAG="86263a4" -p ENV_NAME="env-ephemeral-bqzepn" | oc apply -n ephemeral-bqzepn -f -
+```
