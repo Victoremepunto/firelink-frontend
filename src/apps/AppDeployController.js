@@ -15,9 +15,8 @@ const END_EVENT = 'end-deploy-app';
 // Construct the WebSocket URL based on the current location
 const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 const host = window.location.host;
-const path = '/api/firelink'; // The path for your backend service
+const path = '/api/firelink/socket.io'; // Updated path
 const SERVER = `${protocol}${host}${path}`;
-
 
 export default function AppDeployController(appname, reservation) {
     const [AppState] = useContext(AppContext);
@@ -80,7 +79,7 @@ export default function AppDeployController(appname, reservation) {
 
 
     const Deploy = () => {
-        const tmpSocket = io(SERVER);
+        const tmpSocket = io(SERVER, { path: '/api/firelink/socket.io' });
         
         tmpSocket.on(MONITOR_EVENT, (response) => {
             setWsResponses(state => [...state, response.message]);
