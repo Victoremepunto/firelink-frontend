@@ -11,7 +11,13 @@ const DEPLOY_EVENT = 'deploy-app';
 const ERROR_EVENT = 'error-deploy-app';
 const MONITOR_EVENT = 'monitor-deploy-app';
 const END_EVENT = 'end-deploy-app';
-const SERVER = "wss://firelink-backend-service:8000"
+
+// Construct the WebSocket URL based on the current location
+const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+const host = window.location.host;
+const path = '/api/firelink'; // The path for your backend service
+const SERVER = `${protocol}${host}${path}`;
+
 
 export default function AppDeployController(appname, reservation) {
     const [AppState] = useContext(AppContext);
