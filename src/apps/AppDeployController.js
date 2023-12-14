@@ -11,7 +11,7 @@ const DEPLOY_EVENT = 'deploy-app';
 const ERROR_EVENT = 'error-deploy-app';
 const MONITOR_EVENT = 'monitor-deploy-app';
 const END_EVENT = 'end-deploy-app';
-const SERVER = "ws://127.0.0.1:5000"
+const SERVER = "ws://localhost"
 
 export default function AppDeployController(appname, reservation) {
     const [AppState] = useContext(AppContext);
