@@ -16,7 +16,9 @@ const END_EVENT = 'end-deploy-app';
 const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 const host = window.location.host;
 const path = '/api/firelink/socket.io'; // Updated path
-const SERVER = `${protocol}${host}${path}`;
+//const SERVER = `${protocol}${host}${path}`;
+const SERVER = `${protocol}${host}`;
+console.log(SERVER);
 
 export default function AppDeployController(appname, reservation) {
     const [AppState] = useContext(AppContext);
@@ -75,12 +77,9 @@ export default function AppDeployController(appname, reservation) {
             }
     }},[])
 
-
-
-
     const Deploy = () => {
-        const tmpSocket = io(SERVER, { path: '/api/firelink/socket.io' });
-        
+        const tmpSocket = io(SERVER, { path: '/api/firelink/socket.io', transports: ['polling'] });
+
         tmpSocket.on(MONITOR_EVENT, (response) => {
             setWsResponses(state => [...state, response.message]);
         });
@@ -97,7 +96,7 @@ export default function AppDeployController(appname, reservation) {
         setSocket(tmpSocket);
         tmpSocket.emit(DEPLOY_EVENT, deploymentOptions());
         setShowModal(true);
-    }
+    } 
 
     const StatusIcon = ({index}) => {
         if (index === wsResponses.length - 1 && !canCloseModal)  {
