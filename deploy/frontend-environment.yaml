@@ -1,9 +1,14 @@
-apiVersion: cloud.redhat.com/v1alpha1
-kind: FrontendEnvironment
+apiVersion: template.openshift.io/v1
+kind: Template
 metadata:
-  name: firelink
-spec:
-  generateNavJSON: false
-  ssl: true
-  hostname: foo.redhat.com
-  sso: https://sso.foo.redhat.com
+  name: insights-chrome
+objects:
+  - apiVersion: cloud.redhat.com/v1alpha1
+    kind: FrontendEnvironment
+    metadata:
+      name: firelink
+    spec:
+      generateNavJSON: false
+      ssl: true
+      hostname: foo.redhat.com
+      sso: https://sso.foo.redhat.com
