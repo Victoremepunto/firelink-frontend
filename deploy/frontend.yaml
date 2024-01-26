@@ -43,3 +43,4 @@ parameters:
   - name: IMAGE_TAG
     description: Frontend Image Tag
     required: true
+
