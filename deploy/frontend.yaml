@@ -33,6 +33,9 @@ objects:
       port:
         targetPort: 8000
       wildcardPolicy: None
+      tls:
+        termination: edge
+        key: firelink-frontend-cert
 parameters:
   - name: ENV_NAME
     description: Frontend Environment Name
