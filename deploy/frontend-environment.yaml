@@ -10,5 +10,7 @@ objects:
     spec:
       generateNavJSON: false
       ssl: true
-      hostname: foo.redhat.com
-      sso: https://sso.foo.redhat.com
+      hostname: 'firelink.apps.crc-eph.r9lp.p1.openshiftapps.com'
+      sso: 'https://sso.stage.redhat.com/auth/'
+      enableAkamaiCacheBust: false
+      ingressClass: openshift-default

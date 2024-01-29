@@ -22,20 +22,6 @@ objects:
           ssoUrl: 'https://'
         manifestLocation: /apps/chrome/js/fed-mods.json
       title: Firelink Frontend
-  - apiVersion: route.openshift.io/v1
-    kind: Route
-    metadata:
-      name: firelink-route
-    spec:
-      to:
-        kind: Service
-        name: firelink-frontend
-      port:
-        targetPort: 8000
-      wildcardPolicy: None
-      tls:
-        termination: edge
-        key: firelink-frontend-cert
 parameters:
   - name: ENV_NAME
     description: Frontend Environment Name
