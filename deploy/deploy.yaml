@@ -1,0 +1,48 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: insights-chrome
+objects:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: firelink-frontend
+    spec:
+      replicas: 1  # Adjust the number of replicas as needed
+      selector:
+        matchLabels:
+          app: firelink-frontend
+      template:
+        metadata:
+          labels:
+            app: firelink-frontend
+        spec:
+          containers:
+          - name: firelink-frontend
+            image: '${IMAGE}:${IMAGE_TAG}'
+            ports:
+            - containerPort: 8000  # Adjust the container port as needed
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: '${FRONTEND_SERVICE}'
+    spec:
+      selector:
+        app: firelink-frontend
+      ports:
+        - protocol: TCP
+          port: 80  # Exposed port on the service
+          targetPort: 8000  # Target port on the pod
+      type: ClusterIP  # Change to NodePort or ClusterIP based on your requirements
+parameters:
+  - name: IMAGE
+    description: Frontend Image
+    required: true
+  - name: IMAGE_TAG
+    description: Frontend Image Tag
+    required: true
+  - name: FRONTEND_SERVICE
+    description: Frontend Service
+    required: true
+
+
