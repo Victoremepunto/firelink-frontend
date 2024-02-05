@@ -1,7 +1,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: insights-chrome
+  name: firelink-frontend
 objects:
   - apiVersion: apps/v1
     kind: Deployment
@@ -31,7 +31,7 @@ objects:
         app: firelink-frontend
       ports:
         - protocol: TCP
-          port: 80  # Exposed port on the service
+          port: 8000  # Exposed port on the service
           targetPort: 8000  # Target port on the pod
       type: ClusterIP  # Change to NodePort or ClusterIP based on your requirements
 parameters:

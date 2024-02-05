@@ -1,7 +1,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: insights-chrome
+  name: firelink-frontend
 objects:
   - apiVersion: cloud.redhat.com/v1alpha1
     kind: FrontendEnvironment
