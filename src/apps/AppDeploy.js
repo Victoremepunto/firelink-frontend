@@ -1,7 +1,27 @@
 import React, {useContext, useState, useEffect} from 'react';
 import { AppContext } from "../shared/ContextProvider"
 import Loading from '../shared/Loading';
-import { Select, SelectOption, Radio, Stack, Page, PageSectionVariants, PageSection, Split, SplitItem, Card, CardTitle, CardBody, Title, TitleSizes, Grid, GridItem, StackItem} from '@patternfly/react-core';
+import {
+	Radio,
+	Stack,
+	Page,
+	PageSectionVariants,
+	PageSection,
+	Split,
+	SplitItem,
+	Card,
+	CardTitle,
+	CardBody,
+	Title,
+	TitleSizes,
+	Grid,
+	GridItem,
+	StackItem
+} from '@patternfly/react-core';
+import {
+	Select,
+	SelectOption
+} from '@patternfly/react-core/deprecated';
 import { useParams } from "react-router-dom";
 import AppDeployController from './AppDeployController';
 

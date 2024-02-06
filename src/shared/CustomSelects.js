@@ -1,7 +1,10 @@
 import React from "react";
 import { useState } from "react";
 
-import { Select, SelectOption, } from '@patternfly/react-core';
+import {
+	Select,
+	SelectOption
+} from '@patternfly/react-core/deprecated';
 
 
 const availablePools = ['default','minimal','managed-kafka','real-managed-kafka']
