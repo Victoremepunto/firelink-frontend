@@ -100,7 +100,7 @@ export default function AppDeployController(appname, reservation) {
 
     const StatusIcon = ({index}) => {
         if (index === wsResponses.length - 1 && !canCloseModal)  {
-            return <Spinner isSVG size="md"/>
+            return <Spinner  size="md"/>
         } else {
             return <CheckCircle color="#00FF00"/>
         }

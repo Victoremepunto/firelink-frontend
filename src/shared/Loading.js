@@ -9,7 +9,7 @@ function Loading(message="") {
             </CardTitle>
             <CardBody>
                 <Bullseye>
-                    <Spinner isSVG aria-label="Loading" />
+                    <Spinner  aria-label="Loading" />
                     <TextContent>
 
                     </TextContent>    

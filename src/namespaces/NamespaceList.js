@@ -6,9 +6,6 @@ import { AppContext } from "../shared/ContextProvider"
 import NamespaceListTable from './NamespaceListTable';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import {
-  Backdrop,
-  Bullseye,
-  Spinner,
   Page,
   PageSection,
   PageSectionVariants,

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Linkify from "react-linkify"
 import Loading from '../shared/Loading';
-import { Button, Page, PageSection, CodeBlock,Stack, StackItem , CodeBlockCode, Card, PageSectionVariants, InputGroup, TextInput, Title, TitleSizes, CardBody } from '@patternfly/react-core';
+import { Button, Page, PageSection, CodeBlock,Stack, StackItem , CodeBlockCode, Card, PageSectionVariants, InputGroup, TextInput, Title, TitleSizes, CardBody, InputGroupItem } from '@patternfly/react-core';
 
 function ReservationList() {
     //Get namespace name from router params
@@ -60,10 +60,10 @@ function ReservationList() {
                     <Stack hasGutter>
                         <StackItem>
                             <InputGroup>
-                                <TextInput id="text-input" value={namespaceInput} onChange={e => setNamespaceInput(e)} default="test"></TextInput>
-                                <Button onClick={() => { buttonClickHandler() }}>
+                                <InputGroupItem isFill ><TextInput id="text-input" value={namespaceInput} onChange={e => setNamespaceInput(e)} default="test"></TextInput></InputGroupItem>
+                                <InputGroupItem><Button onClick={() => { buttonClickHandler() }}>
                                     Describe
-                                </Button>
+                                </Button></InputGroupItem>
                             </InputGroup>
                         </StackItem>
                         <StackItem>

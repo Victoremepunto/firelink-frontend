@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import {Page, Nav, ToolbarGroup,  NavItem, NavList, Masthead, MastheadMain, MastheadBrand, MastheadContent, PageSidebar, PageSection, PageSectionVariants, Toolbar, ToolbarContent, ToolbarItem, NavExpandable} from '@patternfly/react-core';
+import {Page, Nav, ToolbarGroup,  NavItem, NavList, Masthead, MastheadMain, MastheadBrand, MastheadContent, PageSidebar, Toolbar, ToolbarContent, NavExpandable, PageSidebarBody} from '@patternfly/react-core';
 //import ReservationList from './ReservationList';
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
 import { AppContext } from "./shared/ContextProvider";
@@ -36,14 +36,14 @@ function App() {
 
   const headerToolbar = <Toolbar id="vertical-toolbar">
       <ToolbarContent>
-        <ToolbarGroup alignment={{default: 'alignRight'}}>
+        <ToolbarGroup align={{default: 'alignRight'}}>
        </ToolbarGroup>
       </ToolbarContent>
 </Toolbar>;
 
   const header = <Masthead>
     <MastheadMain>
-      <MastheadBrand onClick={() => { navigate("/") }}>
+      <MastheadBrand component="a" onClick={() => { navigate("/") }}>
         <img src="/logo-rh.png" alt="Firelink Logo" />
       </MastheadBrand>
     </MastheadMain>
@@ -74,8 +74,11 @@ function App() {
     </NavList>
   </Nav>; 
 
-const sidebar = <PageSidebar nav={navBar} isNavOpen={true} id="vertical-sidebar">
-</PageSidebar>;
+const sidebar = <PageSidebar isSidebarOpen={true} id="vertical-sidebar" >
+<PageSidebarBody>
+{navBar}
+</PageSidebarBody>
+</PageSidebar>
 
   return <Page header={header} sidebar={sidebar}>
         <Outlet/>

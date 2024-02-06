@@ -65,8 +65,8 @@ function AppList() {
                     <TextInput
                         value={filter}
                         type="text"
-                        iconVariant="search"
-                        onChange={value => setFilter(value)}
+                        
+                        onChange={(_event, value) => setFilter(value)}
                         aria-label="text input app list filter"/>
                 </SplitItem>
                 <SplitItem>

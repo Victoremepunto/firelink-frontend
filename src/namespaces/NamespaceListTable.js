@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import {TableComposable, Thead, Tr, Th, Tbody, Td, ActionsColumn} from '@patternfly/react-table';
+import {Table /* data-codemods */, Thead, Tr, Th, Tbody, Td, ActionsColumn} from '@patternfly/react-table';
 
 import FilterDropdown from '../shared/FilterDropdown';
 
@@ -49,7 +49,7 @@ function ReleaseNamespace(namespace, AppState, setShowSpinner) {
 
 function ActionMenu({showSpinner, namespace, AppState, setShowSpinner}) {
     if (showSpinner) {
-        return <Spinner isSVG size="md"/>
+        return <Spinner  size="md"/>
     } else {
         return <ActionsColumn items={[
             {title: 'Extend 1h', onClick: () => console.log(`clicked on Some action, on row `)},
@@ -105,7 +105,7 @@ export default function NamespaceListTable({namespaces, showJustMyReservations})
     
 
     
-      const tableJSX = <TableComposable aria-label="Simple table" borders={'default'} isStriped key="namespace-list-table">
+      const tableJSX = <Table aria-label="Simple table" borders={'default'} isStriped key="namespace-list-table">
         <Thead key="thead">
           <Tr key="header-row">
             <Th>{columnNames.name} </Th>
@@ -143,7 +143,7 @@ export default function NamespaceListTable({namespaces, showJustMyReservations})
                 </Td>}
                 </Tr>)}
         </Tbody>
-      </TableComposable>
+      </Table>
 
     return <React.Fragment>
         {tableJSX}

@@ -1,5 +1,12 @@
 import React from 'react';
-import {Checkbox, DropdownToggle, DropdownItem, Dropdown, } from '@patternfly/react-core';
+import {
+	Checkbox
+} from '@patternfly/react-core';
+import {
+	DropdownToggle,
+	DropdownItem,
+	Dropdown
+} from '@patternfly/react-core/deprecated';
 import {useState} from 'react';
 
 function getUniqueValuesForPropertyInArrayOfObjects(sourceArray, sourceColumn) {
