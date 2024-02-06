@@ -1,11 +1,38 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import {Page, Nav, ToolbarGroup,  NavItem, NavList, Masthead, MastheadMain, MastheadBrand, MastheadContent, PageSidebar, PageSection, PageSectionVariants, Toolbar, ToolbarContent, ToolbarItem, NavExpandable} from '@patternfly/react-core';
 //import ReservationList from './ReservationList';
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
+import { AppContext } from "./shared/ContextProvider";
+
+
 
 function App() {
   
   const navigate = useNavigate();
+
+  const [AppState] = useContext(AppContext);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/index.html');
+        if (response.ok) {
+          // Access the header value using get() method
+          const username = response.headers.get('gap-auth').split('@')[0];
+          AppState.update({requester: username})
+        } else {
+          console.error('Getting Username: Failed to fetch data:', response.status, response.statusText);
+        }
+
+      } catch (error) {
+        console.error('Getting Username: Error during fetch:', error);
+      }
+
+    };
+
+    fetchData();
+  }, []); // Run once when the component mounts
+
 
   const headerToolbar = <Toolbar id="vertical-toolbar">
       <ToolbarContent>
@@ -44,9 +71,6 @@ function App() {
           Deploy
         </NavItem>
       </NavExpandable>
-      <NavItem id="settings" onClick={() => navigate("/settings")} itemId={0} isActive={useMatch("/settings")}>
-        Settings
-      </NavItem>
     </NavList>
   </Nav>; 
 
