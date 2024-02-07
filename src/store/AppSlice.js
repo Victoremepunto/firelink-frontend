@@ -103,6 +103,8 @@ export const loadRequester = () => {
     }
 }
 
-export const { setApps, setNamespaces, setRequester, clearNamespaces } = appSlice.actions
+
+
+export const { setApps, setNamespaces, setRequester, clearNamespaces, clearApps } = appSlice.actions
 
 export default appSlice.reducer

@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
     loadNamespaces,
     getRequester,
+    clearNamespaces,
 } from '../store/AppSlice';
 
 function filterNamespaces(namespaces, filter) {
@@ -31,8 +32,8 @@ function filterNamespaces(namespaces, filter) {
     });
 }
 
-function ReleaseNamespace(namespace, setShowSpinner) {
-    const dispatch = useDispatch();
+function ReleaseNamespace(namespace, setShowSpinner, dispatch) {
+    //const dispatch = useDispatch();
     setShowSpinner(true)
     fetch('/api/firelink/namespace/release', {
         method: 'POST',
@@ -44,6 +45,7 @@ function ReleaseNamespace(namespace, setShowSpinner) {
       }).then(response => response.json()).then((resp) => {
         if (resp.completed) {
             //This will trigger a reload of the namespace list
+            dispatch(clearNamespaces())
             dispatch(loadNamespaces())
             setShowSpinner(false)
         } else {
@@ -53,7 +55,7 @@ function ReleaseNamespace(namespace, setShowSpinner) {
     })
 }
 
-function ActionMenu({showSpinner, namespace, setShowSpinner}) {
+function ActionMenu({showSpinner, namespace, setShowSpinner, dispatch}) {
     if (showSpinner) {
         return <Spinner  size="md"/>
     } else {
@@ -61,7 +63,7 @@ function ActionMenu({showSpinner, namespace, setShowSpinner}) {
             {title: 'Extend 1h', onClick: () => console.log(`clicked on Some action, on row `)},
             {title: 'Extend 8h', onClick: () => console.log(`clicked on Some action, on row `)},
             {title: 'Extend 24h', onClick: () => console.log(`clicked on Some action, on row `)}, 
-            {title: 'Release', onClick: () => ReleaseNamespace(namespace.namespace, setShowSpinner )}
+            {title: 'Release', onClick: () => ReleaseNamespace(namespace.namespace, setShowSpinner, dispatch )}
         ]}/>   
     }
 }
@@ -147,7 +149,7 @@ export default function NamespaceListTable({namespaces, showJustMyReservations})
                 <Td dataLabel={columnNames.expiresIn}>{namespace.expires_in}</Td>
                 {namespace.requester === requester &&
                 <Td isActionCell>
-                    <ActionMenu showSpinner={releasingReserve} namespace={namespace}  setShowSpinner={setReleasingReserve}/>
+                    <ActionMenu showSpinner={releasingReserve} namespace={namespace}  setShowSpinner={setReleasingReserve} dispatch={dispatch}/>
                 </Td>}
                 </Tr>)}
         </Tbody>
