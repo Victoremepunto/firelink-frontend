@@ -3,11 +3,17 @@ import {Table /* data-codemods */, Thead, Tr, Th, Tbody, Td, ActionsColumn} from
 
 import FilterDropdown from '../shared/FilterDropdown';
 
-import { AppContext } from "../shared/ContextProvider"
-import {useContext, useState} from 'react';
+import {useState} from 'react';
 import DescribeLink from '../shared/DescribeLink';
 
 import { Spinner } from '@patternfly/react-core';
+
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    loadNamespaces,
+    getRequester,
+    clearNamespaces,
+} from '../store/AppSlice';
 
 function filterNamespaces(namespaces, filter) {
     return namespaces.filter((namespace) => {
@@ -26,7 +32,8 @@ function filterNamespaces(namespaces, filter) {
     });
 }
 
-function ReleaseNamespace(namespace, AppState, setShowSpinner) {
+function ReleaseNamespace(namespace, setShowSpinner, dispatch) {
+    //const dispatch = useDispatch();
     setShowSpinner(true)
     fetch('/api/firelink/namespace/release', {
         method: 'POST',
@@ -38,7 +45,8 @@ function ReleaseNamespace(namespace, AppState, setShowSpinner) {
       }).then(response => response.json()).then((resp) => {
         if (resp.completed) {
             //This will trigger a reload of the namespace list
-            AppState.update({namespaces: []})
+            dispatch(clearNamespaces())
+            dispatch(loadNamespaces())
             setShowSpinner(false)
         } else {
             alert("Error releasing namespace " + namespace + ": " + resp.message)
@@ -47,7 +55,7 @@ function ReleaseNamespace(namespace, AppState, setShowSpinner) {
     })
 }
 
-function ActionMenu({showSpinner, namespace, AppState, setShowSpinner}) {
+function ActionMenu({showSpinner, namespace, setShowSpinner, dispatch}) {
     if (showSpinner) {
         return <Spinner  size="md"/>
     } else {
@@ -55,13 +63,15 @@ function ActionMenu({showSpinner, namespace, AppState, setShowSpinner}) {
             {title: 'Extend 1h', onClick: () => console.log(`clicked on Some action, on row `)},
             {title: 'Extend 8h', onClick: () => console.log(`clicked on Some action, on row `)},
             {title: 'Extend 24h', onClick: () => console.log(`clicked on Some action, on row `)}, 
-            {title: 'Release', onClick: () => ReleaseNamespace(namespace.namespace, AppState, setShowSpinner )}
+            {title: 'Release', onClick: () => ReleaseNamespace(namespace.namespace, setShowSpinner, dispatch )}
         ]}/>   
     }
 }
 
 export default function NamespaceListTable({namespaces, showJustMyReservations}) {
-    const [AppState] = useContext(AppContext);
+    const dispatch = useDispatch();
+
+    const requester = useSelector(getRequester);
 
     const [filteredNamespaces, setFilteredNamespaces] = useState(namespaces);
 
@@ -80,7 +90,7 @@ export default function NamespaceListTable({namespaces, showJustMyReservations})
     useEffect(() => {
         if (showJustMyReservations) {
             let tmpFilter = {...defaultFilter}
-            tmpFilter.requester = AppState.requester
+            tmpFilter.requester = requester
             setFilteredNamespaces(filterNamespaces(namespaces, tmpFilter))
         } else {
             setFilteredNamespaces(filterNamespaces(namespaces, filter));
@@ -137,9 +147,9 @@ export default function NamespaceListTable({namespaces, showJustMyReservations})
                 <Td dataLabel={columnNames.requester}>{namespace.requester}</Td>
                 <Td dataLabel={columnNames.poolType}>{namespace.pool_type}</Td>
                 <Td dataLabel={columnNames.expiresIn}>{namespace.expires_in}</Td>
-                {namespace.requester === AppState.requester &&
+                {namespace.requester === requester &&
                 <Td isActionCell>
-                    <ActionMenu showSpinner={releasingReserve} namespace={namespace} AppState={AppState} setShowSpinner={setReleasingReserve}/>
+                    <ActionMenu showSpinner={releasingReserve} namespace={namespace}  setShowSpinner={setReleasingReserve} dispatch={dispatch}/>
                 </Td>}
                 </Tr>)}
         </Tbody>

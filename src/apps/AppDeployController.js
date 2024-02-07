@@ -1,11 +1,15 @@
 import React, { useEffect } from "react";
-import { useState, useContext } from "react";
+import { useState} from "react";
 import io from "socket.io-client";
 import { Button, Checkbox, Modal, ModalVariant, Stack, StackItem} from '@patternfly/react-core';
-import { AppContext } from "../shared/ContextProvider"
 import { PoolSelectList, DurationSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
 import { Spinner } from "@patternfly/react-core";
 import CheckCircle from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
+
+import { useSelector} from "react-redux";
+import {
+    getRequester
+} from "../store/AppSlice";
 
 const DEPLOY_EVENT = 'deploy-app';
 const ERROR_EVENT = 'error-deploy-app';
@@ -18,10 +22,8 @@ const host = window.location.host;
 const path = '/api/firelink/socket.io'; // Updated path
 //const SERVER = `${protocol}${host}${path}`;
 const SERVER = `${protocol}${host}`;
-console.log(SERVER);
 
 export default function AppDeployController(appname, reservation) {
-    const [AppState] = useContext(AppContext);
 
     const [frontends , setFrontends] = useState(false);
     const [pool, setPool] = useState(DefaultPool);
@@ -32,10 +34,12 @@ export default function AppDeployController(appname, reservation) {
     const [canCloseModal, setCanCloseModal] = useState(false);
     const [socket, setSocket] = useState(null);
 
+    const requester = useSelector(getRequester);
+
     const deploymentOptions = () => { return {
         //Options exposed in the UI
         app_names: [appname.appname],
-        requester: AppState.requester,
+        requester: requester,
         duration: duration,
         no_release_on_fail: !releaseOnFail,
         frontends: frontends,

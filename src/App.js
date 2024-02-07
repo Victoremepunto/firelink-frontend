@@ -1,36 +1,20 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import {Page, Nav, ToolbarGroup,  NavItem, NavList, Masthead, MastheadMain, MastheadBrand, MastheadContent, PageSidebar, Toolbar, ToolbarContent, NavExpandable, PageSidebarBody} from '@patternfly/react-core';
 //import ReservationList from './ReservationList';
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
-import { AppContext } from "./shared/ContextProvider";
-
+import { useDispatch } from 'react-redux';
+import { 
+  loadRequester,
+} from './store/AppSlice';
 
 
 function App() {
   
   const navigate = useNavigate();
-
-  const [AppState] = useContext(AppContext);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/index.html');
-        if (response.ok) {
-          // Access the header value using get() method
-          const username = response.headers.get('gap-auth').split('@')[0];
-          AppState.update({requester: username})
-        } else {
-          console.error('Getting Username: Failed to fetch data:', response.status, response.statusText);
-        }
-
-      } catch (error) {
-        console.error('Getting Username: Error during fetch:', error);
-      }
-
-    };
-
-    fetchData();
+    dispatch(loadRequester());
   }, []); // Run once when the component mounts
 
 

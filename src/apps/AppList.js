@@ -1,16 +1,24 @@
 import React from 'react';
-import {useContext, useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import {Title, TitleSizes} from '@patternfly/react-core';
 import Loading from '../shared/Loading';
-import { AppContext } from "../shared/ContextProvider"
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { TextInput, Page, PageSection, PageSectionVariants } from '@patternfly/react-core';
 import { Gallery } from '@patternfly/react-core';
 import { Split, SplitItem } from '@patternfly/react-core';
 import AppListItem from './AppListItem';
 
-function AppListJSX({AppState, AppList}) {
-    if ( AppState.isAppsEmpty() ) {
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    getIsAppsEmpty,
+    loadApps,
+    clearApps,
+    getApps
+} from '../store/AppSlice';
+
+function AppListJSX({AppList}) {
+    const isAppsEmpty = useSelector(getIsAppsEmpty);
+    if ( isAppsEmpty ) {
         return <Loading message="Fetching app list..." />
     } else {
         return <Gallery hasGutter>
@@ -25,15 +33,16 @@ function AppListJSX({AppState, AppList}) {
 function AppList() {
 
     //Get the global state
-    const [AppState] = useContext(AppContext);
-    const [filteredApps, setFilteredApps] = useState(AppState.apps);
+    const dispatch = useDispatch();
+    const apps = useSelector(getApps);
+    const isAppsEmpty = useSelector(getIsAppsEmpty);
+    const [filteredApps, setFilteredApps] = useState(apps);
 
     //App list filter text
     const [filter, setFilter] = useState('')
 
     //Filter app list when filter is updated
     useEffect(() => {
-        const apps = [...AppState.apps]
         if (filter === '') {
             setFilteredApps(apps)
             
@@ -43,12 +52,12 @@ function AppList() {
     }, [filter])
 
     useEffect(() => {
-        setFilteredApps(AppState.apps)
-    } ,[AppState.apps])
+        setFilteredApps(apps)
+    } ,[apps])
 
     useEffect(() => {
-        if (AppState.isAppsEmpty()) {
-            AppState.getApps()
+        if (isAppsEmpty) {
+            dispatch(loadApps());
         }
     }, []);
   
@@ -71,8 +80,8 @@ function AppList() {
                 </SplitItem>
                 <SplitItem>
                     <Button variant="primary" onClick={() => { 
-                        AppState.update({apps: []}); 
-                        AppState.getApps() 
+                        dispatch(clearApps());
+                        dispatch(loadApps());
                     }} >
                             Refresh
                     </Button>
@@ -80,7 +89,7 @@ function AppList() {
             </Split>
         </PageSection>
         <PageSection>
-            <AppListJSX AppState={AppState} AppList={filteredApps} />
+            <AppListJSX AppList={filteredApps} />
         </PageSection>
     </Page> 
 

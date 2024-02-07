@@ -1,12 +1,16 @@
-import  React, {useContext,  useState}  from "react"
+import  React, {useState}  from "react"
 import { Title, TitleSizes, Button, Form, Card, Split, Grid, GridItem, CardBody, CodeBlock, CodeBlockCode, FormGroup, TextInput, Page, PageSection, PageSectionVariants, SplitItem, CardTitle  } from "@patternfly/react-core"
-import { AppContext } from "../shared/ContextProvider"
 import Loading from "../shared/Loading";
 import { PoolSelectList, DurationSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
 import DescribeLink from "../shared/DescribeLink";
 
+import { useSelector, useDispatch } from "react-redux";
+import {
+    loadNamespaces,
+    getRequester
+} from "../store/AppSlice";
+
 export default function NamespaceReserve() {
-    const [AppState] = useContext(AppContext);
     const [response, setResponse] = useState({message: "", completed: false, namespace: ""})
     const [displayResponse, setDisplayResponse] = useState(false)
 
@@ -16,6 +20,9 @@ export default function NamespaceReserve() {
     const [isLoading, setIsLoading] = useState(false)
 
     const [loadingMessage, setLoadingMessage] = useState("Reserving namespace...")
+    const requester = useSelector(getRequester)
+
+    const dispatch = useDispatch();
 
     function requestReservation() {
         setLoadingMessage("Reserving namespace...")
@@ -26,13 +33,14 @@ export default function NamespaceReserve() {
               'Accept': 'application/json',
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({requester: AppState.requester})
+            body: JSON.stringify({requester: requester, duration: duration, pool: pool})
           }).then(response => response.json()).then((resp) => {
             setResponse(resp);
             
             setDisplayResponse(true);
             if ( resp.completed ) {
-                loadNamespaceList()
+                setIsLoading(false);
+                loadNamespaceList();
             } else {
                 setIsLoading(false);
             }
@@ -40,16 +48,12 @@ export default function NamespaceReserve() {
     }
 
     function loadNamespaceList() {
-        setLoadingMessage("Loading namespace list...")
-        setIsLoading(true)
-        AppState.getNamespaces().then(resp => {
-            setIsLoading(false)
-        })
+        dispatch(loadNamespaces())
     }
 
     const form = <Form>
     <FormGroup label="Requester" fieldId="simple-form-requester-01">
-      <TextInput isRequired type="text" id="simple-form-requester-01" name="simple-form-requester-01" value={AppState.requester} isDisabled/>
+      <TextInput isRequired type="text" id="simple-form-requester-01" name="simple-form-requester-01" value={requester} isDisabled/>
     </FormGroup>
     <DurationSelectList duration={duration} setDuration={setDuration} />
     <PoolSelectList pool={pool} setPool={setPool} />
