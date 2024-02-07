@@ -1,5 +1,5 @@
 import React from 'react';
-import {useContext, useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import {SplitItem, Title, TitleSizes} from '@patternfly/react-core';
 import Loading from '../shared/Loading';
 import NamespaceListTable from './NamespaceListTable';

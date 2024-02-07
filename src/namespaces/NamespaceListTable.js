@@ -3,7 +3,7 @@ import {Table /* data-codemods */, Thead, Tr, Th, Tbody, Td, ActionsColumn} from
 
 import FilterDropdown from '../shared/FilterDropdown';
 
-import {useContext, useState} from 'react';
+import {useState} from 'react';
 import DescribeLink from '../shared/DescribeLink';
 
 import { Spinner } from '@patternfly/react-core';

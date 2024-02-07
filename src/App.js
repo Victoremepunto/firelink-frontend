@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import {Page, Nav, ToolbarGroup,  NavItem, NavList, Masthead, MastheadMain, MastheadBrand, MastheadContent, PageSidebar, Toolbar, ToolbarContent, NavExpandable, PageSidebarBody} from '@patternfly/react-core';
 //import ReservationList from './ReservationList';
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { 
   loadRequester,
 } from './store/AppSlice';

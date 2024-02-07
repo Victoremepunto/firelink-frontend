@@ -1,4 +1,4 @@
-import  React, {useContext,  useState}  from "react"
+import  React, {useState}  from "react"
 import { Title, TitleSizes, Button, Form, Card, Split, Grid, GridItem, CardBody, CodeBlock, CodeBlockCode, FormGroup, TextInput, Page, PageSection, PageSectionVariants, SplitItem, CardTitle  } from "@patternfly/react-core"
 import Loading from "../shared/Loading";
 import { PoolSelectList, DurationSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
@@ -7,8 +7,6 @@ import DescribeLink from "../shared/DescribeLink";
 import { useSelector, useDispatch } from "react-redux";
 import {
     loadNamespaces,
-    getIsNamespacesEmpty,
-    clearNamespaces,
     getRequester
 } from "../store/AppSlice";
 

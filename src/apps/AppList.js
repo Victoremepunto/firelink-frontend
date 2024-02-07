@@ -1,5 +1,5 @@
 import React from 'react';
-import {useContext, useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import {Title, TitleSizes} from '@patternfly/react-core';
 import Loading from '../shared/Loading';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
@@ -15,7 +15,6 @@ import {
     clearApps,
     getApps
 } from '../store/AppSlice';
-import { clear } from '@testing-library/user-event/dist/clear';
 
 function AppListJSX({AppList}) {
     const isAppsEmpty = useSelector(getIsAppsEmpty);

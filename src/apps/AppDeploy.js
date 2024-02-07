@@ -1,5 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
-import { AppContext } from "../shared/ContextProvider"
+import React, {useState, useEffect} from 'react';
 import Loading from '../shared/Loading';
 import {
 	Radio,
@@ -24,12 +23,23 @@ import {
 } from '@patternfly/react-core/deprecated';
 import { useParams } from "react-router-dom";
 import AppDeployController from './AppDeployController';
-
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    getApps,
+    getIsAppsEmpty,
+    getMyReservations,
+    loadApps
+} from '../store/AppSlice';
 
 
 
 export default function AppDeploy() {
-    const [AppState] = useContext(AppContext);
+    const apps = useSelector(getApps);
+    const myReservations = useSelector(getMyReservations);
+    const isAppsEmpty = useSelector(getIsAppsEmpty);
+    const dispatch = useDispatch();
+
+
     var { appParam } = useParams()
     const [appListSelectIsOpen, setAppListSelectIsOpen] = useState(false);
     const [selectedApp, setSelectedApp] = useState(appParam);
@@ -38,10 +48,10 @@ export default function AppDeploy() {
     const [myReservationListSelectIsOpen, setMyReservationListSelectIsOpen] = useState(false);
     const [selectedReservation, setSelectedReservation] = useState("");
 
-    const [radioUseExistingNamespace, setRadioUseExistingNamespace] = useState( AppState.myReservations().length > 0 );
+    const [radioUseExistingNamespace, setRadioUseExistingNamespace] = useState( myReservations.length > 0 );
 
     const FindSelectApp = () => {
-        AppState.apps.forEach(element => {
+        apps.forEach(element => {
             if ( element.name === selectedApp ) {
                 setSelectedAppObj(element)
             } 
@@ -63,14 +73,13 @@ export default function AppDeploy() {
     }
 
     const NamespaceSelection = () => {
-        const myReservationOptions = AppState.myReservations().map((reservation, index) => {
-            
+        const myReservationOptions = myReservations.map((reservation, index) => {
             return <SelectOption key={`${reservation.namespace}-${index}`} value={reservation.namespace}>
                 {reservation.namespace}
             </SelectOption>   
         })
 
-        if ( AppState.myReservations().length === 0 ) {
+        if ( myReservations.length === 0 ) {
             return <React.Fragment>
                 <p>You have no namespaces reserved. A new namespace will be reserved for you.</p>
             </React.Fragment>
@@ -81,7 +90,7 @@ export default function AppDeploy() {
                 onChange={() => { setRadioUseExistingNamespace(!radioUseExistingNamespace) } }
                 label="Use Existing Namespace"
                 id="radio-use-namespace"
-                isDisabled={AppState.myReservations().length === 0}
+                isDisabled={myReservations.length === 0}
             ></Radio>
             <Radio
                 isChecked={!radioUseExistingNamespace}
@@ -103,7 +112,7 @@ export default function AppDeploy() {
 
     const AppDeployUI = () => {
 
-        const appListOptions = AppState.apps.map((app, index) => {
+        const appListOptions = apps.map((app, index) => {
             return <SelectOption key={`${app.name}-${index}`} value={app.name}>
                 {app.friendly_name}
             </SelectOption>   
@@ -171,8 +180,8 @@ export default function AppDeploy() {
 
     let ui = {}
 
-    if ( AppState.isAppsEmpty() ) {
-        AppState.getApps()
+    if ( isAppsEmpty ) {
+        dispatch(loadApps());
         ui = <Loading message="Fetching app list..."/>
     } else {
         ui = <Page>
@@ -188,7 +197,7 @@ export default function AppDeploy() {
 
         </PageSection>
         <PageSection>
-        { AppDeployUI(AppState)}
+        { AppDeployUI() }
 
         </PageSection>
             </Page> 
