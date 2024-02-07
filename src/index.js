@@ -11,10 +11,13 @@ import ContextProvider from './shared/ContextProvider';
 import Settings from './Settings';
 import AppDeploy from './apps/AppDeploy';
 import Root from './Root';
+import Store from './store/Store'
+import { Provider } from 'react-redux'
+
 
 const root = document.getElementById('root');
 ReactDOM.render(
-  <ContextProvider>
+  <Provider store={Store}>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}>
@@ -33,7 +36,7 @@ ReactDOM.render(
         </Route>
       </Routes>
     </BrowserRouter>
-  </ContextProvider>
+  </Provider>
   ,root
 );
 

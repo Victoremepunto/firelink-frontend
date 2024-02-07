@@ -2,7 +2,6 @@ import React from 'react';
 import {useContext, useState, useEffect} from 'react';
 import {SplitItem, Title, TitleSizes} from '@patternfly/react-core';
 import Loading from '../shared/Loading';
-import { AppContext } from "../shared/ContextProvider"
 import NamespaceListTable from './NamespaceListTable';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import {
@@ -12,25 +11,36 @@ import {
   Split,
   Switch
 } from '@patternfly/react-core';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  getIsNamespacesEmpty,
+  loadNamespaces,
+  clearNamespaces,
+  getMyReservations,
+  getNamespaces
+} from '../store/AppSlice';
 
 function ReservationList() {
 
-  //Get the global state
-  const [AppState] = useContext(AppContext);
   const [showJustMyReservations, setShowJustMyReservations] = useState(false);
 
+  const dispatch = useDispatch();
+  const myNamespaces = useSelector(getMyReservations);
+  const isNamespacesEmpty = useSelector(getIsNamespacesEmpty);
+  const namespaces = useSelector(getNamespaces);
 
 
+  // Run on first load
   useEffect(() => {
     // Your function logic here
-    if ( AppState.isNamespacesEmpty() ) {
-      AppState.getNamespaces()
+    if ( isNamespacesEmpty ) {
+      dispatch(loadNamespaces());
     }
   }, []);
 
    let outputJSX = {}
 
-   if ( AppState.isNamespacesEmpty() ) {
+   if ( isNamespacesEmpty ) {
     outputJSX = <Loading message="Fetching namespaces and reservations..."/>
     if (showJustMyReservations) {
       setShowJustMyReservations(false)
@@ -38,7 +48,7 @@ function ReservationList() {
    } else {
     outputJSX = <div>
 
-      <NamespaceListTable namespaces={AppState.namespaces} showJustMyReservations={showJustMyReservations}/>
+      <NamespaceListTable namespaces={namespaces} showJustMyReservations={showJustMyReservations}/>
     </div>
    }
   
@@ -62,8 +72,9 @@ function ReservationList() {
           </SplitItem> 
           <SplitItem>
             <Button variant="primary" onClick={() => { 
-              AppState.update({namespaces: []}); 
-              AppState.getNamespaces() }} >
+              dispatch(clearNamespaces())
+              dispatch(loadNamespaces())
+              }} >
               Refresh
             </Button>
           </SplitItem>
