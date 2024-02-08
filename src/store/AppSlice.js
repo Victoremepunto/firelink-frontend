@@ -7,6 +7,7 @@ export const appSlice = createSlice({
     requester: "firelink-user",
     namespaces: [],
     apps: [],
+    darkMode: false,
   },
   // Reducers - these are the actions that can be dispatched
   reducers: {
@@ -25,10 +26,17 @@ export const appSlice = createSlice({
     clearApps: (state) => {
       state.apps = []
     },
+    setDarkMode: (state, action) => {
+      state.darkMode = action.payload
+    }
   },
 })
 
 // Selectors - these are used to get data from the store
+export const getDarkMode = (state) => {
+  return state.appSlice.darkMode;
+}
+
 export const getIsNamespacesEmpty = (state) => {
   return state.appSlice.namespaces.length === 0;
 }
@@ -105,6 +113,6 @@ export const loadRequester = () => {
 
 
 
-export const { setApps, setNamespaces, setRequester, clearNamespaces, clearApps } = appSlice.actions
+export const { setApps, setNamespaces, setRequester, clearNamespaces, clearApps, setDarkMode } = appSlice.actions
 
 export default appSlice.reducer
