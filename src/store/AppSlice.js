@@ -6,6 +6,7 @@ export const appSlice = createSlice({
   initialState: {
     requester: "firelink-user",
     darkMode: false,
+    favoriteApps: []
   },
   // Reducers - these are the actions that can be dispatched
   reducers: {
@@ -14,11 +15,24 @@ export const appSlice = createSlice({
     },
     setDarkMode: (state, action) => {
       state.darkMode = action.payload
+    },
+    setFavoriteApp: (state, action) => {
+      // Only push the favorite in if the favorite isn't already there
+      if (!state.favoriteApps.includes(action.payload)) {
+        state.favoriteApps.push(action.payload)
+      }
+    },
+    removeFavoriteApp: (state, action) => {
+      state.favoriteApps = state.favoriteApps.filter(app => app !== action.payload)
     }
-  },
+  }
 })
 
 // Selectors - these are used to get data from the store
+export const getIsAppFavorite = (app) => (state) => {
+  return state.appSlice.favoriteApps.includes(app);
+}
+
 export const getDarkMode = (state) => {
   return state.appSlice.darkMode;
 }
@@ -50,6 +64,6 @@ export const loadRequester = () => {
 
 
 
-export const {  setRequester, setDarkMode } = appSlice.actions
+export const {  setRequester, setDarkMode, setFavoriteApp, removeFavoriteApp } = appSlice.actions
 
 export default appSlice.reducer
