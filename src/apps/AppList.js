@@ -14,7 +14,7 @@ import {
     loadApps,
     clearApps,
     getApps
-} from '../store/AppSlice';
+} from '../store/ListSlice';
 
 function AppListJSX({AppList}) {
     const isAppsEmpty = useSelector(getIsAppsEmpty);

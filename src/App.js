@@ -1,10 +1,35 @@
 import React, { useEffect } from 'react';
-import {Page, Nav, ToolbarGroup,  NavItem, NavList, Masthead, MastheadMain, MastheadBrand, MastheadContent, PageSidebar, Toolbar, ToolbarContent, NavExpandable, PageSidebarBody} from '@patternfly/react-core';
-//import ReservationList from './ReservationList';
+import {
+  Page, 
+  Nav, 
+  ToolbarGroup,  
+  NavItem, 
+  NavList, 
+  Masthead, 
+  MastheadMain, 
+  MastheadBrand, 
+  MastheadContent, 
+  PageSidebar, 
+  Toolbar, 
+  ToolbarContent, 
+  NavExpandable, 
+  PageSidebarBody, 
+  ToolbarItem,
+  Dropdown,
+  MenuToggle,
+  DropdownList,
+  DropdownItem,
+  Divider,
+  Switch,
+  Avatar
+} from '@patternfly/react-core';
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { 
+  getRequester,
   loadRequester,
+  getDarkMode,
+  setDarkMode
 } from './store/AppSlice';
 
 
@@ -13,14 +38,71 @@ function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const requester = useSelector(getRequester);
+
+  const darkMode = useSelector(getDarkMode);
+
+  const [isOpen, setIsOpen] = React.useState(false);
+  const onSelect = () => {
+    setIsOpen(!isOpen);
+  };
+  const onToggleClick = isOpen => {
+    setIsOpen(isOpen);
+  };
+
   useEffect(() => {
     dispatch(loadRequester());
   }, []); // Run once when the component mounts
 
+  if ( darkMode) {
+    document.documentElement.classList.add("pf-v5-theme-dark");
+  } else {
+    document.documentElement.classList.remove("pf-v5-theme-dark");
+  }
 
-  const headerToolbar = <Toolbar id="vertical-toolbar">
+  const deleteCookie = () => {
+    var cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+
+    window.location.reload("/");
+  }
+
+  const setDarkModeToggle = () => {
+    dispatch(setDarkMode(!darkMode));
+  }
+
+  const headerDropDown = <Dropdown isOpen={isOpen} onSelect={onSelect} onOpenChange={isOpen => setIsOpen(isOpen)} toggle={toggleRef => <MenuToggle ref={toggleRef} onClick={onToggleClick} isFullHeight="true" isFullWidth="true"  isExpanded={isOpen}>
+    <Avatar src="user.svg" />
+  </MenuToggle>} ouiaId="BasicDropdown" shouldFocusToggleOnSelect> 
+  <DropdownList>
+    <DropdownItem value={0} key="action" isDisabled="true">
+      {requester}
+    </DropdownItem>
+    <Divider component="li" key="separator" />
+    <DropdownItem value={1} key="separated action">
+    <Switch id="simple-switch" label="Dark" labelOff="Light" isChecked={darkMode} onChange={setDarkModeToggle} ouiaId="BasicSwitch" />
+    </DropdownItem>
+    <Divider component="li" key="separator" />
+    <DropdownItem value={5} key="separated action" onClick={deleteCookie}>
+      Log out
+    </DropdownItem>
+  </DropdownList>
+</Dropdown>
+
+
+
+  const headerToolbar = <Toolbar id="vertical-toolbar" isFullHeight="true">
       <ToolbarContent>
         <ToolbarGroup align={{default: 'alignRight'}}>
+          <ToolbarItem>
+            {headerDropDown}
+          </ToolbarItem>
        </ToolbarGroup>
       </ToolbarContent>
 </Toolbar>;

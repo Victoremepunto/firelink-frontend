@@ -6,9 +6,12 @@ import DescribeLink from "../shared/DescribeLink";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
-    loadNamespaces,
     getRequester
 } from "../store/AppSlice";
+import {
+    loadNamespaces,
+} from "../store/ListSlice";
+
 
 export default function NamespaceReserve() {
     const [response, setResponse] = useState({message: "", completed: false, namespace: ""})

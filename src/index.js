@@ -9,30 +9,32 @@ import NamespaceReserve from './namespaces/NamespaceReserve';
 import AppList from './apps/AppList'; 
 import AppDeploy from './apps/AppDeploy';
 import Root from './Root';
-import Store from './store/Store'
+import { Store, Persistor } from './store/Store'
 import { Provider } from 'react-redux'
-
+import { PersistGate } from 'redux-persist/integration/react';
 
 const root = document.getElementById('root');
 ReactDOM.render(
   <Provider store={Store}>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route path="/" key="root-page" element={<Root />}/>
+    <PersistGate loading={null} persistor={Persistor}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route path="/" key="root-page" element={<Root />}/>
 
-          <Route key="namespace-list" path="/namespace/list" element={<NamespaceList />} />
-          <Route key="namespace-describe" path="/namespace/describe/:namespaceParam" element={<NamespaceDescribe />} />
-          <Route key="namespace-describe" path="/namespace/describe" element={<NamespaceDescribe />} />
-          <Route key="namespace-reserve" path="/namespace/reserve" element={<NamespaceReserve />} />
+            <Route key="namespace-list" path="/namespace/list" element={<NamespaceList />} />
+            <Route key="namespace-describe" path="/namespace/describe/:namespaceParam" element={<NamespaceDescribe />} />
+            <Route key="namespace-describe" path="/namespace/describe" element={<NamespaceDescribe />} />
+            <Route key="namespace-reserve" path="/namespace/reserve" element={<NamespaceReserve />} />
 
-          <Route key="app-list" path="/apps/list" element={<AppList />} />
-          <Route key="app-deploy" path="/apps/deploy/:appParam" element={<AppDeploy />} />
-          <Route key="app-deploy" path="/apps/deploy" element={<AppDeploy />} />
+            <Route key="app-list" path="/apps/list" element={<AppList />} />
+            <Route key="app-deploy" path="/apps/deploy/:appParam" element={<AppDeploy />} />
+            <Route key="app-deploy" path="/apps/deploy" element={<AppDeploy />} />
 
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </PersistGate>
   </Provider>
   ,root
 );
