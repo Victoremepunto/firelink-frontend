@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import {Title, TitleSizes} from '@patternfly/react-core';
+import {Switch, Title, TitleSizes} from '@patternfly/react-core';
 import Loading from '../shared/Loading';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { TextInput, Page, PageSection, PageSectionVariants } from '@patternfly/react-core';
@@ -15,8 +15,11 @@ import {
     clearApps,
     getApps
 } from '../store/ListSlice';
+import {
+    getIsAppFavorite
+}   from '../store/AppSlice';
 
-function AppListJSX({AppList}) {
+function AppListJSX({AppList, ShowFavorites}) {
     const isAppsEmpty = useSelector(getIsAppsEmpty);
     if ( isAppsEmpty ) {
         return <Loading message="Fetching app list..." />
@@ -24,7 +27,7 @@ function AppListJSX({AppList}) {
         return <Gallery hasGutter>
             {AppList.map((app, index) => {
                 const key = `app-list-item-${app.name}-${index}`;
-                return <AppListItem app={app} key={key}/>
+                return <AppListItem app={app} key={key} showFavorites={ShowFavorites}/>
             })}
         </Gallery>
     }
@@ -40,14 +43,17 @@ function AppList() {
 
     //App list filter text
     const [filter, setFilter] = useState('')
+    const [showFavorites, setShowFavorites] = useState(false)
 
     //Filter app list when filter is updated
     useEffect(() => {
+        let tmpFilteredApps = apps
+
         if (filter === '') {
-            setFilteredApps(apps)
+            setFilteredApps(tmpFilteredApps)
             
         } else {
-            setFilteredApps(apps.filter(app => app.name.includes(filter)))
+            setFilteredApps(tmpFilteredApps.filter(app => app.name.includes(filter)))
         }
     }, [filter])
 
@@ -71,10 +77,13 @@ function AppList() {
                 </SplitItem>
                 <SplitItem isFilled/>
                 <SplitItem>
+                    <Switch  isReversed="true" id="app-list-favorites" label="Show Favorites" labelOff="Show All" isChecked={showFavorites} onChange={() => setShowFavorites(!showFavorites)}/>
+                </SplitItem>
+                <SplitItem>
                     <TextInput
                         value={filter}
                         type="text"
-                        
+                        placeholder="Filter apps"
                         onChange={(_event, value) => setFilter(value)}
                         aria-label="text input app list filter"/>
                 </SplitItem>
@@ -89,7 +98,7 @@ function AppList() {
             </Split>
         </PageSection>
         <PageSection>
-            <AppListJSX AppList={filteredApps} />
+            <AppListJSX AppList={filteredApps} ShowFavorites={showFavorites}/>
         </PageSection>
     </Page> 
 

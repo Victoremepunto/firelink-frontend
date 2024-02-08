@@ -78,7 +78,7 @@ function App() {
   }
 
   const headerDropDown = <Dropdown isOpen={isOpen} onSelect={onSelect} onOpenChange={isOpen => setIsOpen(isOpen)} toggle={toggleRef => <MenuToggle ref={toggleRef} onClick={onToggleClick} isFullHeight="true" isFullWidth="true"  isExpanded={isOpen}>
-    <Avatar src="user.svg" />
+    <Avatar src="/user.svg" />
   </MenuToggle>} ouiaId="BasicDropdown" shouldFocusToggleOnSelect> 
   <DropdownList>
     <DropdownItem value={0} key="action" isDisabled="true">
