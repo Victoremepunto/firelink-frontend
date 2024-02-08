@@ -113,7 +113,7 @@ export default function AppDeployController(appname, reservation) {
     const DeployStatusModal = () => {
         const close = () => { setShowModal(false) }
         return <React.Fragment>
-            <Modal variant={ModalVariant.small} title="Deployment Status" isOpen={showModal} actions={[
+            <Modal variant={ModalVariant.small}  showClose={false} title="Deployment Status" isOpen={showModal} actions={[
                 <Button key="close" variant="primary" onClick={close} isDisabled={!canCloseModal}> 
                     Close
                 </Button>
