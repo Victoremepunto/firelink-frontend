@@ -11,8 +11,10 @@ import { Spinner } from '@patternfly/react-core';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     loadNamespaces,
-    getRequester,
     clearNamespaces,
+} from '../store/ListSlice';
+import {
+    getRequester,
 } from '../store/AppSlice';
 
 function filterNamespaces(namespaces, filter) {

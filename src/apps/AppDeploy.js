@@ -29,13 +29,14 @@ import {
     getIsAppsEmpty,
     getMyReservations,
     loadApps
-} from '../store/AppSlice';
-
+} from '../store/ListSlice';
+import { getRequester } from '../store/AppSlice'
 
 
 export default function AppDeploy() {
     const apps = useSelector(getApps);
-    const myReservations = useSelector(getMyReservations);
+    const requester = useSelector(getRequester);
+    const myReservations = useSelector(getMyReservations(requester));
     const isAppsEmpty = useSelector(getIsAppsEmpty);
     const dispatch = useDispatch();
 

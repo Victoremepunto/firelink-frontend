@@ -18,14 +18,16 @@ import {
   clearNamespaces,
   getMyReservations,
   getNamespaces
-} from '../store/AppSlice';
+} from '../store/ListSlice';
+import { getRequester } from '../store/AppSlice'
 
 function ReservationList() {
 
   const [showJustMyReservations, setShowJustMyReservations] = useState(false);
 
   const dispatch = useDispatch();
-  const myNamespaces = useSelector(getMyReservations);
+  const requester = useSelector(getRequester);
+  const myNamespaces = useSelector(getMyReservations(requester));
   const isNamespacesEmpty = useSelector(getIsNamespacesEmpty);
   const namespaces = useSelector(getNamespaces);
 
