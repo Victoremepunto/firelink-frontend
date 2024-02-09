@@ -54,7 +54,6 @@ function ReservationList() {
     }, [description]);
 
     const descriptionJSX = <React.Fragment>
-        <PageSection >
             <Card>
                 <CardBody>
                     <Stack hasGutter>
@@ -80,7 +79,6 @@ function ReservationList() {
                     </Stack>
                 </CardBody>
             </Card>
-        </PageSection>
     </React.Fragment>;
 
     const outputJSX = loading ? <Loading message="Fetching namespace description..."/> : descriptionJSX;
@@ -92,7 +90,9 @@ function ReservationList() {
                     Describe Namespace
                 </Title>
             </PageSection>
-            { outputJSX}
+            <PageSection  isCenterAligned={true}>
+                { outputJSX}
+            </PageSection>
         </Page>
     </React.Fragment>
 };

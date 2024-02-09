@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import {useState} from "react";
-import { Card, CardTitle, CardBody, CardFooter, Button, GalleryItem, Split, SplitItem, Accordion, TitleSizes, Title, AccordionItem, AccordionContent, AccordionToggle  } from '@patternfly/react-core';
+import { Truncate, Card, CardTitle, CardBody, CardFooter, Button, GalleryItem, Split, SplitItem, Accordion, TitleSizes, Title, AccordionItem, AccordionContent, AccordionToggle  } from '@patternfly/react-core';
 import { useNavigate } from "react-router-dom";
 import { StarIcon } from '@patternfly/react-icons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,6 +9,7 @@ import {
     setFavoriteApp,
     removeFavoriteApp
 } from '../store/AppSlice';
+import { Tr } from "@patternfly/react-table";
 
 function AppComponentListLinks(components) {
     return components.map((component, index) => {
@@ -48,13 +49,6 @@ export default function AppListItem({app, showFavorites})  {
             dispatch(setFavoriteApp(app.name));
         }
     }
-
-    const truncateString =(inputString, maxLength)  => {
-        if (inputString.length > maxLength) {
-          return inputString.slice(0, maxLength - 3) + '...';
-        }
-        return inputString;
-      }
       
     if (showFavorites) {
         if (!isFavorite) {
@@ -69,7 +63,7 @@ export default function AppListItem({app, showFavorites})  {
             <SplitItem isFilled></SplitItem>
             <SplitItem>
                 <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                    {truncateString(app.friendly_name, 22)}
+                    <Truncate content={app.friendly_name}></Truncate>
                 </Title>
             </SplitItem>
             <SplitItem isFilled></SplitItem>

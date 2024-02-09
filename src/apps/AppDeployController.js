@@ -23,7 +23,7 @@ const path = '/api/firelink/socket.io'; // Updated path
 //const SERVER = `${protocol}${host}${path}`;
 const SERVER = `${protocol}${host}`;
 
-export default function AppDeployController(appname, reservation) {
+export default function AppDeployController({selectedApps, reservation}) {
 
     const [frontends , setFrontends] = useState(false);
     const [pool, setPool] = useState(DefaultPool);
@@ -38,7 +38,7 @@ export default function AppDeployController(appname, reservation) {
 
     const deploymentOptions = () => { return {
         //Options exposed in the UI
-        app_names: [appname.appname],
+        app_names: selectedApps.map(app => app.name),
         requester: requester,
         duration: duration,
         no_release_on_fail: !releaseOnFail,
@@ -72,7 +72,6 @@ export default function AppDeployController(appname, reservation) {
     const [wsResponses, setWsResponses] = useState(["Initiating deployment connection..."]);
 
     useEffect(() => {
-
         return () => {
             //Disconnect socket on unmount
             if (socket !== null) {
@@ -112,21 +111,45 @@ export default function AppDeployController(appname, reservation) {
 
     const DeployStatusModal = () => {
         const close = () => { setShowModal(false) }
+        /*
         return <React.Fragment>
             <Modal variant={ModalVariant.small}  showClose={false} title="Deployment Status" isOpen={showModal} actions={[
                 <Button key="close" variant="primary" onClick={close} isDisabled={!canCloseModal}> 
                     Close
                 </Button>
             ]}>
+                <ul>
                 {wsResponses.map((response, index) => {
-                    return <ul key={`deploy-response-${index}`}>
-                        <li key={`response-id-${index}`}>
+                    return <li key={`response-id-${index}`}>
                             &nbsp; &nbsp; &nbsp; <StatusIcon index={index}/> &nbsp; {response}
-                        </li>
-                    </ul>})
+                        </li>})
                 }
+                </ul>
             </Modal>
         </React.Fragment> 
+        */
+
+        return <React.Fragment>
+        <Modal
+          variant={ModalVariant.small}
+          title="Deploying..."
+          isOpen={showModal}
+          showClose={false}
+          actions={[
+            <Button key="cancel" variant="primary" onClick={close}>
+              Close
+            </Button>
+          ]}
+        >
+          <ul>
+                {wsResponses.map((response, index) => {
+                    return <li key={`response-id-${index}`}>
+                            &nbsp; &nbsp; &nbsp; <StatusIcon index={index}/> &nbsp; {response}
+                        </li>})
+                }
+                </ul>
+        </Modal>
+      </React.Fragment>
     }
 
 
