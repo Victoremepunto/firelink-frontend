@@ -7,10 +7,13 @@ import { Spinner } from "@patternfly/react-core";
 import CheckCircle from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 
 
-import { useSelector} from "react-redux";
+import { useSelector, useDispatch} from "react-redux";
 import {
     getRequester
 } from "../store/AppSlice";
+import {
+    clearNamespaces,
+} from "../store/ListSlice";
 
 const DEPLOY_EVENT = 'deploy-app';
 const ERROR_EVENT = 'error-deploy-app';
@@ -25,6 +28,8 @@ const path = '/api/firelink/socket.io'; // Updated path
 const SERVER = `${protocol}${host}`;
 
 export default function AppDeployController({selectedApps, reservation}) {
+
+    const dispatch = useDispatch();
 
     const [frontends , setFrontends] = useState(false);
     const [pool, setPool] = useState(DefaultPool);
@@ -94,6 +99,7 @@ export default function AppDeployController({selectedApps, reservation}) {
     
         tmpSocket.on(END_EVENT, (response) => {
             setCanCloseModal(true);
+            dispatch(clearNamespaces());
             tmpSocket.disconnect();
             setSocket(null);
         });
