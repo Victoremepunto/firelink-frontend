@@ -57,7 +57,7 @@ export default function AppListItem({app, showFavorites})  {
     }
 
 
-    return <GalleryItem onMouseOver={() => {setMouseHovering(true)}} onMouseLeave={() => {setMouseHovering(false)}} key={key}><Card className="pf-u-box-shadow-lg">
+    return <GalleryItem onMouseOver={() => {setMouseHovering(true)}} onMouseLeave={() => {setMouseHovering(false)}} key={key}><Card isLarge={true} isRounded={true} className="pf-u-box-shadow-lg">
     <CardTitle>
         <Split>
             <SplitItem isFilled></SplitItem>

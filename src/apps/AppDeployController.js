@@ -111,44 +111,26 @@ export default function AppDeployController({selectedApps, reservation}) {
 
     const DeployStatusModal = () => {
         const close = () => { setShowModal(false) }
-        /*
         return <React.Fragment>
-            <Modal variant={ModalVariant.small}  showClose={false} title="Deployment Status" isOpen={showModal} actions={[
-                <Button key="close" variant="primary" onClick={close} isDisabled={!canCloseModal}> 
-                    Close
+            <Modal
+            variant={ModalVariant.small}
+            title="Deploying..."
+            isOpen={showModal}
+            showClose={false}
+            actions={[
+                <Button key="cancel" variant="primary" onClick={close}>
+                Close
                 </Button>
-            ]}>
-                <ul>
-                {wsResponses.map((response, index) => {
-                    return <li key={`response-id-${index}`}>
-                            &nbsp; &nbsp; &nbsp; <StatusIcon index={index}/> &nbsp; {response}
-                        </li>})
-                }
-                </ul>
+            ]}
+            >
+            <ul>
+                    {wsResponses.map((response, index) => {
+                        return <li key={`response-id-${index}`}>
+                                &nbsp; &nbsp; &nbsp; <StatusIcon index={index}/> &nbsp; {response}
+                            </li>})
+                    }
+                    </ul>
             </Modal>
-        </React.Fragment> 
-        */
-
-        return <React.Fragment>
-        <Modal
-          variant={ModalVariant.small}
-          title="Deploying..."
-          isOpen={showModal}
-          showClose={false}
-          actions={[
-            <Button key="cancel" variant="primary" onClick={close}>
-              Close
-            </Button>
-          ]}
-        >
-          <ul>
-                {wsResponses.map((response, index) => {
-                    return <li key={`response-id-${index}`}>
-                            &nbsp; &nbsp; &nbsp; <StatusIcon index={index}/> &nbsp; {response}
-                        </li>})
-                }
-                </ul>
-        </Modal>
       </React.Fragment>
     }
 
