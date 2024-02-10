@@ -40,7 +40,7 @@ import {
     loadApps
 } from '../store/ListSlice';
 import { getRequester, getFavoriteApps  } from '../store/AppSlice'
-
+import FadeInFadeOut from '../shared/FadeInFadeOut';
 
 export default function AppDeploy() {
     const apps = useSelector(getApps);
@@ -259,8 +259,9 @@ export default function AppDeploy() {
 
         </PageSection>
         <PageSection>
-        { AppDeployUI() }
-
+            <FadeInFadeOut>
+                { AppDeployUI() }
+            </FadeInFadeOut>
         </PageSection>
             </Page> 
 

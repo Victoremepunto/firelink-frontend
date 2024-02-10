@@ -11,7 +11,7 @@ import {
 import {
     loadNamespaces,
 } from "../store/ListSlice";
-
+import FadeInFadeOut from "../shared/FadeInFadeOut";
 
 export default function NamespaceReserve() {
     const [response, setResponse] = useState({message: "", completed: false, namespace: ""})
@@ -150,7 +150,9 @@ export default function NamespaceReserve() {
 
             </PageSection>
             <PageSection isCenterAligned={true}>
-                { renderUI() }
+                <FadeInFadeOut>
+                    { renderUI() }
+                </FadeInFadeOut>
             </PageSection>
         </Page>
     </React.Fragment>
