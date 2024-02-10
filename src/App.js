@@ -31,6 +31,7 @@ import {
   getDarkMode,
   setDarkMode
 } from './store/AppSlice';
+import { ReactSVG } from 'react-svg';
 
 
 function App() {
@@ -110,7 +111,7 @@ function App() {
   const header = <Masthead>
     <MastheadMain>
       <MastheadBrand component="a" onClick={() => { navigate("/") }}>
-        <img src="/logo-rh.png" alt="Firelink Logo" />
+        <ReactSVG src="/firelink-logo.svg" style={{width: '8rem'}}/>
       </MastheadBrand>
     </MastheadMain>
     <MastheadContent>{headerToolbar}</MastheadContent>
