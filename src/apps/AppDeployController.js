@@ -5,6 +5,8 @@ import { Button, Checkbox, Modal, ModalVariant, Stack, StackItem} from '@pattern
 import { PoolSelectList, DurationSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
 import { Spinner } from "@patternfly/react-core";
 import CheckCircle from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
+import SlideInSlideOut from "../shared/SlideInSlideOut";
+
 
 import { useSelector} from "react-redux";
 import {
@@ -112,25 +114,26 @@ export default function AppDeployController({selectedApps, reservation}) {
     const DeployStatusModal = () => {
         const close = () => { setShowModal(false) }
         return <React.Fragment>
-            <Modal
-            variant={ModalVariant.small}
-            title="Deploying..."
-            isOpen={showModal}
-            showClose={false}
-            actions={[
-                <Button key="cancel" variant="primary" onClick={close}>
-                Close
-                </Button>
-            ]}
-            >
-            <ul>
-                    {wsResponses.map((response, index) => {
-                        return <li key={`response-id-${index}`}>
-                                &nbsp; &nbsp; &nbsp; <StatusIcon index={index}/> &nbsp; {response}
-                            </li>})
-                    }
-                    </ul>
-            </Modal>
+                <Modal
+                variant={ModalVariant.small}
+                title="Deploying..."
+                isOpen={showModal}
+                showClose={false}
+                actions={[
+                    <Button key="cancel" variant="primary" onClick={close}>
+                    Close
+                    </Button>
+                ]}>
+                    <div style={{height: '9rem', overflow: 'auto'}}>
+                        <ul>
+                            {wsResponses.map((response, index) => {
+                                return <li key={`response-id-${index}`}>
+                                        &nbsp; &nbsp; &nbsp; <StatusIcon index={index}/> &nbsp; {response}
+                                    </li>})
+                            }
+                        </ul>
+                    </div>
+                </Modal>
       </React.Fragment>
     }
 
