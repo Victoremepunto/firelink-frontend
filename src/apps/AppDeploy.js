@@ -169,7 +169,9 @@ export default function AppDeploy() {
     }
 
     const AppDeployUI = () => {
-
+        if ( isAppsEmpty ) {
+            return <Loading message="Fetching app list..."/>
+        } 
         return <React.Fragment>
             <Grid hasGutter >
                 <GridItem span={4} >
@@ -241,12 +243,7 @@ export default function AppDeploy() {
         </React.Fragment>
     }
 
-    let ui = {}
-
-    if ( isAppsEmpty ) {
-        ui = <Loading message="Fetching app list..."/>
-    } else {
-        ui = <Page>
+    return <Page>
         <PageSection variant={PageSectionVariants.light}>
             <Split>
                 <SplitItem>
@@ -263,9 +260,5 @@ export default function AppDeploy() {
                 { AppDeployUI() }
             </FadeInFadeOut>
         </PageSection>
-            </Page> 
-
-    }
-
-    return ui
+    </Page> 
 }
