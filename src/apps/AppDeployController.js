@@ -5,7 +5,6 @@ import { Button, Checkbox, Modal, ModalVariant, Stack, StackItem} from '@pattern
 import { PoolSelectList, DurationSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
 import { Spinner } from "@patternfly/react-core";
 import CheckCircle from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
-import SlideInSlideOut from "../shared/SlideInSlideOut";
 
 
 import { useSelector} from "react-redux";
