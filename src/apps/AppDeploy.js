@@ -40,7 +40,7 @@ import {
     loadApps
 } from '../store/ListSlice';
 import { getRequester, getFavoriteApps  } from '../store/AppSlice'
-
+import FadeInFadeOut from '../shared/FadeInFadeOut';
 
 export default function AppDeploy() {
     const apps = useSelector(getApps);
@@ -169,7 +169,9 @@ export default function AppDeploy() {
     }
 
     const AppDeployUI = () => {
-
+        if ( isAppsEmpty ) {
+            return <Loading message="Fetching app list..."/>
+        } 
         return <React.Fragment>
             <Grid hasGutter >
                 <GridItem span={4} >
@@ -241,12 +243,7 @@ export default function AppDeploy() {
         </React.Fragment>
     }
 
-    let ui = {}
-
-    if ( isAppsEmpty ) {
-        ui = <Loading message="Fetching app list..."/>
-    } else {
-        ui = <Page>
+    return <Page>
         <PageSection variant={PageSectionVariants.light}>
             <Split>
                 <SplitItem>
@@ -259,12 +256,9 @@ export default function AppDeploy() {
 
         </PageSection>
         <PageSection>
-        { AppDeployUI() }
-
+            <FadeInFadeOut>
+                { AppDeployUI() }
+            </FadeInFadeOut>
         </PageSection>
-            </Page> 
-
-    }
-
-    return ui
+    </Page> 
 }

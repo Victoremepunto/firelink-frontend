@@ -4,7 +4,8 @@ import {  List, ListItem, Stack, Page, PageSectionVariants, PageSection, Split, 
 import Cluster from '@patternfly/react-icons/dist/esm/icons/cluster-icon'
 import CloudUpload from '@patternfly/react-icons/dist/esm/icons/cloud-upload-alt-icon'
 import Code from '@patternfly/react-icons/dist/esm/icons/code-icon'
-
+import FadeInFadeOut from './shared/FadeInFadeOut';
+import SlideInSlideOut from './shared/SlideInSlideOut';
 
 
 export default function Root() {
@@ -12,6 +13,7 @@ export default function Root() {
     const Pillars = () => {
    
         return <React.Fragment>
+            <FadeInFadeOut>
             <Grid hasGutter >
                 <GridItem span={4} >
                     <Card className="pf-u-box-shadow-md" style={{minHeight: '100%'}}>
@@ -95,7 +97,7 @@ export default function Root() {
                     </Card>
                 </GridItem>
             </Grid>
-            
+            </FadeInFadeOut>
         </React.Fragment>
     }
 

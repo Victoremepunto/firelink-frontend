@@ -7,6 +7,7 @@ import { TextInput, Page, PageSection, PageSectionVariants } from '@patternfly/r
 import { Gallery } from '@patternfly/react-core';
 import { Split, SplitItem } from '@patternfly/react-core';
 import AppListItem from './AppListItem';
+import FadeInFadeOut from '../shared/FadeInFadeOut';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -98,7 +99,9 @@ function AppList() {
             </Split>
         </PageSection>
         <PageSection>
-            <AppListJSX AppList={filteredApps} ShowFavorites={showFavorites}/>
+            <FadeInFadeOut>
+                <AppListJSX AppList={filteredApps} ShowFavorites={showFavorites}/>
+            </FadeInFadeOut>
         </PageSection>
     </Page> 
 

@@ -3,7 +3,24 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Linkify from "react-linkify"
 import Loading from '../shared/Loading';
-import { Button, Page, Split,  PageSection, CodeBlock,Stack, StackItem , CodeBlockCode, Card, PageSectionVariants, InputGroup, TextInput, Title, TitleSizes, CardBody, InputGroupItem, SplitItem } from '@patternfly/react-core';
+import { 
+    Button, 
+    Page, 
+    Split,  
+    PageSection, 
+    CodeBlock,
+    CodeBlockCode, 
+    Card, 
+    PageSectionVariants, 
+    InputGroup, 
+    TextInput, 
+    Title, 
+    TitleSizes, 
+    CardBody, 
+    InputGroupItem, 
+    SplitItem 
+} from '@patternfly/react-core';
+import FadeInFadeOut from '../shared/FadeInFadeOut';
 
 function ReservationList() {
     //Get namespace name from router params
@@ -99,7 +116,9 @@ function ReservationList() {
                 </Split>
             </PageSection>
             <PageSection  isCenterAligned={true}>
-                { outputJSX }
+                <FadeInFadeOut>
+                    { outputJSX }
+                </FadeInFadeOut>
             </PageSection>
         </Page>
     </React.Fragment>

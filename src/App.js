@@ -77,7 +77,7 @@ function App() {
     dispatch(setDarkMode(!darkMode));
   }
 
-  const headerDropDown = <Dropdown isOpen={isOpen} onSelect={onSelect} onOpenChange={isOpen => setIsOpen(isOpen)} toggle={toggleRef => <MenuToggle ref={toggleRef} onClick={onToggleClick} isFullHeight="true" isFullWidth="true"  isExpanded={isOpen}>
+  const headerDropDown  = <Dropdown isOpen={isOpen} onSelect={onSelect} onOpenChange={isOpen => setIsOpen(isOpen)} toggle={toggleRef => <MenuToggle ref={toggleRef} onClick={onToggleClick} isFullHeight="true" isFullWidth="true"  isExpanded={isOpen}>
     <Avatar src="/user.svg" />
   </MenuToggle>} ouiaId="BasicDropdown" shouldFocusToggleOnSelect> 
   <DropdownList>

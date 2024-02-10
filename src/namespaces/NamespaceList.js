@@ -20,6 +20,7 @@ import {
   getNamespaces
 } from '../store/ListSlice';
 import { getRequester } from '../store/AppSlice'
+import FadeInFadeOut from '../shared/FadeInFadeOut';
 
 function ReservationList() {
 
@@ -84,8 +85,9 @@ function ReservationList() {
 
       </PageSection>
       <PageSection >
-
-        {outputJSX}
+        <FadeInFadeOut>
+          {outputJSX}
+        </FadeInFadeOut>
       </PageSection>
     </Page>
   </React.Fragment>
