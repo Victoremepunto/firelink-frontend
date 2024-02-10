@@ -77,7 +77,7 @@ function AppList() {
                 </SplitItem>
                 <SplitItem isFilled/>
                 <SplitItem>
-                    <Switch  isReversed="true" id="app-list-favorites" label="Show Favorites" labelOff="Show All" isChecked={showFavorites} onChange={() => setShowFavorites(!showFavorites)}/>
+                    <Switch  isReversed="true" id="app-list-favorites" label="Show Favorites" labelOff="Show Favorites" isChecked={showFavorites} onChange={() => setShowFavorites(!showFavorites)}/>
                 </SplitItem>
                 <SplitItem>
                     <TextInput

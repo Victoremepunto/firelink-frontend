@@ -37,6 +37,10 @@ export const getDarkMode = (state) => {
   return state.appSlice.darkMode;
 }
 
+export const getFavoriteApps = (state) => {
+  return state.appSlice.favoriteApps;
+}
+
 export const getRequesterIsSet = (state) => {
   return state.appSlice.requester !== "";
 }

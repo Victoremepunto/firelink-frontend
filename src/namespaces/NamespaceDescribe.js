@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Linkify from "react-linkify"
 import Loading from '../shared/Loading';
-import { Button, Page, PageSection, CodeBlock,Stack, StackItem , CodeBlockCode, Card, PageSectionVariants, InputGroup, TextInput, Title, TitleSizes, CardBody, InputGroupItem } from '@patternfly/react-core';
+import { Button, Page, Split,  PageSection, CodeBlock,Stack, StackItem , CodeBlockCode, Card, PageSectionVariants, InputGroup, TextInput, Title, TitleSizes, CardBody, InputGroupItem, SplitItem } from '@patternfly/react-core';
 
 function ReservationList() {
     //Get namespace name from router params
@@ -15,6 +15,7 @@ function ReservationList() {
     var [loading, setLoading] = useState(false);
     var [namespace, setNamespace] = useState("");
     var [namespaceInput, setNamespaceInput] = useState("");
+    var [showResponseCard, setShowResponseCard] = useState(false);
 
     useEffect(() => {
         if (namespaceParam === undefined || namespaceParam === "") {
@@ -39,6 +40,7 @@ function ReservationList() {
         fetch(url)
             .then(response => response.json())
             .then(jsonResp => {
+                setShowResponseCard(true);
                 setDescription(jsonResp.message)
                 setLoading(false);
             });
@@ -53,46 +55,52 @@ function ReservationList() {
         setParsedDescription(description.split("\n"))
     }, [description]);
 
-    const descriptionJSX = <React.Fragment>
-        <PageSection >
+    const descriptionJSX = () => { 
+        if ( !showResponseCard) {
+            return <React.Fragment></React.Fragment>
+        }
+        return <React.Fragment>
             <Card>
                 <CardBody>
-                    <Stack hasGutter>
-                        <StackItem>
-                            <InputGroup>
-                                <InputGroupItem isFill ><TextInput id="text-input" value={namespaceInput} onChange={e => setNamespaceInput(e)} default="test"></TextInput></InputGroupItem>
-                                <InputGroupItem><Button onClick={() => { buttonClickHandler() }}>
-                                    Describe
-                                </Button></InputGroupItem>
-                            </InputGroup>
-                        </StackItem>
-                        <StackItem>
-                            <CodeBlock>
-                                <CodeBlockCode id="code-content">
-                                    {parsedDescription.map((line, i) => (
-                                        <p key={line + i.toString()}>
-                                            <Linkify properties={{target: '_blank'}} >{line}</Linkify>
-                                        </p>
-                                    ))}
-                                </CodeBlockCode>
-                            </CodeBlock>
-                        </StackItem>
-                    </Stack>
+                    <CodeBlock>
+                        <CodeBlockCode id="code-content">
+                            {parsedDescription.map((line, i) => (
+                                <p key={line + i.toString()}>
+                                    <Linkify properties={{target: '_blank'}} >{line}</Linkify>
+                                </p>
+                            ))}
+                        </CodeBlockCode>
+                    </CodeBlock>
                 </CardBody>
             </Card>
-        </PageSection>
-    </React.Fragment>;
+        </React.Fragment>;
+    }
 
-    const outputJSX = loading ? <Loading message="Fetching namespace description..."/> : descriptionJSX;
+    const outputJSX = loading ? <Loading message="Fetching namespace description..."/> : descriptionJSX();
     //Render
     return <React.Fragment>
         <Page>
             <PageSection variant={PageSectionVariants.light}>
-                <Title headingLevel="h1" size={TitleSizes['3xl']}>
-                    Describe Namespace
-                </Title>
+                <Split>
+                    <SplitItem>
+                        <Title headingLevel="h1" size={TitleSizes['3xl']}>
+                            Describe Namespace
+                        </Title>
+                    </SplitItem>
+                    <SplitItem isFilled/>
+                    <SplitItem>
+                        <InputGroup>
+                            <InputGroupItem isFill ><TextInput id="text-input" value={namespaceInput} onChange={e => setNamespaceInput(e)} default="test"></TextInput></InputGroupItem>
+                            <InputGroupItem><Button onClick={() => { buttonClickHandler() }}>
+                                Describe
+                            </Button></InputGroupItem>
+                        </InputGroup>
+                    </SplitItem>
+                </Split>
             </PageSection>
-            { outputJSX}
+            <PageSection  isCenterAligned={true}>
+                { outputJSX }
+            </PageSection>
         </Page>
     </React.Fragment>
 };

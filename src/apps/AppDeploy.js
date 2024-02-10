@@ -15,7 +15,16 @@ import {
 	TitleSizes,
 	Grid,
 	GridItem,
-	StackItem
+	StackItem,
+    Menu,
+    MenuContent,
+    MenuList,
+    MenuItem,
+    MenuGroup,
+    Divider,
+    MenuSearch,
+    MenuSearchInput,
+    SearchInput
 } from '@patternfly/react-core';
 import {
 	Select,
@@ -30,7 +39,7 @@ import {
     getMyReservations,
     loadApps
 } from '../store/ListSlice';
-import { getRequester } from '../store/AppSlice'
+import { getRequester, getFavoriteApps  } from '../store/AppSlice'
 
 
 export default function AppDeploy() {
@@ -40,38 +49,70 @@ export default function AppDeploy() {
     const isAppsEmpty = useSelector(getIsAppsEmpty);
     const dispatch = useDispatch();
 
+    const [filteredApps, setFilteredApps] = useState(apps);
+
+    const favoriteApps = useSelector(getFavoriteApps);
 
     var { appParam } = useParams()
-    const [appListSelectIsOpen, setAppListSelectIsOpen] = useState(false);
-    const [selectedApp, setSelectedApp] = useState(appParam);
-    const [selectedAppObj, setSelectedAppObj] = useState({name:"", friendly_name: "", components: []});
+    const [menuFilter, setMenuFilter] = useState("");
+
+    const [selectedApps, setSelectedApps] = useState([]);
 
     const [myReservationListSelectIsOpen, setMyReservationListSelectIsOpen] = useState(false);
     const [selectedReservation, setSelectedReservation] = useState("");
 
     const [radioUseExistingNamespace, setRadioUseExistingNamespace] = useState( myReservations.length > 0 );
 
-    const FindSelectApp = () => {
-        apps.forEach(element => {
-            if ( element.name === selectedApp ) {
-                setSelectedAppObj(element)
-            } 
-        });
-    }
 
     useEffect(()=>{
-        FindSelectApp()
-    },[selectedApp, appParam])
+        if (appParam) {
+            const paramApp = apps.find(app => app.name === appParam)
+            if (paramApp) {
+                setSelectedApps([paramApp, ...selectedApps])
+            }
+        }
+        if (isAppsEmpty) {
+            dispatch(loadApps());
+        }
+        if (myReservations.length > 0) {
+            setSelectedReservation(myReservations[0].namespace)
+        }
+    }, [])
 
-    const AppComponentListLinksCard =  () => {
-        return selectedAppObj.components.map((component, index) => {
-            const link = `https://${component.host}.com/${component.repo}/tree/${component.ref}${component.path}`
-            return <p key={`link-id-${component}-${index}`}>
-                <a href={link} target="_blank" rel="noreferrer" style={{marginLeft: '1em'}}>{component.name}</a>
-            </p>
-        })
-    
-    }
+    useEffect(() => {
+        setFilteredApps(apps.filter(app => app.friendly_name.toLowerCase().includes(menuFilter.toLowerCase())))
+    }, [menuFilter])
+
+    useEffect(() => {
+        setFilteredApps(apps)
+    }, [apps])
+
+    const AppComponentListLinksCard = () => {
+        return (
+          <Menu isScrollable >
+            <MenuContent menuHeight="18.75rem">
+              {selectedApps.map((app, appIndex) => (
+                <MenuGroup key={`menu-group-${app.name}-${appIndex}`} label={app.name}>
+                  <MenuList>
+                    {app.components.map((component, componentIndex) => {
+                      const link = `https://${component.host}.com/${component.repo}/tree/${component.ref}${component.path}`;
+                      return (
+                        <MenuItem key={`link-id-${component}-${componentIndex}`}>
+                          <a href={link} target="_blank" rel="noreferrer">
+                            {component.name}
+                          </a>
+                        </MenuItem>
+                      );
+                    })}
+                  </MenuList>
+                </MenuGroup>
+              ))}
+              <Divider />
+            </MenuContent>
+          </Menu>
+        );
+      };
+
 
     const NamespaceSelection = () => {
         const myReservationOptions = myReservations.map((reservation, index) => {
@@ -111,40 +152,61 @@ export default function AppDeploy() {
         }
     }
 
+
+    const onSelect = (_event, selectedApp) => {
+        if (selectedApps.includes(selectedApp)) {
+            setSelectedApps(selectedApps.filter(app => app.name !== selectedApp.name))
+        }
+        else {
+            setSelectedApps([...selectedApps, selectedApp])
+        }
+    };
+
+
+
+    const handleMenuFilterChange = (value) => {
+        setMenuFilter(value);
+    }
+
     const AppDeployUI = () => {
 
-        const appListOptions = apps.map((app, index) => {
-            return <SelectOption key={`${app.name}-${index}`} value={app.name}>
-                {app.friendly_name}
-            </SelectOption>   
-        })
-
-   
         return <React.Fragment>
             <Grid hasGutter >
                 <GridItem span={4} >
                     <Card className="pf-u-box-shadow-md" style={{minHeight: '100%'}}>
                         <CardTitle>
                             <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                                Select App
+                                Select Apps to Deploy
                             </Title>
                         </CardTitle>
                         <CardBody >
                             <Stack hasGutter>
                                 <StackItem>
-                                    <Select
-                                        isOpen={appListSelectIsOpen}
-                                        onToggle={() => { setAppListSelectIsOpen(!appListSelectIsOpen) } } 
-                                        onSelect={(event, selection) => { setSelectedApp(selection) ; setAppListSelectIsOpen(false) } }
-                                        selections={selectedApp}>
-                                            {appListOptions}
-                                    </Select>
+                                    <Menu  onSelect={onSelect} isScrollable>
+                                        <MenuSearch>
+                                            <MenuSearchInput>
+                                            <SearchInput value={menuFilter} aria-label="Filter menu items" onChange={(_event, value) => handleMenuFilterChange(value)} />
+                                            </MenuSearchInput>
+                                        </MenuSearch>
+                                        <Divider />
+                                        <MenuContent>
+                                            <MenuList>
+                                                {filteredApps.map((app, index) => {
+                                                    return <MenuItem hasCheckbox isSelected={selectedApps.includes(app)} isFavorited={favoriteApps.includes(app.name)} key={`${app.name}-${index}`} itemId={app}>
+                                                        {app.friendly_name}
+                                                    </MenuItem>   
+                                                })}
+                                            </MenuList>
+                                        </MenuContent>
+                                    </Menu>
                                 </StackItem>
                                 <StackItem>
-                                    <Title headingLevel="h4" size={TitleSizes['3x1']}>
+                                    <Title headingLevel="h3" size={TitleSizes['3x1']}>
                                         Dependencies
                                     </Title>
-                                    { AppComponentListLinksCard() }
+                                </StackItem>
+                                <StackItem>
+                                    <AppComponentListLinksCard />
                                 </StackItem>
                             </Stack>
                         </CardBody>
@@ -170,7 +232,7 @@ export default function AppDeploy() {
                             </Title>
                         </CardTitle>
                         <CardBody>
-                            <AppDeployController appname={selectedApp} reservation={selectedReservation} />
+                            <AppDeployController selectedApps={selectedApps} reservation={selectedReservation} />
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -182,7 +244,6 @@ export default function AppDeploy() {
     let ui = {}
 
     if ( isAppsEmpty ) {
-        dispatch(loadApps());
         ui = <Loading message="Fetching app list..."/>
     } else {
         ui = <Page>
@@ -190,7 +251,7 @@ export default function AppDeploy() {
             <Split>
                 <SplitItem>
                     <Title headingLevel="h1" size={TitleSizes['3xl']}>
-                        Deploy App
+                        Deploy Apps
                     </Title>
                 </SplitItem>
                 <SplitItem isFilled/>

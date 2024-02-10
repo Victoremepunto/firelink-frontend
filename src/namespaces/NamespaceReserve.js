@@ -1,5 +1,5 @@
-import  React, {useState}  from "react"
-import { Title, TitleSizes, Button, Form, Card, Split, Grid, GridItem, CardBody, CodeBlock, CodeBlockCode, FormGroup, TextInput, Page, PageSection, PageSectionVariants, SplitItem, CardTitle  } from "@patternfly/react-core"
+import  React, {useEffect, useState}  from "react"
+import { Title, TitleSizes, Switch, Button, Form, Card, Split, Grid, GridItem, CardBody, CodeBlock, CodeBlockCode, FormGroup, TextInput, Page, PageSection, PageSectionVariants, SplitItem, CardTitle  } from "@patternfly/react-core"
 import Loading from "../shared/Loading";
 import { PoolSelectList, DurationSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
 import DescribeLink from "../shared/DescribeLink";
@@ -20,12 +20,17 @@ export default function NamespaceReserve() {
     const [duration, setDuration] = useState(DefaultDuration)   
     const [pool, setPool] = useState(DefaultPool)
 
+    const [force, setForce] = useState(false)
+
     const [isLoading, setIsLoading] = useState(false)
 
     const [loadingMessage, setLoadingMessage] = useState("Reserving namespace...")
     const requester = useSelector(getRequester)
 
+    const [showResponse, setShowResponse] = useState(false)
+
     const dispatch = useDispatch();
+
 
     function requestReservation() {
         setLoadingMessage("Reserving namespace...")
@@ -36,7 +41,7 @@ export default function NamespaceReserve() {
               'Accept': 'application/json',
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({requester: requester, duration: duration, pool: pool})
+            body: JSON.stringify({requester: requester, duration: duration, pool: pool, force: force})
           }).then(response => response.json()).then((resp) => {
             setResponse(resp);
             
@@ -54,13 +59,20 @@ export default function NamespaceReserve() {
         dispatch(loadNamespaces())
     }
 
+    const handleForce = (checked, event) => {
+        setForce(!force);
+    }
+
     const form = <Form>
-    <FormGroup label="Requester" fieldId="simple-form-requester-01">
-      <TextInput isRequired type="text" id="simple-form-requester-01" name="simple-form-requester-01" value={requester} isDisabled/>
-    </FormGroup>
-    <DurationSelectList duration={duration} setDuration={setDuration} />
-    <PoolSelectList pool={pool} setPool={setPool} />
-  </Form>;
+        <FormGroup label="Requester" fieldId="simple-form-requester-01">
+            <TextInput isRequired type="text" id="simple-form-requester-01" name="simple-form-requester-01" value={requester} isDisabled/>
+        </FormGroup>
+        <DurationSelectList duration={duration} setDuration={setDuration} />
+        <PoolSelectList pool={pool} setPool={setPool} />
+        <FormGroup label="Allow Multiple Reservations" fieldId="simple-form-force-01">
+            <Switch label="Yes" labelOff="No"  isChecked={force} onChange={handleForce}/>
+        </FormGroup>
+    </Form>;
 
     function renderResponse() {
         if (displayResponse ) {
@@ -71,15 +83,37 @@ export default function NamespaceReserve() {
         }
     }
 
+    function renderResponseCard() {
+        if (displayResponse) {
+            return <React.Fragment>
+                <GridItem span={6}>
+                    <Card isFullHeight={true}>
+                        <CardTitle>
+                            Response
+                        </CardTitle>
+                        <CardBody>
+                            <CodeBlock>
+                                <CodeBlockCode id="code-content" >
+                                    {renderResponse()}
+                                </CodeBlockCode>
+                            </CodeBlock>
+                        </CardBody>
+                    </Card>
+                </GridItem>
+            </React.Fragment>
+        }
+    }
+
     function renderUI() {
         if ( isLoading) {
             return <Loading message={loadingMessage}/>
         } else {
             return <React.Fragment>
-                <Grid >
+                <Grid hasGutter={true}>
+                    <GridItem span={3} >
+                    </GridItem>
                     <GridItem span={6}>
-                        <PageSection>
-                            <Card>
+                            <Card isFullHeight={true}>
                                 <CardTitle>
                                     Request
                                 </CardTitle>
@@ -87,24 +121,12 @@ export default function NamespaceReserve() {
                                     {form}
                                 </CardBody>
                             </Card>
-                        </PageSection>
                     </GridItem>
-                    <GridItem span={6}>
-                        <PageSection>
-                            <Card>
-                                <CardTitle>
-                                    Response
-                                </CardTitle>
-                                <CardBody>
-                                    <CodeBlock>
-                                        <CodeBlockCode id="code-content">
-                                            {renderResponse()}
-                                        </CodeBlockCode>
-                                    </CodeBlock>
-                                </CardBody>
-                            </Card>
-                        </PageSection>
+                    <GridItem span={3} >
                     </GridItem>
+                    <GridItem span={3} >
+                    </GridItem>
+                    { renderResponseCard() }
                 </Grid>
             </React.Fragment>
     
@@ -127,7 +149,9 @@ export default function NamespaceReserve() {
                 </Split>
 
             </PageSection>
-            { renderUI() }
+            <PageSection isCenterAligned={true}>
+                { renderUI() }
+            </PageSection>
         </Page>
     </React.Fragment>
 }
