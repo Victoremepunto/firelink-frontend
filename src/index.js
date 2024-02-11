@@ -12,9 +12,11 @@ import Root from './Root';
 import { Store, Persistor } from './store/Store'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react';
+import { createRoot } from 'react-dom/client';
 
-const root = document.getElementById('root');
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container); 
+root.render(
   <Provider store={Store}>
     <PersistGate loading={null} persistor={Persistor}>
       <BrowserRouter>
@@ -36,6 +38,5 @@ ReactDOM.render(
       </BrowserRouter>
     </PersistGate>
   </Provider>
-  ,root
 );
 

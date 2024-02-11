@@ -21,10 +21,12 @@ import {
     MenuList,
     MenuItem,
     MenuGroup,
+    MenuFooter,
     Divider,
     MenuSearch,
     MenuSearchInput,
-    SearchInput
+    SearchInput,
+    Switch,
 } from '@patternfly/react-core';
 import {
 	Select,
@@ -43,25 +45,27 @@ import { getRequester, getFavoriteApps  } from '../store/AppSlice'
 import FadeInFadeOut from '../shared/FadeInFadeOut';
 
 export default function AppDeploy() {
+
+    var { appParam } = useParams()
+
+    const dispatch = useDispatch();
+
     const apps = useSelector(getApps);
     const requester = useSelector(getRequester);
     const myReservations = useSelector(getMyReservations(requester));
     const isAppsEmpty = useSelector(getIsAppsEmpty);
-    const dispatch = useDispatch();
-
-    const [filteredApps, setFilteredApps] = useState(apps);
-
     const favoriteApps = useSelector(getFavoriteApps);
 
-    var { appParam } = useParams()
+    
+
+    const [filteredApps, setFilteredApps] = useState(apps);
     const [menuFilter, setMenuFilter] = useState("");
-
     const [selectedApps, setSelectedApps] = useState([]);
-
     const [myReservationListSelectIsOpen, setMyReservationListSelectIsOpen] = useState(false);
     const [selectedReservation, setSelectedReservation] = useState("");
-
     const [radioUseExistingNamespace, setRadioUseExistingNamespace] = useState( myReservations.length > 0 );
+    const [showFavoriteApps, setShowFavoriteApps] = useState(false);
+    const [showSelectedApps, setShowSelectedApps] = useState(false);
 
 
     useEffect(()=>{
@@ -168,6 +172,14 @@ export default function AppDeploy() {
         setMenuFilter(value);
     }
 
+    const toggleShowFavoriteApps = () => {
+        setShowFavoriteApps(!showFavoriteApps)
+    }
+    const toggleShowSelectedApps = () => {
+        setShowSelectedApps(!showSelectedApps)
+    }
+
+
     const AppDeployUI = () => {
         if ( isAppsEmpty ) {
             return <Loading message="Fetching app list..."/>
@@ -200,6 +212,17 @@ export default function AppDeploy() {
                                                 })}
                                             </MenuList>
                                         </MenuContent>
+                                        <MenuFooter>
+                                            <Split hasGutter>
+                                                <SplitItem isFilled/>
+                                                <SplitItem>
+                                                    <Switch label="Favorites" id="show-favorites" isChecked={showFavoriteApps} onChange={toggleShowFavoriteApps} />
+                                                </SplitItem>
+                                                <SplitItem>
+                                                    <Switch label="Selected" id="show-selected" isChecked={showSelectedApps} onChange={toggleShowSelectedApps} />
+                                                </SplitItem>
+                                            </Split>
+                                        </MenuFooter>
                                     </Menu>
                                 </StackItem>
                                 <StackItem>

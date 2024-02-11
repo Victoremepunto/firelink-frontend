@@ -82,15 +82,15 @@ function App() {
     <Avatar src="/user.svg" />
   </MenuToggle>} ouiaId="BasicDropdown" shouldFocusToggleOnSelect> 
   <DropdownList>
-    <DropdownItem value={0} key="action" isDisabled="true">
+    <DropdownItem value={0} key="action" isDisabled={true}>
       {requester}
     </DropdownItem>
-    <Divider component="li" key="separator" />
-    <DropdownItem value={1} key="separated action">
+    <Divider component="li" key="separator-a" />
+    <DropdownItem value={1} key="separated action a">
     <Switch id="simple-switch" label="Dark" labelOff="Light" isChecked={darkMode} onChange={setDarkModeToggle} ouiaId="BasicSwitch" />
     </DropdownItem>
-    <Divider component="li" key="separator" />
-    <DropdownItem value={5} key="separated action" onClick={deleteCookie}>
+    <Divider component="li" key="separator-b" />
+    <DropdownItem value={5} key="separated action b" onClick={deleteCookie}>
       Log out
     </DropdownItem>
   </DropdownList>

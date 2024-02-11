@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 
 // Slice - this is the state and the actions that can be dispatched
 export const listSlice = createSlice({
@@ -25,18 +25,6 @@ export const listSlice = createSlice({
 })
 
 // Selectors - these are used to get data from the store
-export const getIsNamespacesEmpty = (state) => {
-  return state.listSlice.namespaces.length === 0;
-}
-
-export const getIsAppsEmpty = (state) => {
-  return state.listSlice.apps.length === 0;
-}
-
-export const getMyReservations = (requester) => (state) => {
-  return state.listSlice.namespaces.filter(namespace => namespace.requester === requester);
-}
-
 export const getNamespaces = (state) => {
   return state.listSlice.namespaces;
 }
@@ -44,6 +32,27 @@ export const getNamespaces = (state) => {
 export const getApps = (state) => {
   return state.listSlice.apps;
 }
+
+export const getIsNamespacesEmpty = createSelector(
+  [getNamespaces],
+  (namespaces) => namespaces.length === 0
+);
+
+export const getIsAppsEmpty = createSelector(
+  [getApps],
+  (apps) => apps.length === 0
+);
+
+export const getMyReservations = (requester) => createSelector(
+  // Input selectors
+  [(state) => state.listSlice.namespaces, (_, requester) => requester],
+
+  // Computation function
+  (namespaces, requester) => {
+    return namespaces.filter(namespace => namespace.requester === requester);
+  }
+);
+
 
 
 // Thunks - these are async actions that can be dispatched
