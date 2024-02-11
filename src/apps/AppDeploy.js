@@ -42,7 +42,6 @@ import {
     loadApps
 } from '../store/ListSlice';
 import { getRequester, getFavoriteApps  } from '../store/AppSlice'
-import FadeInFadeOut from '../shared/FadeInFadeOut';
 
 export default function AppDeploy() {
 

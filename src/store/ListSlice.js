@@ -43,15 +43,9 @@ export const getIsAppsEmpty = createSelector(
   (apps) => apps.length === 0
 );
 
-export const getMyReservations = (requester) => createSelector(
-  // Input selectors
-  [(state) => state.listSlice.namespaces, (_, requester) => requester],
-
-  // Computation function
-  (namespaces, requester) => {
-    return namespaces.filter(namespace => namespace.requester === requester);
-  }
-);
+export const getMyReservations = (requester) => (state) => {
+  return state.listSlice.namespaces.filter(namespace => namespace.requester === requester);
+}
 
 
 
