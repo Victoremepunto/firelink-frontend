@@ -243,7 +243,7 @@ export default function AppDeploy() {
     }
 
     const NamespaceSelectionCard = () => {
-        return  <Card style={{minHeight: '100%'}}>
+        return <Card style={{minHeight: '100%'}}>
             <CardTitle>
                 <Title headingLevel="h3" size={TitleSizes['3x1']}>
                     Select Ephemeral Environment
@@ -272,20 +272,17 @@ export default function AppDeploy() {
         if ( isAppsEmpty ) {
             return <Loading message="Fetching app list..."/>
         } 
-        return <React.Fragment>
-            <Grid hasGutter >
-                <GridItem span={4} >
-                    <AppMenuCard />
-                </GridItem>
-                <GridItem span={4}>
-                    <NamespaceSelectionCard />
-                </GridItem>
-                <GridItem span={4}>
-                    <DeployControllerCard />
-                </GridItem>
-            </Grid>
-            
-        </React.Fragment>
+        return <Grid hasGutter >
+            <GridItem span={4} >
+                <AppMenuCard />
+            </GridItem>
+            <GridItem span={4}>
+                <NamespaceSelectionCard />
+            </GridItem>
+            <GridItem span={4}>
+                <DeployControllerCard />
+            </GridItem>
+        </Grid>
     }
 
     return <Page>
@@ -298,12 +295,9 @@ export default function AppDeploy() {
                 </SplitItem>
                 <SplitItem isFilled/>
             </Split>
-
         </PageSection>
         <PageSection>
-            <FadeInFadeOut>
-                <AppDeployUI />
-            </FadeInFadeOut>
+            <AppDeployUI />
         </PageSection>
     </Page> 
 }
