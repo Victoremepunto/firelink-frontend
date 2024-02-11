@@ -53,6 +53,7 @@ function App() {
 
   useEffect(() => {
     dispatch(loadRequester());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once when the component mounts
 
   if ( darkMode) {

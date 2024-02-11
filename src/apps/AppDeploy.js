@@ -46,18 +46,20 @@ import FadeInFadeOut from '../shared/FadeInFadeOut';
 
 export default function AppDeploy() {
 
+    // URL Query Params
     var { appParam } = useParams()
 
+    // Redux
     const dispatch = useDispatch();
 
+    // Selectors
     const apps = useSelector(getApps);
     const requester = useSelector(getRequester);
     const myReservations = useSelector(getMyReservations(requester));
     const isAppsEmpty = useSelector(getIsAppsEmpty);
     const favoriteApps = useSelector(getFavoriteApps);
 
-    
-
+    // State
     const [filteredApps, setFilteredApps] = useState(apps);
     const [menuFilter, setMenuFilter] = useState("");
     const [selectedApps, setSelectedApps] = useState([]);
@@ -67,7 +69,9 @@ export default function AppDeploy() {
     const [showFavoriteApps, setShowFavoriteApps] = useState(false);
     const [showSelectedApps, setShowSelectedApps] = useState(false);
 
-
+    // Effects
+    // Load apps if empty
+    // only run once
     useEffect(()=>{
         if (appParam) {
             const paramApp = apps.find(app => app.name === appParam)
@@ -81,19 +85,44 @@ export default function AppDeploy() {
         if (myReservations.length > 0) {
             setSelectedReservation(myReservations[0].namespace)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
+    // Filter apps
+    // run when menuFilter changes
     useEffect(() => {
         setFilteredApps(apps.filter(app => app.friendly_name.toLowerCase().includes(menuFilter.toLowerCase())))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [menuFilter])
-
+    // Update filtered apps when apps change
     useEffect(() => {
         setFilteredApps(apps)
     }, [apps])
 
+
+    // Functions
+    const onSelect = (_event, selectedApp) => {
+        if (selectedApps.includes(selectedApp)) {
+            setSelectedApps(selectedApps.filter(app => app.name !== selectedApp.name))
+        }
+        else {
+            setSelectedApps([...selectedApps, selectedApp])
+        }
+    };
+
+    const handleMenuFilterChange = (value) => {
+        setMenuFilter(value);
+    }
+
+    const toggleShowFavoriteApps = () => {
+        setShowFavoriteApps(!showFavoriteApps)
+    }
+    const toggleShowSelectedApps = () => {
+        setShowSelectedApps(!showSelectedApps)
+    }
+
+    // Components
     const AppComponentListLinksCard = () => {
-        return (
-          <Menu isScrollable >
+        return <Menu isScrollable >
             <MenuContent menuHeight="18.75rem">
               {selectedApps.map((app, appIndex) => (
                 <MenuGroup key={`menu-group-${app.name}-${appIndex}`} label={app.name}>
@@ -114,17 +143,18 @@ export default function AppDeploy() {
               <Divider />
             </MenuContent>
           </Menu>
-        );
       };
 
 
-    const NamespaceSelection = () => {
-        const myReservationOptions = myReservations.map((reservation, index) => {
+    const MyReservationOptions = () => {
+        return myReservations.map((reservation, index) => {
             return <SelectOption key={`${reservation.namespace}-${index}`} value={reservation.namespace}>
                 {reservation.namespace}
             </SelectOption>   
         })
+    }
 
+    const NamespaceSelection = () => {
         if ( myReservations.length === 0 ) {
             return <React.Fragment>
                 <p>You have no namespaces reserved. A new namespace will be reserved for you.</p>
@@ -151,34 +181,92 @@ export default function AppDeploy() {
                 onSelect={(event, selection) => { setSelectedReservation(selection) ; setMyReservationListSelectIsOpen(false) } }
                 selections={selectedReservation}
                 isDisabled={!radioUseExistingNamespace}>
-                    {myReservationOptions}
+                    <MyReservationOptions />
             </Select></React.Fragment>
         }
     }
 
-
-    const onSelect = (_event, selectedApp) => {
-        if (selectedApps.includes(selectedApp)) {
-            setSelectedApps(selectedApps.filter(app => app.name !== selectedApp.name))
-        }
-        else {
-            setSelectedApps([...selectedApps, selectedApp])
-        }
-    };
-
-
-
-    const handleMenuFilterChange = (value) => {
-        setMenuFilter(value);
+    const AppMenu = () => {
+        return <Menu  onSelect={onSelect} isScrollable>
+            <MenuSearch>
+                <MenuSearchInput>
+                <SearchInput value={menuFilter} aria-label="Filter menu items" onChange={(_event, value) => handleMenuFilterChange(value)} />
+                </MenuSearchInput>
+            </MenuSearch>
+            <Divider />
+            <MenuContent>
+                <MenuList>
+                    {filteredApps.map((app, index) => {
+                        return <MenuItem hasCheckbox isSelected={selectedApps.includes(app)} isFavorited={favoriteApps.includes(app.name)} key={`${app.name}-${index}`} itemId={app}>
+                            {app.friendly_name}
+                        </MenuItem>   
+                    })}
+                </MenuList>
+            </MenuContent>
+            <MenuFooter>
+                <Split hasGutter>
+                    <SplitItem isFilled/>
+                    <SplitItem>
+                        <Switch label="Favorites" id="show-favorites" isChecked={showFavoriteApps} onChange={toggleShowFavoriteApps} />
+                    </SplitItem>
+                    <SplitItem>
+                        <Switch label="Selected" id="show-selected" isChecked={showSelectedApps} onChange={toggleShowSelectedApps} />
+                    </SplitItem>
+                </Split>
+            </MenuFooter>
+        </Menu>
     }
 
-    const toggleShowFavoriteApps = () => {
-        setShowFavoriteApps(!showFavoriteApps)
-    }
-    const toggleShowSelectedApps = () => {
-        setShowSelectedApps(!showSelectedApps)
+    const AppMenuCard = () => {
+        return <Card className="pf-u-box-shadow-md" style={{minHeight: '100%'}}>
+            <CardTitle>
+                <Title headingLevel="h3" size={TitleSizes['3x1']}>
+                    Select Apps to Deploy
+                </Title>
+            </CardTitle>
+            <CardBody >
+                <Stack hasGutter>
+                    <StackItem>
+                        <AppMenu />
+                    </StackItem>
+                    <StackItem>
+                        <Title headingLevel="h3" size={TitleSizes['3x1']}>
+                            Dependencies
+                        </Title>
+                    </StackItem>
+                    <StackItem>
+                        <AppComponentListLinksCard />
+                    </StackItem>
+                </Stack>
+            </CardBody>
+        </Card>
     }
 
+    const NamespaceSelectionCard = () => {
+        return  <Card style={{minHeight: '100%'}}>
+            <CardTitle>
+                <Title headingLevel="h3" size={TitleSizes['3x1']}>
+                    Select Ephemeral Environment
+                </Title>
+            </CardTitle>
+            <CardBody>
+                <NamespaceSelection />
+            </CardBody>
+        </Card>
+    }
+
+    const DeployControllerCard = () => {
+        return <Card style={{minHeight: '100%'}}>
+            <CardTitle>
+                <Title headingLevel="h3" size={TitleSizes['3x1']}>
+                    Deploy
+                </Title>
+            </CardTitle>
+            <CardBody>
+                <AppDeployController selectedApps={selectedApps} reservation={selectedReservation} />
+            </CardBody>
+        </Card>
+    }
 
     const AppDeployUI = () => {
         if ( isAppsEmpty ) {
@@ -187,79 +275,13 @@ export default function AppDeploy() {
         return <React.Fragment>
             <Grid hasGutter >
                 <GridItem span={4} >
-                    <Card className="pf-u-box-shadow-md" style={{minHeight: '100%'}}>
-                        <CardTitle>
-                            <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                                Select Apps to Deploy
-                            </Title>
-                        </CardTitle>
-                        <CardBody >
-                            <Stack hasGutter>
-                                <StackItem>
-                                    <Menu  onSelect={onSelect} isScrollable>
-                                        <MenuSearch>
-                                            <MenuSearchInput>
-                                            <SearchInput value={menuFilter} aria-label="Filter menu items" onChange={(_event, value) => handleMenuFilterChange(value)} />
-                                            </MenuSearchInput>
-                                        </MenuSearch>
-                                        <Divider />
-                                        <MenuContent>
-                                            <MenuList>
-                                                {filteredApps.map((app, index) => {
-                                                    return <MenuItem hasCheckbox isSelected={selectedApps.includes(app)} isFavorited={favoriteApps.includes(app.name)} key={`${app.name}-${index}`} itemId={app}>
-                                                        {app.friendly_name}
-                                                    </MenuItem>   
-                                                })}
-                                            </MenuList>
-                                        </MenuContent>
-                                        <MenuFooter>
-                                            <Split hasGutter>
-                                                <SplitItem isFilled/>
-                                                <SplitItem>
-                                                    <Switch label="Favorites" id="show-favorites" isChecked={showFavoriteApps} onChange={toggleShowFavoriteApps} />
-                                                </SplitItem>
-                                                <SplitItem>
-                                                    <Switch label="Selected" id="show-selected" isChecked={showSelectedApps} onChange={toggleShowSelectedApps} />
-                                                </SplitItem>
-                                            </Split>
-                                        </MenuFooter>
-                                    </Menu>
-                                </StackItem>
-                                <StackItem>
-                                    <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                                        Dependencies
-                                    </Title>
-                                </StackItem>
-                                <StackItem>
-                                    <AppComponentListLinksCard />
-                                </StackItem>
-                            </Stack>
-                        </CardBody>
-                    </Card>
+                    <AppMenuCard />
                 </GridItem>
                 <GridItem span={4}>
-                    <Card style={{minHeight: '100%'}}>
-                        <CardTitle>
-                            <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                                Select Ephemeral Environment
-                            </Title>
-                        </CardTitle>
-                        <CardBody>
-                            {NamespaceSelection()}  
-                        </CardBody>
-                    </Card>
+                    <NamespaceSelectionCard />
                 </GridItem>
                 <GridItem span={4}>
-                    <Card style={{minHeight: '100%'}}>
-                        <CardTitle>
-                            <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                                Deploy
-                            </Title>
-                        </CardTitle>
-                        <CardBody>
-                            <AppDeployController selectedApps={selectedApps} reservation={selectedReservation} />
-                        </CardBody>
-                    </Card>
+                    <DeployControllerCard />
                 </GridItem>
             </Grid>
             
@@ -280,7 +302,7 @@ export default function AppDeploy() {
         </PageSection>
         <PageSection>
             <FadeInFadeOut>
-                { AppDeployUI() }
+                <AppDeployUI />
             </FadeInFadeOut>
         </PageSection>
     </Page> 

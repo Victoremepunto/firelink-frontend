@@ -1,11 +1,11 @@
-import React  from 'react';
+import React from 'react';
+import { StrictMode } from 'react';
 
-import {  List, ListItem, Stack, Page, PageSectionVariants, PageSection, Split, SplitItem, Card, CardTitle, CardBody, Title, TitleSizes, Grid, GridItem, StackItem} from '@patternfly/react-core';
+import {   List, ListItem, Stack, Page, PageSectionVariants, PageSection, Split, SplitItem, Card, CardTitle, CardBody, Title, TitleSizes, Grid, GridItem, StackItem} from '@patternfly/react-core';
 import Cluster from '@patternfly/react-icons/dist/esm/icons/cluster-icon'
 import CloudUpload from '@patternfly/react-icons/dist/esm/icons/cloud-upload-alt-icon'
 import Code from '@patternfly/react-icons/dist/esm/icons/code-icon'
 import FadeInFadeOut from './shared/FadeInFadeOut';
-import SlideInSlideOut from './shared/SlideInSlideOut';
 
 
 export default function Root() {
@@ -101,23 +101,24 @@ export default function Root() {
         </React.Fragment>
     }
 
-    return <Page>
-        <PageSection variant={PageSectionVariants.light}>
-            <Split>
-                <SplitItem>
-                    
-                    <Title headingLevel="h1" size={TitleSizes['3xl']}>
-                        Firelink
-                    </Title>
-                    An app store for Ephemeral Environments, powered by Bonfire
-                </SplitItem>
-                <SplitItem isFilled/>
-            </Split>
+    return <StrictMode>
+        <Page>
+            <PageSection variant={PageSectionVariants.light}>
+                <Split>
+                    <SplitItem>
+                        
+                        <Title headingLevel="h1" size={TitleSizes['3xl']}>
+                            Firelink
+                        </Title>
+                        An app store for Ephemeral Environments, powered by Bonfire
+                    </SplitItem>
+                    <SplitItem isFilled/>
+                </Split>
 
-        </PageSection>
-        <PageSection>
-        <Pillars/>
-
-        </PageSection>
-            </Page> 
+            </PageSection>
+            <PageSection>
+            <Pillars/>
+            </PageSection>
+        </Page>
+    </StrictMode>
 }
