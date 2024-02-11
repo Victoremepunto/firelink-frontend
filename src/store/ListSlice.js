@@ -47,8 +47,6 @@ export const getMyReservations = (requester) => (state) => {
   return state.listSlice.namespaces.filter(namespace => namespace.requester === requester);
 }
 
-
-
 // Thunks - these are async actions that can be dispatched
 export const loadNamespaces = () => {
     return async (dispatch) => {

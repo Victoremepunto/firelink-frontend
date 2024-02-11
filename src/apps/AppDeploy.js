@@ -38,8 +38,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
     getApps,
     getIsAppsEmpty,
+    getIsNamespacesEmpty,
     getMyReservations,
-    loadApps
+    loadApps,
+    loadNamespaces,
 } from '../store/ListSlice';
 import { getRequester, getFavoriteApps  } from '../store/AppSlice'
 
@@ -56,6 +58,7 @@ export default function AppDeploy() {
     const requester = useSelector(getRequester);
     const myReservations = useSelector(getMyReservations(requester));
     const isAppsEmpty = useSelector(getIsAppsEmpty);
+    const isNamespacesEmpty = useSelector(getIsNamespacesEmpty);
     const favoriteApps = useSelector(getFavoriteApps);
 
     // State
@@ -64,7 +67,7 @@ export default function AppDeploy() {
     const [selectedApps, setSelectedApps] = useState([]);
     const [myReservationListSelectIsOpen, setMyReservationListSelectIsOpen] = useState(false);
     const [selectedReservation, setSelectedReservation] = useState("");
-    const [radioUseExistingNamespace, setRadioUseExistingNamespace] = useState( myReservations.length > 0 );
+    const [radioUseExistingNamespace, setRadioUseExistingNamespace] = useState(false );
     const [showFavoriteApps, setShowFavoriteApps] = useState(false);
     const [showSelectedApps, setShowSelectedApps] = useState(false);
 
@@ -81,6 +84,9 @@ export default function AppDeploy() {
         if (isAppsEmpty) {
             dispatch(loadApps());
         }
+        if (isNamespacesEmpty) {
+            dispatch(loadNamespaces());
+        }
         if (myReservations.length > 0) {
             setSelectedReservation(myReservations[0].namespace)
         }
@@ -96,7 +102,6 @@ export default function AppDeploy() {
     useEffect(() => {
         setFilteredApps(apps)
     }, [apps])
-
 
     // Functions
     const onSelect = (_event, selectedApp) => {
@@ -145,12 +150,24 @@ export default function AppDeploy() {
       };
 
 
-    const MyReservationOptions = () => {
-        return myReservations.map((reservation, index) => {
-            return <SelectOption key={`${reservation.namespace}-${index}`} value={reservation.namespace}>
-                {reservation.namespace}
-            </SelectOption>   
-        })
+    const MyReservationSelect = () => {
+        if (radioUseExistingNamespace === false) {
+            return null
+        }
+        return <Select
+            isOpen={myReservationListSelectIsOpen}
+            onToggle={() => { setMyReservationListSelectIsOpen(!myReservationListSelectIsOpen) } } 
+            onSelect={(event, selection) => { setSelectedReservation(selection) ; setMyReservationListSelectIsOpen(false) } }
+            selections={selectedReservation}
+            isDisabled={!radioUseExistingNamespace}>
+                {
+                    myReservations.map((reservation, index) => {
+                        return <SelectOption key={`${reservation.namespace}-${index}`} value={reservation.namespace}>
+                            {reservation.namespace}
+                        </SelectOption>   
+                    })
+                }
+        </Select>
     }
 
     const NamespaceSelection = () => {
@@ -159,29 +176,28 @@ export default function AppDeploy() {
                 <p>You have no namespaces reserved. A new namespace will be reserved for you.</p>
             </React.Fragment>
         } else {
-            return <React.Fragment><Radio
-                isChecked={radioUseExistingNamespace}
-                name="radio-use-namespace"
-                onChange={() => { setRadioUseExistingNamespace(!radioUseExistingNamespace) } }
-                label="Use Existing Namespace"
-                id="radio-use-namespace"
-                isDisabled={myReservations.length === 0}
-            ></Radio>
-            <Radio
-                isChecked={!radioUseExistingNamespace}
-                name="radio-request-namespace"
-                onChange={() => { setRadioUseExistingNamespace(!radioUseExistingNamespace) } }
-                label="Request New Namespace"
-                id="radio-request-namespace"
-            ></Radio>  
-            <Select
-                isOpen={myReservationListSelectIsOpen}
-                onToggle={() => { setMyReservationListSelectIsOpen(!myReservationListSelectIsOpen) } } 
-                onSelect={(event, selection) => { setSelectedReservation(selection) ; setMyReservationListSelectIsOpen(false) } }
-                selections={selectedReservation}
-                isDisabled={!radioUseExistingNamespace}>
-                    <MyReservationOptions />
-            </Select></React.Fragment>
+            return <Stack hasGutter>
+                <StackItem>
+                    <Radio
+                        isChecked={!radioUseExistingNamespace}
+                        name="radio-request-namespace"
+                        onChange={() => { setRadioUseExistingNamespace(!radioUseExistingNamespace) } }
+                        label="Request New Namespace"
+                        id="radio-request-namespace"/> 
+                </StackItem>
+                <StackItem>
+                    <Radio
+                    isChecked={radioUseExistingNamespace}
+                    name="radio-use-namespace"
+                    onChange={() => { setRadioUseExistingNamespace(!radioUseExistingNamespace) } }
+                    label="Use Existing Namespace"
+                    id="radio-use-namespace"
+                    isDisabled={myReservations.length === 0}/>
+                </StackItem>
+                <StackItem>
+                    <MyReservationSelect />
+                </StackItem>
+            </Stack>
         }
     }
 
