@@ -27,6 +27,7 @@ import {
 import {
     getAppNames,
     addOrRemoveAppName,
+    addOrRemoveApp,
 } from '../store/AppDeploySlice'
 import { getFavoriteApps  } from '../store/AppSlice'
 
@@ -73,6 +74,7 @@ export default function AppMenuCard() {
 
     const onAppSelect = (_event, selectedApp) => {
         dispatch(addOrRemoveAppName(selectedApp.name))
+        dispatch(addOrRemoveApp(selectedApp))
       };
 
     const isAppFavorite = (app) => {
