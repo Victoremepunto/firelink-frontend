@@ -16,10 +16,8 @@ import {
   getIsNamespacesEmpty,
   loadNamespaces,
   clearNamespaces,
-  getMyReservations,
   getNamespaces
 } from '../store/ListSlice';
-import { getRequester } from '../store/AppSlice'
 import FadeInFadeOut from '../shared/FadeInFadeOut';
 
 function ReservationList() {
@@ -27,8 +25,6 @@ function ReservationList() {
   const [showJustMyReservations, setShowJustMyReservations] = useState(false);
 
   const dispatch = useDispatch();
-  const requester = useSelector(getRequester);
-  const myNamespaces = useSelector(getMyReservations(requester));
   const isNamespacesEmpty = useSelector(getIsNamespacesEmpty);
   const namespaces = useSelector(getNamespaces);
 
@@ -39,6 +35,7 @@ function ReservationList() {
     if ( isNamespacesEmpty ) {
       dispatch(loadNamespaces());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
    let outputJSX = {}

@@ -1,4 +1,4 @@
-import  React, {useEffect, useState}  from "react"
+import  React, {useState}  from "react"
 import { Title, TitleSizes, Switch, Button, Form, Card, Split, Grid, GridItem, CardBody, CodeBlock, CodeBlockCode, FormGroup, TextInput, Page, PageSection, PageSectionVariants, SplitItem, CardTitle  } from "@patternfly/react-core"
 import Loading from "../shared/Loading";
 import { PoolSelectList, DurationSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
@@ -26,8 +26,6 @@ export default function NamespaceReserve() {
 
     const [loadingMessage, setLoadingMessage] = useState("Reserving namespace...")
     const requester = useSelector(getRequester)
-
-    const [showResponse, setShowResponse] = useState(false)
 
     const dispatch = useDispatch();
 

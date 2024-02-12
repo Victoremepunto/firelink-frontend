@@ -6,7 +6,7 @@ import FilterDropdown from '../shared/FilterDropdown';
 import {useState} from 'react';
 import DescribeLink from '../shared/DescribeLink';
 
-import { Modal, ModalVariant, Button, Icon } from '@patternfly/react-core';
+import { Icon } from '@patternfly/react-core';
 import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -65,11 +65,13 @@ export default function NamespaceListTable({namespaces, showJustMyReservations})
         } else {
             setFilteredNamespaces(filterNamespaces(namespaces, filter));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showJustMyReservations]);
     
 
     useEffect(()=>{
         setFilteredNamespaces(filterNamespaces(namespaces, filter));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter]);
 
     const ReleaseNamespace = (namespace) => {

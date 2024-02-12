@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {useState} from "react";
 import { Truncate, Card, CardTitle, CardBody, CardFooter, Button, GalleryItem, Split, SplitItem, Accordion, TitleSizes, Title, AccordionItem, AccordionContent, AccordionToggle  } from '@patternfly/react-core';
 import { useNavigate } from "react-router-dom";
@@ -9,7 +9,6 @@ import {
     setFavoriteApp,
     removeFavoriteApp
 } from '../store/AppSlice';
-import { Tr } from "@patternfly/react-table";
 
 function AppComponentListLinks(components) {
     return components.map((component, index) => {
@@ -28,15 +27,6 @@ export default function AppListItem({app, showFavorites})  {
     const navigate = useNavigate();
     const [mouseHovering, setMouseHovering] = useState(false);
     
-
-    const AppCardFooter = ({mouseHovering}) => {
-            return <Split>
-                <SplitItem isFilled></SplitItem>
-                <SplitItem>
-                    <Button variant='primary' onClick={() => navigate(`/apps/deploy/${app.name}`)} isDisabled={!mouseHovering}>Deploy</Button>
-                </SplitItem>
-            </Split>
-    }
 
     const isFavorite = useSelector(getIsAppFavorite(app.name));
 

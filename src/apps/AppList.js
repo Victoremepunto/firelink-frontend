@@ -16,9 +16,6 @@ import {
     clearApps,
     getApps
 } from '../store/ListSlice';
-import {
-    getIsAppFavorite
-}   from '../store/AppSlice';
 
 function AppListJSX({AppList, ShowFavorites}) {
     const isAppsEmpty = useSelector(getIsAppsEmpty);
@@ -56,6 +53,7 @@ function AppList() {
         } else {
             setFilteredApps(tmpFilteredApps.filter(app => app.name.includes(filter)))
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter])
 
     useEffect(() => {
@@ -66,6 +64,7 @@ function AppList() {
         if (isAppsEmpty) {
             dispatch(loadApps());
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
   
     return <Page>

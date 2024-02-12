@@ -23,8 +23,6 @@ const END_EVENT = 'end-deploy-app';
 // Construct the WebSocket URL based on the current location
 const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 const host = window.location.host;
-const path = '/api/firelink/socket.io'; // Updated path
-//const SERVER = `${protocol}${host}${path}`;
 const SERVER = `${protocol}${host}`;
 
 export default function AppDeployController({selectedApps, reservation}) {
@@ -84,6 +82,7 @@ export default function AppDeployController({selectedApps, reservation}) {
                 socket.disconnect();
                 setSocket(null);
             }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }},[])
 
     const Deploy = () => {
