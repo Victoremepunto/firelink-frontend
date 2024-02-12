@@ -13,6 +13,8 @@ import {
     CardBody,
     Title,
     TitleSizes,
+    Split,
+    SplitItem,
 } from '@patternfly/react-core';
 import { PoolSelectList, DurationSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
 import { Spinner } from "@patternfly/react-core";
@@ -52,17 +54,6 @@ const SERVER = `${protocol}${host}`;
 export default function AppDeployController() {
 
     const dispatch = useDispatch();
-
-    // Use redux for all the state we're going to send for deploy
-    const frontends = useSelector(getAppDeployFrontends);
-    const setStoreFrontends = (value) => { dispatch(setFrontends(value)) }
-    const noReleaseOnFail = useSelector(getAppDeployNoReleaseOnFail);
-    const setStoreNoReleaseOnFail = (value) => { dispatch(setNoReleaseOnFail(value)) }
-    const pool = useSelector(getAppDeployPool);
-    const setStorePool = (value) => { dispatch(setPool(value)) }
-    const duration = useSelector(getAppDeployDuration);
-    const setStoreDuration = (value) => { dispatch(setDuration(value)) }
-
     
     const [showModal, setShowModal] = useState(false);
     const [canCloseModal, setCanCloseModal] = useState(false);
@@ -138,10 +129,10 @@ export default function AppDeployController() {
     }
 
 
-    return <Card>
+    return <Card isFullHeight>
         <CardTitle>
             <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                Deploy Controller
+                Deploy
             </Title>
         </CardTitle>
         <CardBody >
@@ -149,22 +140,15 @@ export default function AppDeployController() {
                 <StackItem>
                     <AppDeployNamespaceSelector/>
                 </StackItem>
-                <StackItem>
-                    <Checkbox label="Deploy Frontend" isChecked={frontends} onChange={() => { setStoreFrontends(!frontends) }} id="deploy-app-frontends-checkbox" name="deploy-app-frontends-checkbox" />
-                </StackItem>
-                <StackItem>
-                    <Checkbox label="Release Reservation on Fail" isChecked={!noReleaseOnFail} onChange={() => { setStoreNoReleaseOnFail(!noReleaseOnFail) }} id="deploy-app-release-checkbox" name="deploy-app-release-checkbox" />
-                </StackItem>
-                <StackItem>
-                    <PoolSelectList value={pool}  setValue={setStorePool}/>
-                </StackItem>
-                <StackItem>
-                    <DurationSelectList value={duration}  setValue={setStoreDuration}/>
-                </StackItem>
-                <StackItem>
-                    <Button onClick={Deploy}>
-                        Deploy
-                    </Button>
+                <StackItem >
+                    <Split hasGutter>
+                        <SplitItem isFilled/>
+                        <SplitItem>
+                            <Button onClick={Deploy}>
+                                Go
+                            </Button>
+                        </SplitItem>
+                    </Split>
                 </StackItem>
             </Stack>
             { DeployStatusModal() }

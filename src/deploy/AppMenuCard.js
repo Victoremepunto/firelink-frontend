@@ -124,7 +124,7 @@ export default function AppMenuCard() {
     return <Card className="pf-u-box-shadow-md" isFullHeight>
         <CardTitle>
             <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                Select Apps to Deploy
+                Apps
             </Title>
         </CardTitle>
         <CardBody >

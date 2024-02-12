@@ -10,7 +10,7 @@ export const appDeploySlice = createSlice({
     app_names: [],
     requester: "",
     duration: "1h",
-    no_release_on_fail: true,
+    no_release_on_fail: false,
     frontends: false,
     pool: "default",
     namespace: "",
