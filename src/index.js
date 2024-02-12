@@ -6,12 +6,13 @@ import NamespaceList from './namespaces/NamespaceList';
 import NamespaceDescribe from './namespaces/NamespaceDescribe';
 import NamespaceReserve from './namespaces/NamespaceReserve';
 import AppList from './apps/AppList'; 
-import AppDeploy from './apps/AppDeploy';
+import AppDeploy from './deploy/AppDeploy';
 import Root from './Root';
 import { Store, Persistor } from './store/Store'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react';
 import { createRoot } from 'react-dom/client';
+
 
 const container = document.getElementById('root');
 const root = createRoot(container); 
