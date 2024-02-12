@@ -19,6 +19,7 @@ import {
     loadNamespaces,
 } from '../store/ListSlice';
 import AppMenuCard from './AppMenuCard';
+import AppDeployController from './AppDeployControllerCard';
 
 // AppDeploy is the parent component to the app deploy page
 // It ensures redux is hydrated with the app and namespace lists, but that's all it does
@@ -75,6 +76,7 @@ export default function AppDeploy() {
             <GridItem span={4}>
             </GridItem>
             <GridItem span={4}>
+                <AppDeployController />
             </GridItem>
         </Grid>
     }

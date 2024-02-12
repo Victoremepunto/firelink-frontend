@@ -1,10 +1,23 @@
 import React, { useEffect } from "react";
 import { useState} from "react";
 import io from "socket.io-client";
-import { Button, Checkbox, Modal, ModalVariant, Stack, StackItem} from '@patternfly/react-core';
+import { 
+    Button, 
+    Checkbox, 
+    Modal, 
+    ModalVariant, 
+    Stack, 
+    StackItem,
+    Card,
+    CardTitle,
+    CardBody,
+    Title,
+    TitleSizes,
+} from '@patternfly/react-core';
 import { PoolSelectList, DurationSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
 import { Spinner } from "@patternfly/react-core";
 import CheckCircle from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
+import AppDeployNamespaceSelector from "./AppDeployNamespaceSelector";
 
 
 import { useSelector, useDispatch} from "react-redux";
@@ -14,6 +27,17 @@ import {
 import {
     clearNamespaces,
 } from "../store/ListSlice";
+import {
+    getAppDeployFrontends,
+    getAppDeployNoReleaseOnFail,
+    getAppDeployPool,
+    getDeploymentOptions,
+    getAppDeployDuration,
+    setFrontends,
+    setNoReleaseOnFail,
+    setPool,
+    setDuration,
+} from "../store/AppDeploySlice";
 
 const DEPLOY_EVENT = 'deploy-app';
 const ERROR_EVENT = 'error-deploy-app';
@@ -25,53 +49,25 @@ const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 const host = window.location.host;
 const SERVER = `${protocol}${host}`;
 
-export default function AppDeployController({selectedApps, reservation}) {
+export default function AppDeployController() {
 
     const dispatch = useDispatch();
 
-    const [frontends , setFrontends] = useState(false);
-    const [pool, setPool] = useState(DefaultPool);
-    const [duration, setDuration] = useState(DefaultDuration);
-    const [releaseOnFail, setReleaseOnFail] = useState(false);
+    // Use redux for all the state we're going to send for deploy
+    const frontends = useSelector(getAppDeployFrontends);
+    const setStoreFrontends = (value) => { dispatch(setFrontends(value)) }
+    const noReleaseOnFail = useSelector(getAppDeployNoReleaseOnFail);
+    const setStoreNoReleaseOnFail = (value) => { dispatch(setNoReleaseOnFail(value)) }
+    const pool = useSelector(getAppDeployPool);
+    const setStorePool = (value) => { dispatch(setPool(value)) }
+    const duration = useSelector(getAppDeployDuration);
+    const setStoreDuration = (value) => { dispatch(setDuration(value)) }
+
     
     const [showModal, setShowModal] = useState(false);
     const [canCloseModal, setCanCloseModal] = useState(false);
     const [socket, setSocket] = useState(null);
-
-    const requester = useSelector(getRequester);
-
-    const deploymentOptions = () => { return {
-        //Options exposed in the UI
-        app_names: selectedApps.map(app => app.name),
-        requester: requester,
-        duration: duration,
-        no_release_on_fail: !releaseOnFail,
-        frontends: frontends,
-        pool: pool,
-        namespace: reservation,
-        //Options not exposed in the UI
-        timeout: 600,
-        source: 'appsre',
-        get_dependencies: true,
-        optional_deps_method: 'hybrid',
-        set_image_tag: {},
-        ref_env: null,
-        target_env: 'insights-ephemeral',
-        set_template_ref: {},
-        set_parameter: {},
-        clowd_env: null,
-        local_config_path: null,
-        remove_resources: [],
-        no_remove_resources: [],
-        remove_dependencies: [],
-        no_remove_dependencies: [],
-        single_replicas: true,
-        name: null,
-        component_filter: [],
-        import_secrets: false,
-        secrets_dir: '',
-        local: true}
-    }
+    const deploymentOptions = useSelector(getDeploymentOptions);
 
     const [wsResponses, setWsResponses] = useState(["Initiating deployment connection..."]);
 
@@ -103,7 +99,7 @@ export default function AppDeployController({selectedApps, reservation}) {
             setSocket(null);
         });
         setSocket(tmpSocket);
-        tmpSocket.emit(DEPLOY_EVENT, deploymentOptions());
+        tmpSocket.emit(DEPLOY_EVENT, deploymentOptions);
         setShowModal(true);
     } 
 
@@ -142,26 +138,36 @@ export default function AppDeployController({selectedApps, reservation}) {
     }
 
 
-    return <React.Fragment>
-        <Stack hasGutter>
-            <StackItem>
-                <Checkbox label="Deploy Frontend" isChecked={frontends} onChange={() => { setFrontends(!frontends) }} id="deploy-app-frontends-checkbox" name="deploy-app-frontends-checkbox" />
-            </StackItem>
-            <StackItem>
-                <Checkbox label="Release Reservation on Fail" isChecked={releaseOnFail} onChange={() => { setReleaseOnFail(!releaseOnFail) }} id="deploy-app-release-checkbox" name="deploy-app-release-checkbox" />
-            </StackItem>
-            <StackItem>
-                <PoolSelectList value={pool}  setValue={setPool}/>
-            </StackItem>
-            <StackItem>
-                <DurationSelectList value={duration}  setValue={setDuration}/>
-            </StackItem>
-            <StackItem>
-                <Button onClick={Deploy}>
-                    Deploy
-                </Button>
-            </StackItem>
-        </Stack>
-        { DeployStatusModal() }
-    </React.Fragment>
+    return <Card>
+        <CardTitle>
+            <Title headingLevel="h3" size={TitleSizes['3x1']}>
+                Deploy Controller
+            </Title>
+        </CardTitle>
+        <CardBody >
+            <Stack hasGutter>
+                <StackItem>
+                    <AppDeployNamespaceSelector/>
+                </StackItem>
+                <StackItem>
+                    <Checkbox label="Deploy Frontend" isChecked={frontends} onChange={() => { setStoreFrontends(!frontends) }} id="deploy-app-frontends-checkbox" name="deploy-app-frontends-checkbox" />
+                </StackItem>
+                <StackItem>
+                    <Checkbox label="Release Reservation on Fail" isChecked={!noReleaseOnFail} onChange={() => { setStoreNoReleaseOnFail(!noReleaseOnFail) }} id="deploy-app-release-checkbox" name="deploy-app-release-checkbox" />
+                </StackItem>
+                <StackItem>
+                    <PoolSelectList value={pool}  setValue={setStorePool}/>
+                </StackItem>
+                <StackItem>
+                    <DurationSelectList value={duration}  setValue={setStoreDuration}/>
+                </StackItem>
+                <StackItem>
+                    <Button onClick={Deploy}>
+                        Deploy
+                    </Button>
+                </StackItem>
+            </Stack>
+            { DeployStatusModal() }
+        </CardBody>
+    </Card>
 }
