@@ -72,17 +72,6 @@ export default function AppDeployoptionsCard() {
 
     const optionalDepsMethods = ["hyrbid", "all", "none"];
 
-    useEffect(() => {
-        if ( removeResources.length === 0 ) {
-            setStoreRemoveResources(["all"]);
-        }
-    }, [removeResources, setStoreRemoveResources])
-    useEffect(() => {
-        if ( noRemoveResources.length === 0 ) {
-            setStoreNoRemoveResources(["none"]);
-        }
-    }, [noRemoveResources, setStoreNoRemoveResources])
-
     return <Card isFullHeight>
         <CardTitle>
             <Title headingLevel="h3" size={TitleSizes.lg}>Options</Title>
