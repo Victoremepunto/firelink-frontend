@@ -5,7 +5,7 @@ export const appSlice = createSlice({
   name: 'appSlice',
   initialState: {
     requester: "firelink-user",
-    darkMode: false,
+    darkMode: true,
     favoriteApps: []
   },
   // Reducers - these are the actions that can be dispatched
