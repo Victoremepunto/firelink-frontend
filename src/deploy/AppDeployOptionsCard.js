@@ -108,10 +108,10 @@ export default function AppDeployoptionsCard() {
                     <OptionalDepsMethodSelectList value={optionDepsMethod}  setValue={setStoreOptionDepsMethod}/>
                 </StackItem>
                 <StackItem>
-                    <AppDeployRemoveSelector title="Remove Resources" value={removeResources} onSelect={setStoreRemoveResources}/>  
+                    <AppDeployRemoveSelector title="Remove Resources" value={removeResources} onSelect={setStoreRemoveResources} defaultValue={"all"}/>  
                 </StackItem>
                 <StackItem>
-                    <AppDeployRemoveSelector title="No Remove Resources" value={noRemoveResources} onSelect={setStoreNoRemoveResources}/>  
+                    <AppDeployRemoveSelector title="No Remove Resources" value={noRemoveResources} onSelect={setStoreNoRemoveResources} defaultValue={"none"}/>  
                 </StackItem>
             </Stack>
         </CardBody>

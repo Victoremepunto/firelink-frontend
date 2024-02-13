@@ -10,15 +10,19 @@ import {
     Modal,
     ModalVariant,
     DualListSelector,
+    Card,
+    CardBody,
 
 } from '@patternfly/react-core';
+// Import plus and minus icons
+import { PlusIcon,  TimesIcon } from '@patternfly/react-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
     getAppDeployComponents, 
     getAppNames 
 } from '../store/AppDeploySlice';
 
-export default function AppDeployRemoveSelector({title, value, onSelect}) {
+export default function AppDeployRemoveSelector({title, value, onSelect, defaultValue}) {
     const dispatch = useDispatch();
 
     const apps = useSelector(getAppNames);
@@ -122,30 +126,48 @@ export default function AppDeployRemoveSelector({title, value, onSelect}) {
         setAvailableOptions(generateOptions());
     }
 
+    const CustomChipGroup = () => {
+        if (value.length === 0) {
+            return <ChipGroup>
+                <Chip key="none" isReadOnly>
+                    {defaultValue}
+                </Chip>
+            </ChipGroup>
+        }
+        return <ChipGroup>
+            {value.map((currentChip) => (
+                <Chip key={currentChip} isReadOnly>
+                    {currentChip}
+                </Chip>
+            ))}
+        </ChipGroup>
+    } 
+
     return <React.Fragment>
         <OptionSelectModal />
-        <Stack>
+        <Stack hasGutter>
             <StackItem>
                 {title}
             </StackItem>
             <StackItem>
-                <ChipGroup>
-                    {value.map((currentChip) => (
-                        <Chip key={currentChip} >
-                            {currentChip}
-                        </Chip>
-                    ))}
-                </ChipGroup>
+                <Card isFlat isRounded isCompact>
+                    <CardBody>
+                        <CustomChipGroup />
+                    </CardBody>
+                </Card>
             </StackItem>
             <StackItem>
                 <Split>
                     <SplitItem isFilled>
                     </SplitItem>
                     <SplitItem>
-                        <Button size="sm" variant="primary" onClick={() => setIsModalOpen(true)}>Modify</Button>
-                    </SplitItem>
-                    <SplitItem>
-                        <Button size="sm" variant="primary" onClick={reset}>Reset</Button>
+                        <Button size="sm" variant="primary" onClick={() => setIsModalOpen(true)}>
+                            <PlusIcon />
+                        </Button>
+                        {" "}
+                        <Button size="sm" variant="primary" onClick={reset}>
+                            <TimesIcon />
+                        </Button>
                     </SplitItem>
                 </Split>
             </StackItem>
