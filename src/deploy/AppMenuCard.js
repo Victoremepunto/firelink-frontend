@@ -98,18 +98,21 @@ export default function AppMenuCard() {
     }
   
     const AppMenu = () => {
-        return <Menu onSelect={onAppSelect} isScrollable >
+        return <Menu onSelect={onAppSelect} isScrollable>
             <MenuSearch>
                 <MenuSearchInput>
                     <SearchInput ref={menuFilterInputRef} value={menuFilter} aria-label="Filter menu items" onChange={(_event, value) => setMenuFilter(value)} />
                 </MenuSearchInput>
             </MenuSearch>
             <Divider />
-            <MenuContent menuHeight="100%">
-                <MenuList>
+
+            <Divider />
+            <MenuContent maxMenuHeight='40rem' >
+                <MenuList >
                     <AppMenuItems />
                 </MenuList>
             </MenuContent>
+
             <MenuFooter>
                 <Split hasGutter>
                     <SplitItem isFilled/>
@@ -118,6 +121,7 @@ export default function AppMenuCard() {
                     </SplitItem>
                 </Split>
             </MenuFooter>
+
         </Menu>
     }
 
@@ -127,12 +131,9 @@ export default function AppMenuCard() {
                 Apps
             </Title>
         </CardTitle>
-        <CardBody >
-            <Stack hasGutter>
-                <StackItem>
+        <CardBody>
+
                     <AppMenu />
-                </StackItem>
-            </Stack>
         </CardBody>
     </Card>
 }
