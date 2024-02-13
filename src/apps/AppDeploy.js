@@ -33,7 +33,7 @@ import {
 	SelectOption
 } from '@patternfly/react-core/deprecated';
 import { useParams } from "react-router-dom";
-import AppDeployController from './AppDeployController';
+import AppDeployController from '../deploy/AppDeployControllerCard';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     getApps,

@@ -1,5 +1,4 @@
 import React from 'react';
-import { StrictMode } from 'react';
 
 import {   List, ListItem, Stack, Page, PageSectionVariants, PageSection, Split, SplitItem, Card, CardTitle, CardBody, Title, TitleSizes, Grid, GridItem, StackItem} from '@patternfly/react-core';
 import Cluster from '@patternfly/react-icons/dist/esm/icons/cluster-icon'
@@ -101,8 +100,7 @@ export default function Root() {
         </React.Fragment>
     }
 
-    return <StrictMode>
-        <Page>
+    return <Page>
             <PageSection variant={PageSectionVariants.light}>
                 <Split>
                     <SplitItem>
@@ -120,5 +118,4 @@ export default function Root() {
             <Pillars/>
             </PageSection>
         </Page>
-    </StrictMode>
 }

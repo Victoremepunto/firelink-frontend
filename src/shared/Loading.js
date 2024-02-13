@@ -1,11 +1,10 @@
 import React from 'react';
 import { Spinner,Bullseye, Card, CardBody, TextContent, CardTitle, CardFooter } from '@patternfly/react-core';
-import SlideInSlideOut from './SlideInSlideOut';
 
 function Loading(message="") {
     return <Bullseye style={{height: "12em"}}>
-        <SlideInSlideOut>
-            <Card>
+            <div style={{width: "24rem", textAlign: "center"}}>
+            <Card isLarge>
                 <CardTitle>                        
                         Loading...            
                 </CardTitle>
@@ -21,7 +20,7 @@ function Loading(message="") {
                     {message.message}
                 </CardFooter>
             </Card>
-        </SlideInSlideOut>
+            </div>
     </Bullseye>
 }
 

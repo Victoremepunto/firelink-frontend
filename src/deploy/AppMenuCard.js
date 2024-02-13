@@ -20,34 +20,41 @@ import {
     SearchInput,
     Switch,
 } from '@patternfly/react-core';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     getApps,
 } from '../store/ListSlice';
+import {
+    getAppNames,
+    addOrRemoveAppName,
+    addOrRemoveApp,
+} from '../store/AppDeploySlice'
 import { getFavoriteApps  } from '../store/AppSlice'
-
 
 export default function AppMenuCard() {
 
+    const dispatch = useDispatch();
 
     const apps = useSelector(getApps);
+    const selectedApps = useSelector(getAppNames);
 
-    const menuRef = useRef();
     const menuFilterInputRef = useRef();
 
     const [filteredApps, setFilteredApps] = useState(apps);
     const favoriteApps = useSelector(getFavoriteApps);
-    const [selectedApps, setSelectedApps] = useState([]);
     const [menuFilter, setMenuFilter] = useState("");
     const [showFavoriteApps, setShowFavoriteApps] = useState(false);
-    const [savedScrollPosition, setSavedScrollPosition] = useState(0);
 
     // Filter apps
     // run when menuFilter changes
     useEffect(() => {
-        setFilteredApps(apps.filter(app => app.friendly_name.toLowerCase().includes(menuFilter.toLowerCase())))
+        let _filteredApps = apps.filter(app => app.friendly_name.toLowerCase().includes(menuFilter.toLowerCase()))
+        if (showFavoriteApps) {
+            _filteredApps = _filteredApps.filter(app => favoriteApps.includes(app.name))
+        }
+        setFilteredApps(_filteredApps)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [menuFilter])
+    }, [menuFilter, showFavoriteApps])
     // Update filtered apps when apps change
     useEffect(() => {
         setFilteredApps(apps)
@@ -58,30 +65,16 @@ export default function AppMenuCard() {
             menuFilterInputRef.current.focus();
         }
     }, [filteredApps])
-    useEffect(() => {
-        // Restore scroll position
-        if (menuRef.current) {
-          menuRef.current.scrollTop = savedScrollPosition;
-        }
-    }, [filteredApps, savedScrollPosition]);
 
-
-    const handleMenuFilterChange = (value) => {
-        setMenuFilter(value);
-    }
 
     const toggleShowFavoriteApps = () => {
         setShowFavoriteApps(!showFavoriteApps)
     }
 
+
     const onAppSelect = (_event, selectedApp) => {
-        setSelectedApps((prevSelectedApps) => {
-          if (prevSelectedApps.includes(selectedApp)) {
-            return prevSelectedApps.filter((app) => app.name !== selectedApp.name);
-          } else {
-            return [...prevSelectedApps, selectedApp];
-          }
-        });
+        dispatch(addOrRemoveAppName(selectedApp.name))
+        dispatch(addOrRemoveApp(selectedApp))
       };
 
     const isAppFavorite = (app) => {
@@ -89,7 +82,7 @@ export default function AppMenuCard() {
     }
 
     const isAppSelected = (app) => {
-        return selectedApps.includes(app)
+        return selectedApps.includes(app.name)
     }
 
     const AppMenuItem = (app, index) => {
@@ -98,28 +91,28 @@ export default function AppMenuCard() {
         </MenuItem>
     }
 
-    const handleMenuScroll = () => {
-        // Save the scroll position when the menu is scrolled
-        if (menuRef.current) {
-          setSavedScrollPosition(menuRef.current.scrollTop);
-        }
-    };
+    const AppMenuItems = () => {
+        return filteredApps.map((app, index) => {
+            return AppMenuItem(app, index)
+        })
+    }
   
     const AppMenu = () => {
-        return <Menu  onSelect={onAppSelect} isScrollable onScroll={handleMenuScroll} ref={menuRef}>
+        return <Menu onSelect={onAppSelect} isScrollable>
             <MenuSearch>
                 <MenuSearchInput>
-                    <SearchInput ref={menuFilterInputRef} value={menuFilter} aria-label="Filter menu items" onChange={(_event, value) => handleMenuFilterChange(value)} />
+                    <SearchInput ref={menuFilterInputRef} value={menuFilter} aria-label="Filter menu items" onChange={(_event, value) => setMenuFilter(value)} />
                 </MenuSearchInput>
             </MenuSearch>
             <Divider />
-            <MenuContent menuHeight="100%">
-                <MenuList>
-                    {filteredApps.map((app, index) => {
-                        return AppMenuItem(app, index)  
-                    })}
+
+            <Divider />
+            <MenuContent maxMenuHeight='40rem' >
+                <MenuList >
+                    <AppMenuItems />
                 </MenuList>
             </MenuContent>
+
             <MenuFooter>
                 <Split hasGutter>
                     <SplitItem isFilled/>
@@ -128,21 +121,19 @@ export default function AppMenuCard() {
                     </SplitItem>
                 </Split>
             </MenuFooter>
+
         </Menu>
     }
 
     return <Card className="pf-u-box-shadow-md" isFullHeight>
         <CardTitle>
             <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                Select Apps to Deploy
+                Apps
             </Title>
         </CardTitle>
-        <CardBody >
-            <Stack hasGutter>
-                <StackItem>
+        <CardBody>
+
                     <AppMenu />
-                </StackItem>
-            </Stack>
         </CardBody>
     </Card>
 }

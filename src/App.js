@@ -31,6 +31,7 @@ import {
   getDarkMode,
   setDarkMode
 } from './store/AppSlice';
+import { setRequester } from './store/AppDeploySlice';
 import { ReactSVG } from 'react-svg';
 
 
@@ -55,6 +56,11 @@ function App() {
     dispatch(loadRequester());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once when the component mounts
+
+  useEffect(() => {
+    dispatch(setRequester(requester));
+}, [requester]);
+
 
   if ( darkMode) {
     document.documentElement.classList.add("pf-v5-theme-dark");
