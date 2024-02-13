@@ -20,7 +20,7 @@ export const appDeploySlice = createSlice({
     get_dependencies: true,
     optional_deps_method: 'hybrid',
     set_image_tag: {},
-    ref_env: "insights-stage",
+    ref_env: null,
     target_env: 'insights-ephemeral',
     set_template_ref: {},
     set_parameter: {},

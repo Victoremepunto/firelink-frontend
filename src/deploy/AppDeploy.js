@@ -1,4 +1,6 @@
-import React, { useEffect} from 'react';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+
 import Loading from '../shared/Loading';
 import {
 	Page,
@@ -13,11 +15,16 @@ import {
 } from '@patternfly/react-core';
 import { useSelector, useDispatch } from 'react-redux';
 import {
+    getApps,
     getIsAppsEmpty,
     getIsNamespacesEmpty,
     loadApps,
     loadNamespaces,
 } from '../store/ListSlice';
+import {
+    addOrRemoveApp,
+    addOrRemoveAppName,
+} from '../store/AppDeploySlice';
 import AppMenuCard from './AppMenuCard';
 import AppDeployController from './AppDeployControllerCard';
 import AppDeoployOptions from './AppDeployOptionsCard';
@@ -30,12 +37,17 @@ import AppDeoployOptions from './AppDeployOptionsCard';
 // because app deploy is the most complex part of the app
 export default function AppDeploy() {
 
+    // Query string
+    const { appParam } = useParams()
+
     // Redux
     const dispatch = useDispatch();
 
     // Selectors
     const isNamespacesEmpty = useSelector(getIsNamespacesEmpty);
     const isAppsEmpty = useSelector(getIsAppsEmpty);
+
+    const apps = useSelector(getApps);
 
     // Load the app list if the app list is empty
     useEffect(() => {
@@ -51,6 +63,19 @@ export default function AppDeploy() {
             dispatch(loadNamespaces());
         }
     }, [dispatch, isNamespacesEmpty])
+    useEffect(() => {
+        if ( !appParam ) {
+            return;
+        }
+        if ( isAppsEmpty ) {
+            return;
+        }
+        const appObj = apps.find(app => app.name === appParam);
+        if ( appObj ) {
+            dispatch(addOrRemoveApp(appObj));
+            dispatch(addOrRemoveAppName(appObj.name));
+        }
+    }, [appParam, dispatch, isAppsEmpty])
 
     const loadingMessage = () => {
         if (isAppsEmpty && isNamespacesEmpty) {
