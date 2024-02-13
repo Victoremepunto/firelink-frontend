@@ -20,16 +20,16 @@ export const appDeploySlice = createSlice({
     get_dependencies: true,
     optional_deps_method: 'hybrid',
     set_image_tag: {},
-    ref_env: null,
+    ref_env: "insights-stage",
     target_env: 'insights-ephemeral',
     set_template_ref: {},
     set_parameter: {},
     clowd_env: null,
     local_config_path: null,
-    remove_resources: [],
-    no_remove_resources: [],
-    remove_dependencies: [],
-    no_remove_dependencies: [],
+    remove_resources: ["all"],
+    no_remove_resources: ["none"],
+    remove_dependencies: ["none"],
+    no_remove_dependencies: ["all"],
     single_replicas: true,
     name: null,
     component_filter: [],
@@ -111,14 +111,38 @@ export const appDeploySlice = createSlice({
     setRemoveResources: (state, action) => {
         state.remove_resources = action.payload;
     },
+    deleteRemoveResources: (state, action) => {
+        const index = state.remove_resources.indexOf(action.payload);
+        if (index !== -1) {
+            state.remove_resources.splice(index, 1);
+        }
+    },
     setNoRemoveResources: (state, action) => {
         state.no_remove_resources = action.payload;
+    },
+    deleteNoRemoveResources: (state, action) => {
+        const index = state.no_remove_resources.indexOf(action.payload);
+        if (index !== -1) {
+            state.no_remove_resources.splice(index, 1);
+        }
     },
     setRemoveDependencies: (state, action) => {
         state.remove_dependencies = action.payload;
     },
+    deleteRemoveDependencys: (state, action) => {
+        const index = state.remove_dependencies.indexOf(action.payload);
+        if (index !== -1) {
+            state.remove_dependencies.splice(index, 1);
+        }
+    },
     setNoRemoveDependencies: (state, action) => {
         state.no_remove_dependencies = action.payload;
+    },
+    deleteNoRemoveDependencys: (state, action) => {
+        const index = state.no_remove_dependencies.indexOf(action.payload);
+        if (index !== -1) {
+            state.no_remove_dependencies.splice(index, 1);
+        }
     },
     setSingleReplicas: (state, action) => {
         state.single_replicas = action.payload;
@@ -150,6 +174,14 @@ export const getAppNames = createSelector(
 export const getAppDeployApps = createSelector(
     [getAppDeploySlice],
     (opts) => opts.apps
+)
+export const getAppDeployComponents = createSelector(
+    [getAppDeploySlice],
+    (opts) => {
+        let components = opts.apps.map(app => app.components);
+        components = components.flat();
+        return components.map(component => component.name);
+    }
 )
 export const getAppDeployRequester = createSelector(
     [getAppDeploySlice],
@@ -325,7 +357,11 @@ export const {
     setComponentFilter,
     setImportSecrets,
     setSecretsDir,
-    setLocal
+    setLocal,
+    deleteRemoveResources,
+    deleteNoRemoveResources,
+    deleteRemoveDependencys,
+    deleteNoRemoveDependencys
 } = appDeploySlice.actions
 
 export default appDeploySlice.reducer
