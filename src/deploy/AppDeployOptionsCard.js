@@ -72,12 +72,7 @@ export default function AppDeployoptionsCard() {
 
     const optionalDepsMethods = ["hyrbid", "all", "none"];
 
-    return <Card isFullHeight>
-        <CardTitle>
-            <Title headingLevel="h3" size={TitleSizes.lg}>Options</Title>
-        </CardTitle>
-        <CardBody>
-            <Stack hasGutter>
+    return <Stack hasGutter>
                 <StackItem>
                     <Switch label="Deploy Frontends" isChecked={frontends} onChange={() => { setStoreFrontends(!frontends) }} id="deploy-app-frontends-checkbox" name="deploy-app-frontends-checkbox" />
                 </StackItem>
@@ -114,6 +109,4 @@ export default function AppDeployoptionsCard() {
                     <AppDeployRemoveSelector title="No Remove Resources" value={noRemoveResources} onSelect={setStoreNoRemoveResources} defaultValue={"none"}/>  
                 </StackItem>
             </Stack>
-        </CardBody>
-    </Card>
 }
