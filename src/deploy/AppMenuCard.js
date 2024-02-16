@@ -3,11 +3,6 @@ import {
 	Stack,
 	Split,
 	SplitItem,
-	Card,
-	CardTitle,
-	CardBody,
-	Title,
-	TitleSizes,
 	StackItem,
     Menu,
     MenuContent,
@@ -30,6 +25,7 @@ import {
     addOrRemoveApp,
 } from '../store/AppDeploySlice'
 import { getFavoriteApps  } from '../store/AppSlice'
+import SelectedAppsChips  from './SelectedAppsChips';
 
 export default function AppMenuCard() {
 
@@ -107,7 +103,7 @@ export default function AppMenuCard() {
             <Divider />
 
             <Divider />
-            <MenuContent maxMenuHeight='40rem' >
+            <MenuContent>
                 <MenuList >
                     <AppMenuItems />
                 </MenuList>
@@ -125,15 +121,13 @@ export default function AppMenuCard() {
         </Menu>
     }
 
-    return <Card className="pf-u-box-shadow-md" isFullHeight>
-        <CardTitle>
-            <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                Apps
-            </Title>
-        </CardTitle>
-        <CardBody>
+    return <Stack hasGutter>
+        <StackItem>
+            <SelectedAppsChips />
+        </StackItem>
+        <StackItem>
+            <AppMenu />
+        </StackItem>
+    </Stack>
 
-                    <AppMenu />
-        </CardBody>
-    </Card>
 }
