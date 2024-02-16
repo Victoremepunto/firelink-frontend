@@ -10,8 +10,8 @@ import {
 	SplitItem,
 	Title,
 	TitleSizes,
-	Grid,
-	GridItem,
+	Wizard,
+    WizardStep,
 } from '@patternfly/react-core';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -95,17 +95,17 @@ export default function AppDeploy() {
         if ( isAppsEmpty ) {
             return <Loading message={loadingMessage()}/>
         } 
-        return <Grid hasGutter >
-            <GridItem span={4} >
+        return <Wizard>
+            <WizardStep name="Apps" id="step-1">
                 <AppMenuCard />
-            </GridItem>
-            <GridItem span={4}>
+            </WizardStep>
+            <WizardStep name="Options" id="step-2">
                 <AppDeoployOptions />
-            </GridItem>
-            <GridItem span={4}>
+            </WizardStep>
+            <WizardStep name="Deploy" id="step-3">
                 <AppDeployController />
-            </GridItem>
-        </Grid>
+            </WizardStep>
+        </Wizard>
     }
 
     return <Page>
@@ -119,7 +119,7 @@ export default function AppDeploy() {
                 <SplitItem isFilled/>
             </Split>
         </PageSection>
-        <PageSection>
+        <PageSection hasOverflowScroll>
             <AppDeployGrid />
         </PageSection>
     </Page> 
