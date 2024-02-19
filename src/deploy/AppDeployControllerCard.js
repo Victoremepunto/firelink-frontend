@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useState} from "react";
 import io from "socket.io-client";
 import { 
     Button, 
-    Checkbox, 
     Modal, 
     ModalVariant, 
     Stack, 
@@ -16,29 +15,14 @@ import {
     Split,
     SplitItem,
 } from '@patternfly/react-core';
-import { PoolSelectList, DurationSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
 import { Spinner } from "@patternfly/react-core";
 import CheckCircle from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
+import TimesCircle from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
+import InfoCircle from '@patternfly/react-icons/dist/js/icons/info-circle-icon';
 import AppDeployNamespaceSelector from "./AppDeployNamespaceSelector";
-
-
-import { useSelector, useDispatch} from "react-redux";
+import { useSelector } from "react-redux";
 import {
-    getRequester
-} from "../store/AppSlice";
-import {
-    clearNamespaces,
-} from "../store/ListSlice";
-import {
-    getAppDeployFrontends,
-    getAppDeployNoReleaseOnFail,
-    getAppDeployPool,
     getDeploymentOptions,
-    getAppDeployDuration,
-    setFrontends,
-    setNoReleaseOnFail,
-    setPool,
-    setDuration,
 } from "../store/AppDeploySlice";
 
 const DEPLOY_EVENT = 'deploy-app';
@@ -52,54 +36,46 @@ const host = window.location.host;
 const SERVER = `${protocol}${host}`;
 
 export default function AppDeployController() {
-
-    const dispatch = useDispatch();
     
+    const deploymentOptions = useSelector(getDeploymentOptions);
+    const initialResponse = { message: "Initiating deployment connection..."};
+
     const [showModal, setShowModal] = useState(false);
     const [canCloseModal, setCanCloseModal] = useState(false);
-    const [socket, setSocket] = useState(null);
-    const deploymentOptions = useSelector(getDeploymentOptions);
-
-    const [wsResponses, setWsResponses] = useState(["Initiating deployment connection..."]);
-
-    useEffect(() => {
-        return () => {
-            //Disconnect socket on unmount
-            if (socket !== null) {
-                socket.disconnect();
-                setSocket(null);
-            }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }},[])
+    const [wsResponses, setWsResponses] = useState([initialResponse]);
 
     const Deploy = () => {
-        const tmpSocket = io(SERVER, { path: '/api/firelink/socket.io', transports: ['polling'] });
+        setWsResponses([initialResponse]);
+        const socket = io(SERVER, { path: '/api/firelink/socket.io', transports: ['polling'] });
 
-        tmpSocket.on(MONITOR_EVENT, (response) => {
-            setWsResponses(state => [...state, response.message]);
+        socket.on(MONITOR_EVENT, (response) => {
+            setWsResponses(state => [...state, response]);
         });
     
-        tmpSocket.on(ERROR_EVENT, (response) => {
-            setWsResponses(state => [...state, response.message]);
+        socket.on(ERROR_EVENT, (response) => {
+            setWsResponses(state => [...state, response]);
         });
     
-        tmpSocket.on(END_EVENT, (response) => {
+        socket.on(END_EVENT, (response) => {
+            setWsResponses(state => [...state, response]);
             setCanCloseModal(true);
-            dispatch(clearNamespaces());
-            tmpSocket.disconnect();
-            setSocket(null);
+            socket.disconnect();
         });
-        setSocket(tmpSocket);
-        tmpSocket.emit(DEPLOY_EVENT, deploymentOptions);
+        socket.emit(DEPLOY_EVENT, deploymentOptions);
         setShowModal(true);
     } 
 
-    const StatusIcon = ({index}) => {
+    const StatusIcon = ({index, response}) => {
         if (index === wsResponses.length - 1 && !canCloseModal)  {
             return <Spinner  size="md"/>
-        } else {
-            return <CheckCircle color="#00FF00"/>
         }
+        if (response.error === true) {
+            return <TimesCircle color="#FF0000"/>
+        }
+        if ( response.completed === true) {
+            return <CheckCircle color="#00FF00"/>
+        }   
+        return <InfoCircle color="#00AAFF"/>
     }
 
     const DeployStatusModal = () => {
@@ -109,17 +85,18 @@ export default function AppDeployController() {
                 variant={ModalVariant.small}
                 title="Deploying..."
                 isOpen={showModal}
-                showClose={false}
+                showClose={canCloseModal}
+                onClose={close}
                 actions={[
-                    <Button key="cancel" variant="primary" onClick={close}>
-                    Close
+                    <Button key="cancel" onClick={close} isDisabled={!canCloseModal}>
+                        Close
                     </Button>
                 ]}>
-                    <div style={{height: '9rem', overflow: 'auto'}}>
+                    <div style={{height: '14rem', overflow: 'auto'}}>
                         <ul>
                             {wsResponses.map((response, index) => {
                                 return <li key={`response-id-${index}`}>
-                                        &nbsp; &nbsp; &nbsp; <StatusIcon index={index}/> &nbsp; {response}
+                                        &nbsp; &nbsp; &nbsp; <StatusIcon index={index} response={response}/> &nbsp; {response.message}
                                     </li>})
                             }
                         </ul>
