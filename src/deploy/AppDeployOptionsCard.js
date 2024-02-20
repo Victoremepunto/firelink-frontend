@@ -65,13 +65,6 @@ export default function AppDeployoptionsCard() {
     const singleReplicas = useSelector(getAppDeploySingleReplicas);
     const setStoreSingleReplicas = (value) => { dispatch(setSingleReplicas(value)) }
 
-    const removeResources = useSelector(getAppDeployRemoveResources);
-    const setStoreRemoveResources = (value) => { dispatch(setRemoveResources(value)) }
-    const noRemoveResources = useSelector(getAppDeployNoRemoveResources);
-    const setStoreNoRemoveResources = (value) => { dispatch(setNoRemoveResources(value)) }
-
-    const optionalDepsMethods = ["hyrbid", "all", "none"];
-
     return <Stack hasGutter>
                 <StackItem>
                     <Switch label="Deploy Frontends" isChecked={frontends} onChange={() => { setStoreFrontends(!frontends) }} id="deploy-app-frontends-checkbox" name="deploy-app-frontends-checkbox" />
@@ -101,12 +94,6 @@ export default function AppDeployoptionsCard() {
                 </StackItem>
                 <StackItem>
                     <OptionalDepsMethodSelectList value={optionDepsMethod}  setValue={setStoreOptionDepsMethod}/>
-                </StackItem>
-                <StackItem>
-                    <AppDeployRemoveSelector title="Remove Resources" value={removeResources} onSelect={setStoreRemoveResources} defaultValue={"all"}/>  
-                </StackItem>
-                <StackItem>
-                    <AppDeployRemoveSelector title="No Remove Resources" value={noRemoveResources} onSelect={setStoreNoRemoveResources} defaultValue={"none"}/>  
                 </StackItem>
             </Stack>
 }

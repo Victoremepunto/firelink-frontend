@@ -14,6 +14,8 @@ import {
     MenuSearchInput,
     SearchInput,
     Switch,
+    TextContent,
+    Text,
 } from '@patternfly/react-core';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -23,11 +25,12 @@ import {
     getAppNames,
     addOrRemoveAppName,
     addOrRemoveApp,
+    clearResourcesAndDependencies,
 } from '../store/AppDeploySlice'
 import { getFavoriteApps  } from '../store/AppSlice'
 import SelectedAppsChips  from './SelectedAppsChips';
 
-export default function AppMenuCard() {
+export default function AppMenuCard({onAppSelectionChange}) {
 
     const dispatch = useDispatch();
 
@@ -61,16 +64,26 @@ export default function AppMenuCard() {
             menuFilterInputRef.current.focus();
         }
     }, [filteredApps])
-
+    useEffect(() => {
+        const appsAreSelected = selectedApps.length > 0
+        onAppSelectionChange(appsAreSelected)
+    }, [selectedApps])
 
     const toggleShowFavoriteApps = () => {
         setShowFavoriteApps(!showFavoriteApps)
     }
 
-
     const onAppSelect = (_event, selectedApp) => {
         dispatch(addOrRemoveAppName(selectedApp.name))
         dispatch(addOrRemoveApp(selectedApp))
+        // This wipes out all four resource and dependency lists
+        // We need to do this because the user may have selected a different app
+        // and that means that the resources and dependencies for the new app are different
+        // so any the user previously selected may not be valid
+        // This is a bit nuclear, I know
+        // But the logic required to reconcile the old resources and dependencies with the new app
+        // is a bit much for me right now
+        dispatch(clearResourcesAndDependencies())
       };
 
     const isAppFavorite = (app) => {
@@ -122,6 +135,13 @@ export default function AppMenuCard() {
     }
 
     return <Stack hasGutter>
+        <StackItem>
+            <TextContent>
+                <Text>
+                    Select the apps you want to deploy. You can filter the list by typing in the search box. You can also filter the list to show only your favorite apps.
+                </Text>
+            </TextContent>
+        </StackItem>
         <StackItem>
             <SelectedAppsChips />
         </StackItem>

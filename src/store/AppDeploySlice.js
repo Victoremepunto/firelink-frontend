@@ -20,7 +20,7 @@ export const appDeploySlice = createSlice({
     get_dependencies: true,
     optional_deps_method: 'hybrid',
     set_image_tag: {},
-    ref_env: null,
+    ref_env: "",
     target_env: 'insights-ephemeral',
     set_template_ref: {},
     set_parameter: {},
@@ -146,6 +146,12 @@ export const appDeploySlice = createSlice({
         if (index !== -1) {
             state.no_remove_dependencies.splice(index, 1);
         }
+    },
+    clearResourcesAndDependencies: (state, action) => {
+        state.remove_resources = [];
+        state.no_remove_resources = [];
+        state.remove_dependencies = [];
+        state.no_remove_dependencies = [];
     },
     setSingleReplicas: (state, action) => {
         state.single_replicas = action.payload;
@@ -358,6 +364,7 @@ export const {
     setNoRemoveResources,
     setRemoveDependencies,
     setNoRemoveDependencies,
+    clearResourcesAndDependencies,
     setSingleReplicas,
     setName,
     setComponentFilter,
