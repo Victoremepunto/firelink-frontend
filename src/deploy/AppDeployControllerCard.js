@@ -88,7 +88,7 @@ export default function AppDeployController() {
                 showClose={canCloseModal}
                 onClose={close}
                 actions={[
-                    <Button key="cancel" onClick={close} isDisabled={!canCloseModal}>
+                    <Button key="cancel" onClick={close} >
                         Close
                     </Button>
                 ]}>

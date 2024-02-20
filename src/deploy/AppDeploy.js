@@ -126,6 +126,9 @@ export default function AppDeploy() {
             <WizardStep name="Apps" id="step-1" footer={{ isNextDisabled: !appsSelected, isCancelHidden: true }}>
                 <AppMenuCard onAppSelectionChange={onAppSelectionChange}  />
             </WizardStep>
+            <WizardStep name="Namespace" id="step-12" footer={{ isCancelHidden: true }}>
+                <AppDeployController />
+            </WizardStep>
             <WizardStep name="Options" id="step-2" footer={{ isCancelHidden: true }}>
                 <AppDeoployOptions />
             </WizardStep>
@@ -160,7 +163,10 @@ export default function AppDeploy() {
                     </StackItem>
                 </Stack>
             </WizardStep>
-            <WizardStep name="Deploy" id="step-7" footer={{ isCancelHidden: true }}>
+            <WizardStep name="Review" id="step-7" footer={{ isCancelHidden: true }}>
+                <AppDeployController />
+            </WizardStep>
+            <WizardStep name="Deploy" id="step-8" footer={{ isCancelHidden: true }}>
                 <AppDeployController />
             </WizardStep>
         </Wizard>
