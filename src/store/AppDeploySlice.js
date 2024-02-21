@@ -20,7 +20,7 @@ export const appDeploySlice = createSlice({
     get_dependencies: true,
     optional_deps_method: 'hybrid',
     set_image_tag: {},
-    ref_env: "",
+    ref_env: "insights-stage",
     target_env: 'insights-ephemeral',
     set_template_ref: {},
     set_parameter: {},
@@ -28,7 +28,7 @@ export const appDeploySlice = createSlice({
     local_config_path: null,
     local_config_method: "merge",
     preferred_params: {},
-    fallback_ref_env: "",
+    fallback_ref_env: "insights-stage",
     remove_resources: [],
     no_remove_resources: [],
     remove_dependencies: [],
@@ -95,6 +95,9 @@ export const appDeploySlice = createSlice({
     },
     setRefEnv: (state, action) => {
         state.ref_env = action.payload;
+    },
+    setFallbackRefEnv: (state, action) => {
+        state.fallback_ref_env = action.payload;
     },
     setTargetEnv: (state, action) => {
         state.target_env = action.payload;
@@ -356,6 +359,7 @@ export const {
     setSetImageTag,
     setRefEnv,
     setTargetEnv,
+    setFallbackRefEnv,
     setTemplateRef,
     setSetParameter,
     setClowdEnv,

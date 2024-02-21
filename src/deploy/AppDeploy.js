@@ -42,6 +42,7 @@ import AppMenuCard from './AppMenuCard';
 import AppDeployController from './AppDeployControllerCard';
 import AppDeoployOptions from './AppDeployOptionsCard';
 import ResourceSelector from './ResourceSelector';
+import AppDeployNamespaceSelector from './AppDeployNamespaceSelector';
 
 // AppDeploy is the parent component to the app deploy page
 // It ensures redux is hydrated with the app and namespace lists, but that's all it does
@@ -127,7 +128,7 @@ export default function AppDeploy() {
                 <AppMenuCard onAppSelectionChange={onAppSelectionChange}  />
             </WizardStep>
             <WizardStep name="Namespace" id="step-12" footer={{ isCancelHidden: true }}>
-                <AppDeployController />
+                <AppDeployNamespaceSelector/>
             </WizardStep>
             <WizardStep name="Options" id="step-2" footer={{ isCancelHidden: true }}>
                 <AppDeoployOptions />
