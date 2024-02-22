@@ -30,12 +30,8 @@ import {
     addOrRemoveApp,
     addOrRemoveAppName,
     setNoRemoveResources,
-    setRemoveResources,
-    setNoRemoveDependencies,
     setRemoveDependencies,
     getAppDeployNoRemoveResources,
-    getAppDeployRemoveResources,
-    getAppDeployNoRemoveDependencies,
     getAppDeployRemoveDependencies,
 } from '../store/AppDeploySlice';
 import AppMenuCard from './AppMenuCard';
@@ -43,6 +39,7 @@ import AppDeployController from './AppDeployControllerCard';
 import AppDeoployOptions from './AppDeployOptionsCard';
 import ResourceSelector from './ResourceSelector';
 import AppDeployNamespaceSelector from './AppDeployNamespaceSelector';
+import SetParameters from './SetParameters';
 
 // AppDeploy is the parent component to the app deploy page
 // It ensures redux is hydrated with the app and namespace lists, but that's all it does
@@ -163,6 +160,9 @@ export default function AppDeploy() {
                         <ResourceSelector setSelection={setRemoveDependenciesAction} getSelection={getRemoveDependencies} />
                     </StackItem>
                 </Stack>
+            </WizardStep>
+            <WizardStep name="Set Parameters" id="step-4" footer={{ isCancelHidden: true }}>
+                <SetParameters />
             </WizardStep>
             <WizardStep name="Review" id="step-7" footer={{ isCancelHidden: true }}>
                 <AppDeployController />
