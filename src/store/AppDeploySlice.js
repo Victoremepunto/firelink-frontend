@@ -1,9 +1,6 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 
-// Slice - this is the state and the actions that can be dispatched
-export const appDeploySlice = createSlice({
-  name: 'appDeploySlice',
-  initialState: {
+const emptyState = {
     //We need to store the apps along with the app_names even though we only send the app_names to the backend
     //We do this because we need other properties of the app object in the UI such as components and template params
     apps: [],
@@ -39,9 +36,20 @@ export const appDeploySlice = createSlice({
     import_secrets: false,
     secrets_dir: '',
     local: true,
-  },
+  }
+
+// Slice - this is the state and the actions that can be dispatched
+export const appDeploySlice = createSlice({
+  name: 'appDeploySlice',
+  initialState: emptyState,
   // Reducers - these are the actions that can be dispatched
   reducers: {
+    clearAppDeployOptions: (state) => {
+        // Stomp over the entire state property by proptery and set them to their default values
+        Object.keys(emptyState).forEach(key => {
+            state[key] = emptyState[key];
+        })
+    },
     addOrRemoveAppName: (state, action) => {
         const index = state.app_names.indexOf(action.payload);
         if (index === -1) {
@@ -344,11 +352,13 @@ export const getDeploymentOptions = createSelector(
 )
 
 export const { 
+    
     addOrRemoveAppName, 
     setRequester, 
     addOrRemoveApp, 
     setDuration,
     setNoReleaseOnFail,
+    clearAppDeployOptions,
     setFrontends,
     setPool,
     setNamespace,

@@ -105,34 +105,6 @@ export default function AppMenuCard({onAppSelectionChange}) {
             return AppMenuItem(app, index)
         })
     }
-  
-    const AppMenu = () => {
-        return <Menu onSelect={onAppSelect} isScrollable>
-            <MenuSearch>
-                <MenuSearchInput>
-                    <SearchInput ref={menuFilterInputRef} value={menuFilter} aria-label="Filter menu items" onChange={(_event, value) => setMenuFilter(value)} />
-                </MenuSearchInput>
-            </MenuSearch>
-            <Divider />
-
-            <Divider />
-            <MenuContent>
-                <MenuList >
-                    <AppMenuItems />
-                </MenuList>
-            </MenuContent>
-
-            <MenuFooter>
-                <Split hasGutter>
-                    <SplitItem isFilled/>
-                    <SplitItem>
-                        <Switch label="Favorites" id="show-favorites" isChecked={showFavoriteApps} onChange={toggleShowFavoriteApps} />
-                    </SplitItem>
-                </Split>
-            </MenuFooter>
-
-        </Menu>
-    }
 
     return <Stack hasGutter>
         <StackItem>
@@ -146,7 +118,32 @@ export default function AppMenuCard({onAppSelectionChange}) {
             <SelectedAppsChips />
         </StackItem>
         <StackItem>
-            <AppMenu />
+            <Menu onSelect={onAppSelect} isScrollable>
+                <MenuSearch>
+                    <MenuSearchInput>
+                        <SearchInput ref={menuFilterInputRef} value={menuFilter} aria-label="Filter menu items" onChange={(_event, value) => setMenuFilter(value)} />
+                    </MenuSearchInput>
+                </MenuSearch>
+                <Divider />
+                <Divider />
+                <MenuContent>
+                    <MenuList >
+                        {filteredApps.map((app, index) => {
+                            return <MenuItem hasCheckbox isSelected={isAppSelected(app)} isFavorited={isAppFavorite(app)} key={`${app.name}-${index}`} itemId={app}>
+                                {app.friendly_name}
+                            </MenuItem>
+                        })}
+                    </MenuList>
+                </MenuContent>
+                <MenuFooter>
+                    <Split hasGutter>
+                        <SplitItem isFilled/>
+                        <SplitItem>
+                            <Switch label="Favorites" id="show-favorites" isChecked={showFavoriteApps} onChange={toggleShowFavoriteApps} />
+                        </SplitItem>
+                    </Split>
+                </MenuFooter>
+            </Menu>        
         </StackItem>
     </Stack>
 

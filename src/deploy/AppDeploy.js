@@ -33,6 +33,7 @@ import {
     setRemoveDependencies,
     getAppDeployNoRemoveResources,
     getAppDeployRemoveDependencies,
+    clearAppDeployOptions,
 } from '../store/AppDeploySlice';
 import AppMenuCard from './AppMenuCard';
 import AppDeployController from './AppDeployControllerCard';
@@ -40,7 +41,9 @@ import AppDeoployOptions from './AppDeployOptionsCard';
 import ResourceSelector from './ResourceSelector';
 import AppDeployNamespaceSelector from './AppDeployNamespaceSelector';
 import SetParameters from './SetParameters';
-
+import {
+    clearAll
+} from '../store/ParamSelectorSlice';
 // AppDeploy is the parent component to the app deploy page
 // It ensures redux is hydrated with the app and namespace lists, but that's all it does
 // It mantains no state and passes no state to its children
@@ -70,6 +73,11 @@ export default function AppDeploy() {
     // State
     const [appsSelected, setAppsSelected] = useState(false);
 
+    useEffect(() => {
+        dispatch(clearAll());
+        dispatch(clearAppDeployOptions());
+    }, [])
+    
     // Load the app list if the app list is empty
     useEffect(() => {
         if ( isAppsEmpty)  {
