@@ -34,6 +34,7 @@ import {
     getAppDeployNoRemoveResources,
     getAppDeployRemoveDependencies,
     clearAppDeployOptions,
+    getAppDeployListIsEmpty
 } from '../store/AppDeploySlice';
 import AppMenuCard from './AppMenuCard';
 import AppDeployController from './AppDeployControllerCard';
@@ -61,6 +62,7 @@ export default function AppDeploy() {
     // Selectors
     const isNamespacesEmpty = useSelector(getIsNamespacesEmpty);
     const isAppsEmpty = useSelector(getIsAppsEmpty);
+    const deployAppListEmpty = useSelector(getAppDeployListIsEmpty);
 
     const getNoRemoveResources = useSelector(getAppDeployNoRemoveResources);
     const getRemoveDependencies = useSelector(getAppDeployRemoveDependencies);    
@@ -70,8 +72,7 @@ export default function AppDeploy() {
     const setNoRemoveResourcesAction = (value) => { dispatch(setNoRemoveResources(value)) }
     const setRemoveDependenciesAction = (value) => { dispatch(setRemoveDependencies(value)) }
 
-    // State
-    const [appsSelected, setAppsSelected] = useState(false);
+
 
     useEffect(() => {
         dispatch(clearAll());
@@ -85,6 +86,7 @@ export default function AppDeploy() {
             dispatch(loadApps());
         }
     }, [dispatch, isAppsEmpty])
+
     // Load the namespace list if the namespace list is empty
     useEffect(() => {
         if (isNamespacesEmpty) {
@@ -92,14 +94,23 @@ export default function AppDeploy() {
             dispatch(loadNamespaces());
         }
     }, [dispatch, isNamespacesEmpty])
+
+    // Add the app to the list of selected apps if the appParam is set
+    // appParam is taken from the query string
     useEffect(() => {
+        // If the appParam is not set, do nothing
         if ( !appParam ) {
             return;
         }
+        // If the app list is empty, do nothing
+        // This is because if the app list is empty we wont be able to look 
+        // up the app for the app param
         if ( isAppsEmpty ) {
             return;
         }
+        // Find the app object that matches the appParam
         const appObj = apps.find(app => app.name === appParam);
+        // TODO: We should probably show an error message if the app is not found
         if ( appObj ) {
             dispatch(addOrRemoveApp(appObj));
             dispatch(addOrRemoveAppName(appObj.name));
@@ -120,67 +131,6 @@ export default function AppDeploy() {
         return "Loading...";
     }
 
-    const onAppSelectionChange = (appsAreSelected) => {
-        setAppsSelected(appsAreSelected);
-    }
-
-    const AppDeployGrid = () => {
-        if ( isAppsEmpty ) {
-            return <Loading message={loadingMessage()}/>
-        } 
-        return <Wizard isVisitRequired>
-            <WizardStep name="Apps" id="step-1" footer={{ isNextDisabled: !appsSelected, isCancelHidden: true }}>
-                <AppMenuCard onAppSelectionChange={onAppSelectionChange}  />
-            </WizardStep>
-            <WizardStep name="Namespace" id="step-12" footer={{ isCancelHidden: true }}>
-                <AppDeployNamespaceSelector/>
-            </WizardStep>
-            <WizardStep name="Options" id="step-2" footer={{ isCancelHidden: true }}>
-                <AppDeoployOptions />
-            </WizardStep>
-            <WizardStep name="Preserve Resources" id="step-3" footer={{ isCancelHidden: true }}>
-                <Stack hasGutter>
-                    <StackItem>
-                        <TextContent>
-                            <Text>
-                                Bonfire removes CPU and memory resource requests and limits by default. Select any ClowdApps and ResourceTemplates you may want to preserve requests and limits for. ClowdApps are prepended by "app:".
-                            </Text>
-                        </TextContent>
-                    </StackItem>
-                    <StackItem>
-                        <Alert variant="warning" title="Resource preservation is not recommended for most use cases. Use only if you know that your app requires specific resource requests and limits." ouiaId="WarningAlert" />
-                    </StackItem>
-                    <StackItem>
-                        <ResourceSelector setSelection={setNoRemoveResourcesAction} getSelection={getNoRemoveResources}/>
-                    </StackItem>
-                </Stack>
-            </WizardStep>
-            <WizardStep name="Omit Dependencies" id="step-6" footer={{ isCancelHidden: true }}>
-                <Stack hasGutter>
-                    <StackItem>
-                        <TextContent>
-                            <Text>
-                                Bonfire deploys all dependencies for your ClowdApps and Resource Templates. If you wish to omit dependencies for a ClowdApp or ResourceTemplate, select them here. ClowdApps are prepended by "app:".
-                            </Text>
-                        </TextContent>
-                    </StackItem>
-                    <StackItem>
-                        <ResourceSelector setSelection={setRemoveDependenciesAction} getSelection={getRemoveDependencies} />
-                    </StackItem>
-                </Stack>
-            </WizardStep>
-            <WizardStep name="Set Parameters" id="step-4" footer={{ isCancelHidden: true }}>
-                <SetParameters />
-            </WizardStep>
-            <WizardStep name="Review" id="step-7" footer={{ isCancelHidden: true }}>
-                <AppDeployController />
-            </WizardStep>
-            <WizardStep name="Deploy" id="step-8" footer={{ isCancelHidden: true }}>
-                <AppDeployController />
-            </WizardStep>
-        </Wizard>
-    }
-
     return <Page>
         <PageSection variant={PageSectionVariants.light}>
             <Split>
@@ -193,7 +143,61 @@ export default function AppDeploy() {
             </Split>
         </PageSection>
         <PageSection hasOverflowScroll>
-            <AppDeployGrid />
+            {isAppsEmpty ? (
+                <Loading message={loadingMessage()}/>
+            ) : (
+                <Wizard isVisitRequired>
+                    <WizardStep name="Apps" id="step-1" footer={{ isNextDisabled: deployAppListEmpty, isCancelHidden: true }}>
+                        <AppMenuCard />
+                    </WizardStep>
+                    <WizardStep name="Namespace" id="step-12" footer={{ isCancelHidden: true }}>
+                        <AppDeployNamespaceSelector/>
+                    </WizardStep>
+                    <WizardStep name="Options" id="step-2" footer={{ isCancelHidden: true }}>
+                        <AppDeoployOptions />
+                    </WizardStep>
+                    <WizardStep name="Preserve Resources" id="step-3" footer={{ isCancelHidden: true }}>
+                        <Stack hasGutter>
+                            <StackItem>
+                                <TextContent>
+                                    <Text>
+                                        Bonfire removes CPU and memory resource requests and limits by default. Select any ClowdApps and ResourceTemplates you may want to preserve requests and limits for. ClowdApps are prepended by "app:".
+                                    </Text>
+                                </TextContent>
+                            </StackItem>
+                            <StackItem>
+                                <Alert variant="warning" title="Resource preservation is not recommended for most use cases. Use only if you know that your app requires specific resource requests and limits." ouiaId="WarningAlert" />
+                            </StackItem>
+                            <StackItem>
+                                <ResourceSelector setSelection={setNoRemoveResourcesAction} getSelection={getNoRemoveResources}/>
+                            </StackItem>
+                        </Stack>
+                    </WizardStep>
+                    <WizardStep name="Omit Dependencies" id="step-6" footer={{ isCancelHidden: true }}>
+                        <Stack hasGutter>
+                            <StackItem>
+                                <TextContent>
+                                    <Text>
+                                        Bonfire deploys all dependencies for your ClowdApps and Resource Templates. If you wish to omit dependencies for a ClowdApp or ResourceTemplate, select them here. ClowdApps are prepended by "app:".
+                                    </Text>
+                                </TextContent>
+                            </StackItem>
+                            <StackItem>
+                                <ResourceSelector setSelection={setRemoveDependenciesAction} getSelection={getRemoveDependencies} />
+                            </StackItem>
+                        </Stack>
+                    </WizardStep>
+                    <WizardStep name="Set Parameters" id="step-4" footer={{ isCancelHidden: true }}>
+                        <SetParameters />
+                    </WizardStep>
+                    <WizardStep name="Review" id="step-7" footer={{ isCancelHidden: true }}>
+                        <AppDeployController />
+                    </WizardStep>
+                    <WizardStep name="Deploy" id="step-8" footer={{ isCancelHidden: true }}>
+                        <AppDeployController />
+                    </WizardStep>
+                </Wizard>
+            )}
         </PageSection>
     </Page> 
 }

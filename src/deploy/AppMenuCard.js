@@ -30,7 +30,7 @@ import {
 import { getFavoriteApps  } from '../store/AppSlice'
 import SelectedAppsChips  from './SelectedAppsChips';
 
-export default function AppMenuCard({onAppSelectionChange}) {
+export default function AppMenuCard() {
 
     const dispatch = useDispatch();
 
@@ -64,10 +64,6 @@ export default function AppMenuCard({onAppSelectionChange}) {
             menuFilterInputRef.current.focus();
         }
     }, [filteredApps])
-    useEffect(() => {
-        const appsAreSelected = selectedApps.length > 0
-        onAppSelectionChange(appsAreSelected)
-    }, [selectedApps])
 
     const toggleShowFavoriteApps = () => {
         setShowFavoriteApps(!showFavoriteApps)
@@ -94,17 +90,6 @@ export default function AppMenuCard({onAppSelectionChange}) {
         return selectedApps.includes(app.name)
     }
 
-    const AppMenuItem = (app, index) => {
-        return <MenuItem hasCheckbox isSelected={isAppSelected(app)} isFavorited={isAppFavorite(app)} key={`${app.name}-${index}`} itemId={app}>
-            {app.friendly_name}
-        </MenuItem>
-    }
-
-    const AppMenuItems = () => {
-        return filteredApps.map((app, index) => {
-            return AppMenuItem(app, index)
-        })
-    }
 
     return <Stack hasGutter>
         <StackItem>

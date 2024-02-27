@@ -195,6 +195,13 @@ export const getAppDeployApps = createSelector(
     [getAppDeploySlice],
     (opts) => opts.apps
 )
+export const getAppDeployListIsEmpty = createSelector(
+    [getAppDeploySlice],
+    (opts) => {
+        return opts.app_names.length === 0
+    }
+)
+
 export const getAppDeployComponents = createSelector(
     [getAppDeploySlice],
     (opts) => {
