@@ -6,6 +6,9 @@ import {
 	StackItem,
     FormSelect,
     FormSelectOption,
+    Text,
+    TextContent,
+    TextVariants,
 } from '@patternfly/react-core';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -63,7 +66,27 @@ export default function AppDeployNamespaceSelector() {
                 <p>You have no namespaces reserved. A new namespace will be reserved for you.</p>
             </React.Fragment>
         } else {
-            return <Stack hasGutter>
+            return 
+        }
+    }
+
+    return <Stack hasGutter>
+        <StackItem>
+            <TextContent>
+                <Text component={TextVariants.h1}>
+                    Namespace Selection
+                </Text>
+            </TextContent>
+        </StackItem>
+        { myReservations.length === 0 ? (
+                <StackItem>
+                    <TextContent>
+                        <Text>
+                            You have no namespaces reserved. A new namespace will be reserved for you.
+                        </Text>
+                    </TextContent>
+                </StackItem>
+            ) : ( <React.Fragment>
                 <StackItem>
                     <Radio
                         isChecked={!showNamespaceSelect}
@@ -84,10 +107,8 @@ export default function AppDeployNamespaceSelector() {
                 <StackItem>
                     <MyReservationSelect />
                 </StackItem>
-            </Stack>
-        }
-    }
-
-    return <NamespaceSelection />
+            </React.Fragment>
+        )}
+    </Stack>
 
 }

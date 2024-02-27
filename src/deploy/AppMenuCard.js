@@ -15,6 +15,7 @@ import {
     SearchInput,
     Switch,
     TextContent,
+    TextVariants,
     Text,
 } from '@patternfly/react-core';
 import { useSelector, useDispatch } from 'react-redux';
@@ -92,6 +93,13 @@ export default function AppMenuCard() {
 
 
     return <Stack hasGutter>
+        <StackItem>
+            <TextContent>
+                <Text component={TextVariants.h1}>
+                    Select Apps to Deploy
+                </Text>
+            </TextContent>
+        </StackItem>
         <StackItem>
             <TextContent>
                 <Text>

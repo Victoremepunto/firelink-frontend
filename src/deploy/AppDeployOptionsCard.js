@@ -4,7 +4,9 @@ import {
     Stack,
     StackItem,
     Switch,
-    ToolTip,
+    Text,
+    TextContent,
+    TextVariants,
 } from '@patternfly/react-core';
 import { 
     getAppDeployFrontends, 
@@ -63,6 +65,13 @@ export default function AppDeployoptionsCard() {
     const setStoreSingleReplicas = (value) => { dispatch(setSingleReplicas(value)) }
 
     return <Stack hasGutter>
+            <StackItem>
+                <TextContent>
+                    <Text component={TextVariants.h1}>
+                        Set Deployment Options
+                    </Text>
+                </TextContent>
+            </StackItem>
                 <StackItem>
                     <Switch label="Deploy Frontends" isChecked={frontends} onChange={() => { setStoreFrontends(!frontends) }} id="deploy-app-frontends-checkbox" name="deploy-app-frontends-checkbox" />
                     &nbsp; <HelpTip content="By default, frontends are not deployed. Check to deploy frontends."/>

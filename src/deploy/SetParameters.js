@@ -7,7 +7,11 @@ import {
     Card,
     CardTitle,
     CardBody,
-    Stack
+    Stack,
+    StackItem,
+    Text,
+    TextContent,
+    TextVariants,
 } from '@patternfly/react-core';
 import {
     getAppDeployApps,
@@ -87,32 +91,44 @@ export default function SetParameters() {
         setSelectedParameters(newParams);
     };
 
-    return <Grid hasGutter isFullHeight>
-        <GridItem isFilled span={6}>
-            <Card isFullHeight >
-                <CardTitle>
-                    <h3>Available Parameters</h3>
-                </CardTitle>
-                <CardBody style={cardBodyStyle}>
-                    <TreeView data={options} activeItems={selectedParameters} onSelect={onSelect} hasGuides={true} useMemo={true} />
-                </CardBody>
-            </Card>
-        </GridItem>
-        <GridItem isFilled span={6}>
-            <Card isFullHeight >
-                <CardTitle>
-                    <h3>Selected Parameters</h3>
-                </CardTitle>
-                <CardBody style={cardBodyStyle}>
-                    &nbsp;
-                    <Stack hasGutter={true}>
-                        {selectedParameters.map((param) => {
-                            return <ParamInput key={param.id} param={param} onParamChange={handleParamChange} />
-                        })}    
-                    </Stack> 
-                    &nbsp;
-                </CardBody>
-            </Card>
-        </GridItem>
-    </Grid>
+    return <Stack>
+        <StackItem>
+            <TextContent>
+                <Text component={TextVariants.h1}>
+                    Override Deploy Template Parameters
+                </Text>
+            </TextContent>
+        </StackItem>
+        <StackItem>
+            <Grid hasGutter isFullHeight>
+                <GridItem span={6}>
+                    <Card isFullHeight >
+                        <CardTitle>
+                            <h3>Available Parameters</h3>
+                        </CardTitle>
+                        <CardBody style={cardBodyStyle}>
+                            <TreeView data={options} activeItems={selectedParameters} onSelect={onSelect} hasGuides={true} useMemo={true} />
+                        </CardBody>
+                    </Card>
+                </GridItem>
+                <GridItem span={6}>
+                    <Card isFullHeight >
+                        <CardTitle>
+                            <h3>Selected Parameters</h3>
+                        </CardTitle>
+                        <CardBody style={cardBodyStyle}>
+                            &nbsp;
+                            <Stack hasGutter={true}>
+                                {selectedParameters.map((param) => {
+                                    return <ParamInput key={param.id} param={param} onParamChange={handleParamChange} />
+                                })}    
+                            </Stack> 
+                            &nbsp;
+                        </CardBody>
+                    </Card>
+                </GridItem>
+            </Grid>
+        </StackItem>
+    </Stack> 
+
 }

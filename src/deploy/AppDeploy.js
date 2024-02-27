@@ -17,6 +17,7 @@ import {
     Stack,
     StackItem,
     Alert,
+    TextVariants,
 } from '@patternfly/react-core';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -42,6 +43,7 @@ import AppDeoployOptions from './AppDeployOptionsCard';
 import ResourceSelector from './ResourceSelector';
 import AppDeployNamespaceSelector from './AppDeployNamespaceSelector';
 import SetParameters from './SetParameters';
+import AppDeployReview from './AppDeployReview';
 import {
     clearAll
 } from '../store/ParamSelectorSlice';
@@ -160,6 +162,13 @@ export default function AppDeploy() {
                         <Stack hasGutter>
                             <StackItem>
                                 <TextContent>
+                                    <Text component={TextVariants.h1}>
+                                        Preserve CPU & RAM for Apps or Comononts
+                                    </Text>
+                                </TextContent>
+                            </StackItem>
+                            <StackItem>
+                                <TextContent>
                                     <Text>
                                         Bonfire removes CPU and memory resource requests and limits by default. Select any ClowdApps and ResourceTemplates you may want to preserve requests and limits for. ClowdApps are prepended by "app:".
                                     </Text>
@@ -177,6 +186,13 @@ export default function AppDeploy() {
                         <Stack hasGutter>
                             <StackItem>
                                 <TextContent>
+                                    <Text component={TextVariants.h1}>
+                                        Select Dependencies to Omit
+                                    </Text>
+                                </TextContent>
+                            </StackItem>
+                            <StackItem>
+                                <TextContent>
                                     <Text>
                                         Bonfire deploys all dependencies for your ClowdApps and Resource Templates. If you wish to omit dependencies for a ClowdApp or ResourceTemplate, select them here. ClowdApps are prepended by "app:".
                                     </Text>
@@ -191,7 +207,7 @@ export default function AppDeploy() {
                         <SetParameters />
                     </WizardStep>
                     <WizardStep name="Review" id="step-7" footer={{ isCancelHidden: true }}>
-                        <AppDeployController />
+                        <AppDeployReview />
                     </WizardStep>
                     <WizardStep name="Deploy" id="step-8" footer={{ isCancelHidden: true }}>
                         <AppDeployController />
