@@ -4,57 +4,67 @@ import {
     TreeView,
     Grid,
     GridItem,
-    TextInput,
     Card,
     CardTitle,
     CardBody,
-    Form,
-    FormGroup,
+    Stack
 } from '@patternfly/react-core';
-import { v4 as uuidv4 } from 'uuid';
 import {
-    getAppDeployApps
+    getAppDeployApps,
+    setSetParameter
 } from "../store/AppDeploySlice";
 import {
     getDarkMode
 } from "../store/AppSlice";
 import {
     createStoreOptionsFromApps,
-    addOrRemoveStoreSelectedParameter,
-    setStoreOptions,
     getStoreOptions,
     getStoreSelectedParameters,
     setStoreSelectedParameters
 } from "../store/ParamSelectorSlice";
+import ParamInput from "./ParamInput";
 
 export default function SetParameters() {
 
-    // Redux
+    const DARK_GRAY = "#26292d";
+    const WHITE = "#FFFFFF";
+    const PARAMETER_SELECT_CARD_STYLE = {height: "30rem", overflow: "auto", backgroundColor: "#FFFFFF"}
+
     const dispatch = useDispatch();
+
     const options = useSelector(getStoreOptions);
     const selectedParameters = useSelector(getStoreSelectedParameters);
-    const addOrRemoveSelectedParameter = (param) => dispatch(addOrRemoveSelectedParameter(param));
+    const apps = useSelector(getAppDeployApps);
+    const darkMode = useSelector(getDarkMode);
+
+    const setStoreSetParameter = (param) => dispatch(setSetParameter(param));
     const createOptionsFromApps = (apps) => dispatch(createStoreOptionsFromApps(apps));
-    const setOptions = (options) => dispatch(setStoreOptions(options));
     const setSelectedParameters = (params) => dispatch(setStoreSelectedParameters(params));
 
-    const apps = useSelector(getAppDeployApps);
 
-    const darkMode = useSelector(getDarkMode);
-    const [cardBodyStyle, setCardBodyStyle] = useState({height: "30rem", overflow: "auto", backgroundColor: "#FFFFFF"})
+    const [cardBodyStyle, setCardBodyStyle] = useState(PARAMETER_SELECT_CARD_STYLE)
 
     useEffect(() => {
-        console.log("Dark mode effect")
-        const color = darkMode ? "#26292d" : "#FFFFFF"
-        setCardBodyStyle({height: "30rem", overflow: "auto", backgroundColor: color})
+        const color = darkMode ? DARK_GRAY : WHITE
+        setCardBodyStyle({...PARAMETER_SELECT_CARD_STYLE, backgroundColor: color})
     }, [darkMode])
 
     useEffect(() => {
-        console.log("Apps effect")
         if (apps.length > 0) {
             createOptionsFromApps(apps)
         }
     }, [apps])
+
+    useEffect(() => {
+        // Need to send the selected params and their values to the store
+        //First we need to turn it into an array of strings of the form "component/param=value"
+        const selectedParams = selectedParameters.map((param) => {
+            return param.component+"/"+param.name+"="+param.value
+        })
+        setStoreSetParameter(selectedParams)
+    }, [selectedParameters])
+
+
 
     const onSelect = (_event, treeViewItem) => {
         if (treeViewItem && !treeViewItem.children) {
@@ -69,13 +79,13 @@ export default function SetParameters() {
         }
     }
 
-    const ParamInput = ({param}) => {
-        return <Form>
-            <FormGroup label={param.component+'/'+param.name} fieldId={param.id}>
-                <TextInput type="text" value={param.value} onChange={(newValue) => param.value = newValue} aria-label={param.component+"/"+param.name}/>
-            </FormGroup>
-        </Form>
-    }
+
+    const handleParamChange = (updatedParam) => {
+        const newParams = selectedParameters.map((param) =>
+            param.id === updatedParam.id ? updatedParam : param
+        );
+        setSelectedParameters(newParams);
+    };
 
     return <Grid hasGutter isFullHeight>
         <GridItem isFilled span={6}>
@@ -94,9 +104,13 @@ export default function SetParameters() {
                     <h3>Selected Parameters</h3>
                 </CardTitle>
                 <CardBody style={cardBodyStyle}>
+                    &nbsp;
+                    <Stack hasGutter={true}>
                         {selectedParameters.map((param) => {
-                            return <ParamInput key={param.id} param={param}/>
-                        })}                    
+                            return <ParamInput key={param.id} param={param} onParamChange={handleParamChange} />
+                        })}    
+                    </Stack> 
+                    &nbsp;
                 </CardBody>
             </Card>
         </GridItem>
