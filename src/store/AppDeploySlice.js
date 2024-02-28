@@ -16,12 +16,12 @@ const emptyState = {
     source: 'appsre',
     get_dependencies: true,
     optional_deps_method: 'hybrid',
-    set_image_tag: [],
+    set_image_tag: {},
     ref_env: "insights-stage",
     target_env: 'insights-ephemeral',
     set_template_ref: {},
-    set_parameter: [],
-    clowd_env: null,
+    set_parameter: {},
+    clowd_env: "",
     local_config_path: null,
     local_config_method: "merge",
     preferred_params: {},
@@ -67,7 +67,7 @@ export const appDeploySlice = createSlice({
             state.apps.splice(index, 1);
         }
     },
-    setRequester: (state, action) => {
+    setAppDeployRequester: (state, action) => {
         state.requester = action.payload;
     },
     //Reducers for the other options
@@ -361,7 +361,7 @@ export const getDeploymentOptions = createSelector(
 export const { 
     
     addOrRemoveAppName, 
-    setRequester, 
+    setAppDeployRequester, 
     addOrRemoveApp, 
     setDuration,
     setNoReleaseOnFail,

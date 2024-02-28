@@ -5,21 +5,11 @@ import {
     Button, 
     Modal, 
     ModalVariant, 
-    Stack, 
-    StackItem,
-    Card,
-    CardTitle,
-    CardBody,
-    Title,
-    TitleSizes,
-    Split,
-    SplitItem,
 } from '@patternfly/react-core';
 import { Spinner } from "@patternfly/react-core";
 import CheckCircle from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import TimesCircle from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import InfoCircle from '@patternfly/react-icons/dist/js/icons/info-circle-icon';
-import AppDeployNamespaceSelector from "./AppDeployNamespaceSelector";
 import { useSelector } from "react-redux";
 import {
     getDeploymentOptions,
@@ -35,7 +25,7 @@ const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 const host = window.location.host;
 const SERVER = `${protocol}${host}`;
 
-export default function AppDeployController() {
+export default function AppDeployModal({buttonLabel, disabled, buttonVariant}) {
     
     const deploymentOptions = useSelector(getDeploymentOptions);
     const initialResponse = { message: "Initiating deployment connection..."};
@@ -61,6 +51,7 @@ export default function AppDeployController() {
             setCanCloseModal(true);
             socket.disconnect();
         });
+        console.log(deploymentOptions)
         socket.emit(DEPLOY_EVENT, deploymentOptions);
         setShowModal(true);
     } 
@@ -78,57 +69,47 @@ export default function AppDeployController() {
         return <InfoCircle color="#00AAFF"/>
     }
 
-    const DeployStatusModal = () => {
-        const close = () => { setShowModal(false) }
-        return <React.Fragment>
-                <Modal
-                variant={ModalVariant.small}
-                title="Deploying..."
-                isOpen={showModal}
-                showClose={canCloseModal}
-                onClose={close}
-                actions={[
-                    <Button key="cancel" onClick={close} >
-                        Close
-                    </Button>
-                ]}>
-                    <div style={{height: '14rem', overflow: 'auto'}}>
-                        <ul>
-                            {wsResponses.map((response, index) => {
-                                return <li key={`response-id-${index}`}>
-                                        &nbsp; &nbsp; &nbsp; <StatusIcon index={index} response={response}/> &nbsp; {response.message}
-                                    </li>})
-                            }
-                        </ul>
-                    </div>
-                </Modal>
-      </React.Fragment>
+    const close = () => { setShowModal(false) }
+
+    const getButtonLabel = () => {
+        if (buttonLabel) {
+            return buttonLabel;
+        }
+        return "Deploy";
     }
 
+    const getButtonVariant = () => {
+        if (buttonVariant) {
+            return buttonVariant;
+        }
+        return "primary";
+    }
 
-    return <Card isFullHeight>
-        <CardTitle>
-            <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                Deploy
-            </Title>
-        </CardTitle>
-        <CardBody >
-            <Stack hasGutter>
-                <StackItem>
-                    <AppDeployNamespaceSelector/>
-                </StackItem>
-                <StackItem >
-                    <Split hasGutter>
-                        <SplitItem isFilled/>
-                        <SplitItem>
-                            <Button onClick={Deploy}>
-                                Go
-                            </Button>
-                        </SplitItem>
-                    </Split>
-                </StackItem>
-            </Stack>
-            { DeployStatusModal() }
-        </CardBody>
-    </Card>
+    return <React.Fragment> 
+        <Modal
+        variant={ModalVariant.small}
+        title="Deploying..."
+        isOpen={showModal}
+        showClose={canCloseModal}
+        onClose={close}
+        actions={[
+            <Button key="cancel" onClick={close} >
+                Close
+            </Button>
+        ]}>
+            <div style={{height: '14rem', overflow: 'auto'}}>
+                <ul>
+                    {wsResponses.map((response, index) => {
+                        return <li key={`response-id-${index}`}>
+                                &nbsp; &nbsp; &nbsp; <StatusIcon index={index} response={response}/> &nbsp; {response.message}
+                            </li>})
+                    }
+                </ul>
+            </div>
+        </Modal>
+        <Button onClick={Deploy} isDisabled={disabled} variant={getButtonVariant()}>
+            {getButtonLabel()}
+        </Button>
+    </React.Fragment>
+
 }

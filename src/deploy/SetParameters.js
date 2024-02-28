@@ -61,12 +61,14 @@ export default function SetParameters() {
 
     useEffect(() => {
         // Need to send the selected params and their values to the store
-        //First we need to turn it into an array of strings of the form "component/param=value"
-        const selectedParams = selectedParameters.map((param) => {
-            return param.component+"/"+param.name+"="+param.value
-        })
-        setStoreSetParameter(selectedParams)
-    }, [selectedParameters])
+        // First, we need to turn it into an object with key-value pairs of the form "component/param": "value"
+        const selectedParams = selectedParameters.reduce((acc, param) => {
+            acc[param.component + "/" + param.name] = param.value;
+            return acc;
+        }, {});
+        setStoreSetParameter(selectedParams);
+    }, [selectedParameters]);
+    
 
 
 

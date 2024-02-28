@@ -12,12 +12,14 @@ import {
     TextVariants,
     Split,
     SplitItem,
-    Chip
+    Chip,
+    Button
 } from '@patternfly/react-core';
 import {
     CheckCircleIcon,
     TimesCircleIcon,
 } from '@patternfly/react-icons';
+import AppDeployModal from "./AppDeployModal";
 
 export default function AppDeployReview()  {
     const dispatch = useDispatch();
@@ -73,26 +75,30 @@ export default function AppDeployReview()  {
     }
 
     const SetParameters = () => {
-        if (appDeploySlice.set_parameter.length === 0) {
+        const setParameter = appDeploySlice.set_parameter; 
+    
+        if (Object.keys(setParameter).length === 0) {
             return <TextListItem>
-                    No templarte parameters overridden.
+                No template parameters overridden.
             </TextListItem>
         }
-        return appDeploySlice.set_parameter.map((resource) => {
-            return <TextListItem key={resource}>
+    
+        return Object.entries(setParameter).map(([key, value]) => {
+            return <TextListItem key={key}>
                 <Text style={monospaceStyle}>
-                    {resource}
+                    {key}={value}
                 </Text>
-            </TextListItem>
+                </TextListItem>
         });
     }
+    
 
     return (
         <Stack hasGutter>
             <StackItem>
                 <TextContent>
                     <Text component={TextVariants.h1}>
-                        Review Your Deployment
+                        Review & Deploy
                     </Text>
                 </TextContent>
             </StackItem>
@@ -167,6 +173,19 @@ export default function AppDeployReview()  {
                                         <SetParameters/>
                                     </TextList>
                                 </TextContent>
+                            </StackItem>
+                        </Stack>
+                    </SplitItem>
+                    <SplitItem isFilled/>
+                </Split>
+            </StackItem>
+            <StackItem>
+                <Split hasGutter>
+                    <SplitItem isFilled/>
+                    <SplitItem>
+                        <Stack hasGutter>
+                            <StackItem>
+                               <AppDeployModal />
                             </StackItem>
                         </Stack>
                     </SplitItem>

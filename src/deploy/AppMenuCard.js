@@ -30,6 +30,7 @@ import {
 } from '../store/AppDeploySlice'
 import { getFavoriteApps  } from '../store/AppSlice'
 import SelectedAppsChips  from './SelectedAppsChips';
+import AppDeployModal from './AppDeployModal';
 
 export default function AppMenuCard() {
 
@@ -91,6 +92,9 @@ export default function AppMenuCard() {
         return selectedApps.includes(app.name)
     }
 
+    const selectedAppListEmpty = () => {
+        return selectedApps.length === 0
+    }
 
     return <Stack hasGutter>
         <StackItem>
@@ -103,7 +107,7 @@ export default function AppMenuCard() {
         <StackItem>
             <TextContent>
                 <Text>
-                    Select the apps you want to deploy. You can filter the list by typing in the search box. You can also filter the list to show only your favorite apps.
+                    Select the apps you want to deploy. You can filter the list by typing in the search box. You can also filter the list to show only your favorite apps. Press the Quick Deploy button to deploy the selected apps with default options.
                 </Text>
             </TextContent>
         </StackItem>
@@ -137,6 +141,14 @@ export default function AppMenuCard() {
                     </Split>
                 </MenuFooter>
             </Menu>        
+        </StackItem>
+        <StackItem>
+            <Split>
+                <SplitItem isFilled/>
+                <SplitItem> 
+                    <AppDeployModal buttonLabel="Quick Deploy" disabled={selectedAppListEmpty()} buttonVariant="secondary"/>
+                </SplitItem>
+            </Split>
         </StackItem>
     </Stack>
 

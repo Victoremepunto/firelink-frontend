@@ -31,7 +31,7 @@ import {
   getDarkMode,
   setDarkMode
 } from './store/AppSlice';
-import { setRequester } from './store/AppDeploySlice';
+import { setAppDeployRequester } from './store/AppDeploySlice';
 import { ReactSVG } from 'react-svg';
 
 
@@ -58,7 +58,7 @@ function App() {
   }, []); // Run once when the component mounts
 
   useEffect(() => {
-    dispatch(setRequester(requester));
+    dispatch(setAppDeployRequester(requester));
 }, [requester]);
 
 

@@ -35,18 +35,18 @@ import {
     getAppDeployNoRemoveResources,
     getAppDeployRemoveDependencies,
     clearAppDeployOptions,
-    getAppDeployListIsEmpty
+    getAppDeployListIsEmpty,
+    setAppDeployRequester,
 } from '../store/AppDeploySlice';
 import AppMenuCard from './AppMenuCard';
-import AppDeployController from './AppDeployControllerCard';
 import AppDeoployOptions from './AppDeployOptionsCard';
 import ResourceSelector from './ResourceSelector';
 import AppDeployNamespaceSelector from './AppDeployNamespaceSelector';
 import SetParameters from './SetParameters';
 import AppDeployReview from './AppDeployReview';
-import {
-    clearAll
-} from '../store/ParamSelectorSlice';
+import { clearAll } from '../store/ParamSelectorSlice';
+import { getRequester } from '../store/AppSlice';
+
 // AppDeploy is the parent component to the app deploy page
 // It ensures redux is hydrated with the app and namespace lists, but that's all it does
 // It mantains no state and passes no state to its children
@@ -65,6 +65,7 @@ export default function AppDeploy() {
     const isNamespacesEmpty = useSelector(getIsNamespacesEmpty);
     const isAppsEmpty = useSelector(getIsAppsEmpty);
     const deployAppListEmpty = useSelector(getAppDeployListIsEmpty);
+    const requester = useSelector(getRequester);
 
     const getNoRemoveResources = useSelector(getAppDeployNoRemoveResources);
     const getRemoveDependencies = useSelector(getAppDeployRemoveDependencies);    
@@ -73,12 +74,14 @@ export default function AppDeploy() {
     // Actions
     const setNoRemoveResourcesAction = (value) => { dispatch(setNoRemoveResources(value)) }
     const setRemoveDependenciesAction = (value) => { dispatch(setRemoveDependencies(value)) }
-
+    const setRequesterAction = (value) => { dispatch(setAppDeployRequester(value)) }
 
 
     useEffect(() => {
         dispatch(clearAll());
         dispatch(clearAppDeployOptions());
+        //Need to reset the requester here 
+        setRequesterAction(requester)
     }, [])
     
     // Load the app list if the app list is empty
@@ -206,11 +209,8 @@ export default function AppDeploy() {
                     <WizardStep name="Set Parameters" id="step-4" footer={{ isCancelHidden: true }}>
                         <SetParameters />
                     </WizardStep>
-                    <WizardStep name="Review" id="step-7" footer={{ isCancelHidden: true }}>
+                    <WizardStep name="Review & Deploy" id="step-7" footer={{ isCancelHidden: true, isNextDisabled: true }}>
                         <AppDeployReview />
-                    </WizardStep>
-                    <WizardStep name="Deploy" id="step-8" footer={{ isCancelHidden: true }}>
-                        <AppDeployController />
                     </WizardStep>
                 </Wizard>
             )}
