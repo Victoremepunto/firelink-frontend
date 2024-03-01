@@ -12,6 +12,7 @@ import { Store, Persistor } from './store/Store'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react';
 import { createRoot } from 'react-dom/client';
+import Recipes from './recipes/Recipes';
 
 
 const container = document.getElementById('root');
@@ -32,6 +33,8 @@ root.render(
             <Route key="app-list" path="/apps/list" element={<AppList />} />
             <Route key="app-deploy" path="/apps/deploy/:appParam" element={<AppDeploy />} />
             <Route key="app-deploy" path="/apps/deploy" element={<AppDeploy />} />
+
+            <Route key="recipes" path="/recipes" element={<Recipes />} />
 
           </Route>
         </Routes>

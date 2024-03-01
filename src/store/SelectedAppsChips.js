@@ -9,9 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import {
     getAppNames,
-} from '../store/AppDeploySlice';
+} from './AppDeploySlice';
 
-export default function SelectedAppsChips() {
+export default function SelectedAppsChips({appList}) {
 
     const apps = useSelector(getAppNames);
 
@@ -21,6 +21,13 @@ export default function SelectedAppsChips() {
                 <Chip key='empty' isReadOnly>
                     None
                 </Chip>
+            </ChipGroup>;
+        }
+        if (appList) {
+            return <ChipGroup categoryName='Selected Apps'>
+                {appList.map(currentChip => <Chip key={currentChip} isReadOnly>
+                    {currentChip}
+                </Chip>)}
             </ChipGroup>;
         }
         return <ChipGroup categoryName='Selected Apps'>
