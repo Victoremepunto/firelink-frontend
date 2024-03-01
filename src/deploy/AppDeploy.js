@@ -45,6 +45,7 @@ import AppDeoployOptions from './AppDeployOptionsCard';
 import ResourceSelector from './ResourceSelector';
 import AppDeployNamespaceSelector from './AppDeployNamespaceSelector';
 import SetParameters from './SetParameters';
+import ImageTagOverrides from './ImageTagOverrides';
 import AppDeployReview from './AppDeployReview';
 import { clearAll } from '../store/ParamSelectorSlice';
 import { getRequester } from '../store/AppSlice';
@@ -226,7 +227,7 @@ export default function AppDeploy() {
                         <SetParameters />
                     </WizardStep>
                     <WizardStep name="Image Tag Overrides" id="step-44" footer={{ isCancelHidden: true }} isHidden={!advancedMode}>
-                        <SetParameters />
+                        <ImageTagOverrides />
                     </WizardStep>
                     <WizardStep name="Review & Deploy" id="step-7" footer={{ isCancelHidden: true, isNextDisabled: true }}>
                         <AppDeployReview />

@@ -13,7 +13,9 @@ import {
     Split,
     SplitItem,
     Chip,
-    Button
+    Button,
+    Grid,
+    GridItem,
 } from '@patternfly/react-core';
 import {
     CheckCircleIcon,
@@ -92,20 +94,46 @@ export default function AppDeployReview()  {
         });
     }
     
+    const ImageTagOverrides = () => {
+        const overrides = appDeploySlice.set_image_tag; 
+    
+        if (Object.keys(overrides).length === 0) {
+            return <TextListItem>
+                No image tags overridden.
+            </TextListItem>
+        }
+    
+        return Object.entries(overrides).map(([key, value]) => {
+            return <TextListItem key={key}>
+                <Text style={monospaceStyle}>
+                    {key}={value}
+                </Text>
+                </TextListItem>
+        });
+    }
 
     return (
         <Stack hasGutter>
             <StackItem>
-                <TextContent>
-                    <Text component={TextVariants.h1}>
-                        Review & Deploy
-                    </Text>
-                </TextContent>
-            </StackItem>
-            <StackItem>
-                <Split hasGutter>
+                <Split>
+                    <SplitItem>
+                        <TextContent>
+                            <Text component={TextVariants.h1}>
+                                Review & Deploy
+                            </Text>
+                        </TextContent>
+                    </SplitItem>
                     <SplitItem isFilled/>
                     <SplitItem>
+                        <AppDeployModal />
+                    </SplitItem>
+                </Split>
+
+            </StackItem>
+            <StackItem>
+                <Grid hasGutter>
+                    <GridItem span={1}/>
+                    <GridItem span={5}>
                         <Stack hasGutter>
                             <StackItem>
                                 <TextContent>
@@ -119,7 +147,6 @@ export default function AppDeployReview()  {
                                 <TextContent>
                                     <Text component={TextVariants.h2}>
                                         Namespace
-                                        
                                     </Text>
                                     <Namespace />
                                 </TextContent>
@@ -141,8 +168,8 @@ export default function AppDeployReview()  {
                                 </TextContent>
                             </StackItem>
                         </Stack>
-                    </SplitItem>
-                    <SplitItem>
+                    </GridItem>
+                    <GridItem span={5}>
                         <Stack hasGutter>
                             <StackItem>
                                 <TextContent>
@@ -174,25 +201,21 @@ export default function AppDeployReview()  {
                                     </TextList>
                                 </TextContent>
                             </StackItem>
-                        </Stack>
-                    </SplitItem>
-                    <SplitItem isFilled/>
-                </Split>
-            </StackItem>
-            <StackItem>
-                <Split hasGutter>
-                    <SplitItem isFilled/>
-                    <SplitItem>
-                        <Stack hasGutter>
                             <StackItem>
-                               <AppDeployModal />
+                                <TextContent>
+                                    <Text component={TextVariants.h2}>
+                                        Image Tag Overrides
+                                    </Text>
+                                    <TextList >
+                                        <ImageTagOverrides/>
+                                    </TextList>
+                                </TextContent>
                             </StackItem>
                         </Stack>
-                    </SplitItem>
-                    <SplitItem isFilled/>
-                </Split>
+                    </GridItem>
+                    <GridItem span={1}/>
+                </Grid>
             </StackItem>
-
         </Stack>
     );
 }

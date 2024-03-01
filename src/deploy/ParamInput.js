@@ -3,12 +3,7 @@ import { StackItem, FormGroup, TextInputGroup, TextInput, Button } from '@patter
 import { useDispatch } from 'react-redux';
 import { TimesCircleIcon } from '@patternfly/react-icons';
 import {
-    createStoreOptionsFromApps,
     addOrRemoveStoreSelectedParameter,
-    setStoreOptions,
-    getStoreOptions,
-    getStoreSelectedParameters,
-    setStoreSelectedParameters
 } from "../store/ParamSelectorSlice";
 
 const ParamInput = ({ param, onParamChange }) => {
