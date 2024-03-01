@@ -45,6 +45,8 @@ export default function AppDeployoptionsCard() {
     // Use redux for all the state we're going to send for deploy
     const frontends = useSelector(getAppDeployFrontends);
     const setStoreFrontends = (value) => { dispatch(setFrontends(value)) }
+
+    
     const noReleaseOnFail = useSelector(getAppDeployNoReleaseOnFail);
     const setStoreNoReleaseOnFail = (value) => { dispatch(setNoReleaseOnFail(value)) }
     const pool = useSelector(getAppDeployPool);

@@ -18,6 +18,7 @@ import {
     StackItem,
     Alert,
     TextVariants,
+    Switch,
 } from '@patternfly/react-core';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -26,6 +27,7 @@ import {
     getIsNamespacesEmpty,
     loadApps,
     loadNamespaces,
+    getMyReservations
 } from '../store/ListSlice';
 import {
     addOrRemoveApp,
@@ -66,6 +68,7 @@ export default function AppDeploy() {
     const isAppsEmpty = useSelector(getIsAppsEmpty);
     const deployAppListEmpty = useSelector(getAppDeployListIsEmpty);
     const requester = useSelector(getRequester);
+    const reservations = useSelector(getMyReservations(requester));
 
     const getNoRemoveResources = useSelector(getAppDeployNoRemoveResources);
     const getRemoveDependencies = useSelector(getAppDeployRemoveDependencies);    
@@ -75,6 +78,9 @@ export default function AppDeploy() {
     const setNoRemoveResourcesAction = (value) => { dispatch(setNoRemoveResources(value)) }
     const setRemoveDependenciesAction = (value) => { dispatch(setRemoveDependencies(value)) }
     const setRequesterAction = (value) => { dispatch(setAppDeployRequester(value)) }
+
+    const [advancedMode, setAdvancedMode] = useState(false);
+    const [showNamespaceStep, setShowNamespaceStep] = useState(false);
 
 
     useEffect(() => {
@@ -99,6 +105,12 @@ export default function AppDeploy() {
             dispatch(loadNamespaces());
         }
     }, [dispatch, isNamespacesEmpty])
+
+    useEffect(() => {
+        if (reservations.length > 0) {
+            setShowNamespaceStep(true);
+        }
+    }, [reservations])
 
     // Add the app to the list of selected apps if the appParam is set
     // appParam is taken from the query string
@@ -136,6 +148,7 @@ export default function AppDeploy() {
         return "Loading...";
     }
 
+
     return <Page>
         <PageSection variant={PageSectionVariants.light}>
             <Split>
@@ -151,17 +164,20 @@ export default function AppDeploy() {
             {isAppsEmpty ? (
                 <Loading message={loadingMessage()}/>
             ) : (
-                <Wizard isVisitRequired>
+                <Wizard 
+                isVisitRequired>
                     <WizardStep name="Apps" id="step-1" footer={{ isNextDisabled: deployAppListEmpty, isCancelHidden: true }}>
-                        <AppMenuCard />
+                        <AppMenuCard>
+                            <Switch id="app-deploy-switch" label="Advanced Options"  isChecked={advancedMode} onChange={() => setAdvancedMode(!advancedMode)} isReversed/>
+                        </AppMenuCard>
                     </WizardStep>
-                    <WizardStep name="Namespace" id="step-12" footer={{ isCancelHidden: true }}>
+                    <WizardStep name="Namespace" id="step-12" footer={{ isCancelHidden: true }} isHidden={!showNamespaceStep}>
                         <AppDeployNamespaceSelector/>
                     </WizardStep>
                     <WizardStep name="Options" id="step-2" footer={{ isCancelHidden: true }}>
                         <AppDeoployOptions />
                     </WizardStep>
-                    <WizardStep name="Preserve Resources" id="step-3" footer={{ isCancelHidden: true }}>
+                    <WizardStep name="Preserve Resources" id="step-3" footer={{ isCancelHidden: true }} isHidden={!advancedMode}>
                         <Stack hasGutter>
                             <StackItem>
                                 <TextContent>
@@ -185,7 +201,7 @@ export default function AppDeploy() {
                             </StackItem>
                         </Stack>
                     </WizardStep>
-                    <WizardStep name="Omit Dependencies" id="step-6" footer={{ isCancelHidden: true }}>
+                    <WizardStep name="Omit Dependencies" id="step-6" footer={{ isCancelHidden: true }}  isHidden={!advancedMode}>
                         <Stack hasGutter>
                             <StackItem>
                                 <TextContent>
@@ -206,7 +222,10 @@ export default function AppDeploy() {
                             </StackItem>
                         </Stack>
                     </WizardStep>
-                    <WizardStep name="Set Parameters" id="step-4" footer={{ isCancelHidden: true }}>
+                    <WizardStep name="Set Parameters" id="step-4" footer={{ isCancelHidden: true }}  isHidden={!advancedMode}>
+                        <SetParameters />
+                    </WizardStep>
+                    <WizardStep name="Image Tag Overrides" id="step-44" footer={{ isCancelHidden: true }} isHidden={!advancedMode}>
                         <SetParameters />
                     </WizardStep>
                     <WizardStep name="Review & Deploy" id="step-7" footer={{ isCancelHidden: true, isNextDisabled: true }}>

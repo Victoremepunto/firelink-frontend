@@ -32,7 +32,7 @@ import { getFavoriteApps  } from '../store/AppSlice'
 import SelectedAppsChips  from './SelectedAppsChips';
 import AppDeployModal from './AppDeployModal';
 
-export default function AppMenuCard() {
+export default function AppMenuCard(props) {
 
     const dispatch = useDispatch();
 
@@ -98,11 +98,19 @@ export default function AppMenuCard() {
 
     return <Stack hasGutter>
         <StackItem>
-            <TextContent>
-                <Text component={TextVariants.h1}>
-                    Select Apps to Deploy
-                </Text>
-            </TextContent>
+            <Split>
+                <SplitItem>
+                    <TextContent>
+                        <Text component={TextVariants.h1}>
+                            Select Apps to Deploy
+                        </Text>
+                    </TextContent>
+                </SplitItem>
+                <SplitItem isFilled/>
+                <SplitItem>
+                    {props.children}
+                </SplitItem>
+            </Split>
         </StackItem>
         <StackItem>
             <TextContent>
