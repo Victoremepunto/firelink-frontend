@@ -8,6 +8,8 @@ import DescribeLink from '../shared/DescribeLink';
 
 import { Icon } from '@patternfly/react-core';
 import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
+import CheckCircleIcon from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
+import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -103,7 +105,7 @@ export default function NamespaceListTable({namespaces, showJustMyReservations})
         name: 'Name',
         reserved: 'Reserved',
         status: 'Status',
-        clowdapps: 'ClowdApps Ready',
+        clowdapps: 'ClowdApps',
         requester: 'Requester',
         pool_type: 'Pool Type',
         expires_in: 'Expires in'
@@ -131,47 +133,101 @@ export default function NamespaceListTable({namespaces, showJustMyReservations})
         return <Table aria-label="Simple table" borders={'default'} isStriped key="namespace-list-table">
             <Thead key="thead">
             <Tr key="header-row">
-                <Th>{columnNames.name} </Th>
-                <Th>{columnNames.reserved}</Th>
-                <Th>{columnNames.status}</Th>
-                <Th>{columnNames.clowdapps}</Th>
-                <Th>{columnNames.requester}</Th>
-                <Th>{columnNames.pool_type}</Th>
-                <Th>{columnNames.expires_in}</Th>
-                <Th>    <Icon>
+                <Th textCenter >{columnNames.name} </Th>
+                <Th textCenter >{columnNames.reserved}</Th>
+                <Th textCenter >{columnNames.status}</Th>
+                <Th textCenter >{columnNames.clowdapps}</Th>
+                <Th textCenter >{columnNames.requester}</Th>
+                <Th textCenter >{columnNames.pool_type}</Th>
+                <Th textCenter >{columnNames.expires_in}</Th>
+                <Th textCenter >    <Icon>
         <CogIcon />
         </Icon></Th>
             </Tr>
             </Thead>
             <Tbody key="tbody">
                 <Tr key="filter-row">
-                <Td style={{padding: "0.2em"}}></Td>
-                <Td style={{padding: "0.2em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="reserved" filter={filter} setFilter={setFilter}/></Td>
-                <Td style={{padding: "0em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="status" filter={filter} setFilter={setFilter}/></Td>
-                <Td style={{padding: "0em"}}></Td>
-                <Td style={{padding: "0em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="requester" filter={filter} setFilter={setFilter}/></Td>
-                <Td style={{padding: "0em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="pool_type" filter={filter} setFilter={setFilter}/></Td>
-                <Td style={{padding: "0em"}}></Td>
-                <Td style={{padding: "0em"}}></Td>
+                <Td textCenter style={{padding: "0.2em"}}></Td>
+                <Td textCenter style={{padding: "0.2em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="reserved" filter={filter} setFilter={setFilter}/></Td>
+                <Td textCenter style={{padding: "0em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="status" filter={filter} setFilter={setFilter}/></Td>
+                <Td textCenter style={{padding: "0em"}}></Td>
+                <Td textCenter style={{padding: "0em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="requester" filter={filter} setFilter={setFilter}/></Td>
+                <Td textCenter style={{padding: "0em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="pool_type" filter={filter} setFilter={setFilter}/></Td>
+                <Td textCenter style={{padding: "0em"}}></Td>
+                <Td textCenter style={{padding: "0em"}}></Td>
                 </Tr>
                 {filteredNamespaces.map(namespace => <Tr key={namespace.namespace}>
-                    <Td dataLabel={columnNames.name}>
+                    <Td textCenter dataLabel={columnNames.name}>
                         <DescribeLink namespace={namespace.namespace}/>
                     </Td>
-                    <Td dataLabel={columnNames.reserved}>{namespace.reserved.toString()}</Td>
-                    <Td dataLabel={columnNames.status}>{namespace.status}</Td>
-                    <Td dataLabel={columnNames.clowdapps}>{namespace.clowdapps}</Td>
-                    <Td dataLabel={columnNames.requester}>{namespace.requester}</Td>
-                    <Td dataLabel={columnNames.poolType}>{namespace.pool_type}</Td>
-                    <Td dataLabel={columnNames.expiresIn}>{namespace.expires_in}</Td>
+                    <Td textCenter dataLabel={columnNames.reserved}>
+                        { namespace.reserved ? <CheckCircleIcon style={{color: "green"}}/> : ""}
+                    </Td>
+                    <Td textCenter dataLabel={columnNames.status}>
+                        { namespace.status ? <CheckCircleIcon style={{color: "green"}}/> : <TimesCircleIcon style={{color: "red"}}/> }
+                    </Td>
+                    <Td textCenter dataLabel={columnNames.clowdapps}>
+                        { namespace.clowdapps === "none" ? "" : namespace.clowdapps }
+                    </Td>
+                    <Td textCenter dataLabel={columnNames.requester}>{namespace.requester}</Td>
+                    <Td textCenter dataLabel={columnNames.poolType}>{namespace.pool_type}</Td>
+                    <Td textCenter dataLabel={columnNames.expiresIn}>
+                        { namespace.expires_in === "TBD" ? "" : namespace.expires_in }
+                    </Td>
                     {actionRow(namespace, requester)}
                     </Tr>)}
             </Tbody>
         </Table>
     }
 
-    return <React.Fragment>
-        {outputJSX()}
+    return <React.Fragment>{ showReleaseModal ? <Loading message="Releasing namespace..."/> : <Table aria-label="Simple table" borders={'default'} isStriped key="namespace-list-table">
+        <Thead key="thead">
+        <Tr key="header-row">
+            <Th textCenter >{columnNames.name} </Th>
+            <Th textCenter >{columnNames.reserved}</Th>
+            <Th textCenter >{columnNames.status}</Th>
+            <Th textCenter >{columnNames.clowdapps}</Th>
+            <Th textCenter >{columnNames.requester}</Th>
+            <Th textCenter >{columnNames.pool_type}</Th>
+            <Th textCenter >{columnNames.expires_in}</Th>
+            <Th textCenter >    <Icon>
+    <CogIcon />
+    </Icon></Th>
+        </Tr>
+        </Thead>
+        <Tbody key="tbody">
+            <Tr key="filter-row">
+            <Td textCenter style={{padding: "0.2em"}}></Td>
+            <Td textCenter style={{padding: "0.2em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="reserved" filter={filter} setFilter={setFilter}/></Td>
+            <Td textCenter style={{padding: "0em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="status" filter={filter} setFilter={setFilter}/></Td>
+            <Td textCenter style={{padding: "0em"}}></Td>
+            <Td textCenter style={{padding: "0em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="requester" filter={filter} setFilter={setFilter}/></Td>
+            <Td textCenter style={{padding: "0em"}}><FilterDropdown sourceArray={filteredNamespaces} sourceColumn="pool_type" filter={filter} setFilter={setFilter}/></Td>
+            <Td textCenter style={{padding: "0em"}}></Td>
+            <Td textCenter style={{padding: "0em"}}></Td>
+            </Tr>
+            {filteredNamespaces.map(namespace => <Tr key={namespace.namespace}>
+                <Td textCenter dataLabel={columnNames.name}>
+                    <DescribeLink namespace={namespace.namespace}/>
+                </Td>
+                <Td textCenter dataLabel={columnNames.reserved}>
+                    { namespace.reserved ? <CheckCircleIcon style={{color: "green"}}/> : ""}
+                </Td>
+                <Td textCenter dataLabel={columnNames.status}>
+                    { namespace.status ? <CheckCircleIcon style={{color: "green"}}/> : <TimesCircleIcon style={{color: "red"}}/> }
+                </Td>
+                <Td textCenter dataLabel={columnNames.clowdapps}>
+                    { namespace.clowdapps === "none" ? "" : namespace.clowdapps }
+                </Td>
+                <Td textCenter dataLabel={columnNames.requester}>{namespace.requester}</Td>
+                <Td textCenter dataLabel={columnNames.poolType}>{namespace.pool_type}</Td>
+                <Td textCenter dataLabel={columnNames.expiresIn}>
+                    { namespace.expires_in === "TBD" ? "" : namespace.expires_in }
+                </Td>
+                {actionRow(namespace, requester)}
+                </Tr>)}
+        </Tbody>
+    </Table> }
     </React.Fragment>
 
 }

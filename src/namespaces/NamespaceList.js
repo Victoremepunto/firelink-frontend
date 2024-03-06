@@ -23,6 +23,7 @@ import FadeInFadeOut from '../shared/FadeInFadeOut';
 function ReservationList() {
 
   const [showJustMyReservations, setShowJustMyReservations] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(false);
 
   const dispatch = useDispatch();
   const isNamespacesEmpty = useSelector(getIsNamespacesEmpty);
@@ -37,6 +38,17 @@ function ReservationList() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
+  useEffect(() => {
+    let interval;
+    if (autoRefresh) {
+      interval = setInterval(() => {
+        dispatch(loadNamespaces());
+      }, 10000); 
+    }
+    return () => clearInterval(interval); 
+  }, [autoRefresh, dispatch]);
 
    let outputJSX = {}
 
@@ -61,7 +73,15 @@ function ReservationList() {
               Namespaces
             </Title>
           </SplitItem >
-          <SplitItem isFilled></SplitItem>        
+          <SplitItem isFilled></SplitItem>
+          <SplitItem>
+            <Switch id="namespace-list-my-reservations"
+              label="Auto Refresh"
+              labelOff="Auto Refresh"
+              isChecked={autoRefresh}
+              isReversed
+              onChange={() => { setAutoRefresh(!autoRefresh) }}/>
+          </SplitItem>         
           <SplitItem>
             <Switch id="namespace-list-my-reservations"
               label="My Reservations"
