@@ -3,11 +3,6 @@ import {
 	Stack,
 	Split,
 	SplitItem,
-	Card,
-	CardTitle,
-	CardBody,
-	Title,
-	TitleSizes,
 	StackItem,
     Menu,
     MenuContent,
@@ -19,6 +14,9 @@ import {
     MenuSearchInput,
     SearchInput,
     Switch,
+    TextContent,
+    TextVariants,
+    Text,
 } from '@patternfly/react-core';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -28,10 +26,13 @@ import {
     getAppNames,
     addOrRemoveAppName,
     addOrRemoveApp,
+    clearResourcesAndDependencies,
 } from '../store/AppDeploySlice'
 import { getFavoriteApps  } from '../store/AppSlice'
+import SelectedAppsChips  from '../shared/SelectedAppsChips';
+import AppDeployModal from './AppDeployModal';
 
-export default function AppMenuCard() {
+export default function AppMenuCard(props) {
 
     const dispatch = useDispatch();
 
@@ -66,15 +67,21 @@ export default function AppMenuCard() {
         }
     }, [filteredApps])
 
-
     const toggleShowFavoriteApps = () => {
         setShowFavoriteApps(!showFavoriteApps)
     }
 
-
     const onAppSelect = (_event, selectedApp) => {
         dispatch(addOrRemoveAppName(selectedApp.name))
         dispatch(addOrRemoveApp(selectedApp))
+        // This wipes out all four resource and dependency lists
+        // We need to do this because the user may have selected a different app
+        // and that means that the resources and dependencies for the new app are different
+        // so any the user previously selected may not be valid
+        // This is a bit nuclear, I know
+        // But the logic required to reconcile the old resources and dependencies with the new app
+        // is a bit much for me right now
+        dispatch(clearResourcesAndDependencies())
       };
 
     const isAppFavorite = (app) => {
@@ -85,55 +92,72 @@ export default function AppMenuCard() {
         return selectedApps.includes(app.name)
     }
 
-    const AppMenuItem = (app, index) => {
-        return <MenuItem hasCheckbox isSelected={isAppSelected(app)} isFavorited={isAppFavorite(app)} key={`${app.name}-${index}`} itemId={app}>
-            {app.friendly_name}
-        </MenuItem>
+    const selectedAppListEmpty = () => {
+        return selectedApps.length === 0
     }
 
-    const AppMenuItems = () => {
-        return filteredApps.map((app, index) => {
-            return AppMenuItem(app, index)
-        })
-    }
-  
-    const AppMenu = () => {
-        return <Menu onSelect={onAppSelect} isScrollable>
-            <MenuSearch>
-                <MenuSearchInput>
-                    <SearchInput ref={menuFilterInputRef} value={menuFilter} aria-label="Filter menu items" onChange={(_event, value) => setMenuFilter(value)} />
-                </MenuSearchInput>
-            </MenuSearch>
-            <Divider />
+    return <Stack hasGutter>
+        <StackItem>
+            <Split>
+                <SplitItem>
+                    <TextContent>
+                        <Text component={TextVariants.h1}>
+                            Select Apps to Deploy
+                        </Text>
+                    </TextContent>
+                </SplitItem>
+                <SplitItem isFilled/>
+                <SplitItem>
+                    {props.children}
+                </SplitItem>
+            </Split>
+        </StackItem>
+        <StackItem>
+            <TextContent>
+                <Text>
+                    Select the apps you want to deploy. You can filter the list by typing in the search box. You can also filter the list to show only your favorite apps. Press the Quick Deploy button to deploy the selected apps with default options.
+                </Text>
+            </TextContent>
+        </StackItem>
+        <StackItem>
+            <SelectedAppsChips />
+        </StackItem>
+        <StackItem>
+            <Menu onSelect={onAppSelect} isScrollable>
+                <MenuSearch>
+                    <MenuSearchInput>
+                        <SearchInput ref={menuFilterInputRef} value={menuFilter} aria-label="Filter menu items" onChange={(_event, value) => setMenuFilter(value)} />
+                    </MenuSearchInput>
+                </MenuSearch>
+                <Divider />
+                <Divider />
+                <MenuContent>
+                    <MenuList >
+                        {filteredApps.map((app, index) => {
+                            return <MenuItem hasCheckbox isSelected={isAppSelected(app)} isFavorited={isAppFavorite(app)} key={`${app.name}-${index}`} itemId={app}>
+                                {app.friendly_name}
+                            </MenuItem>
+                        })}
+                    </MenuList>
+                </MenuContent>
+                <MenuFooter>
+                    <Split hasGutter>
+                        <SplitItem isFilled/>
+                        <SplitItem>
+                            <Switch label="Favorites" id="show-favorites" isChecked={showFavoriteApps} onChange={toggleShowFavoriteApps} />
+                        </SplitItem>
+                    </Split>
+                </MenuFooter>
+            </Menu>        
+        </StackItem>
+        <StackItem>
+            <Split>
+                <SplitItem isFilled/>
+                <SplitItem> 
+                    <AppDeployModal buttonLabel="Quick Deploy" disabled={selectedAppListEmpty()} buttonVariant="secondary"/>
+                </SplitItem>
+            </Split>
+        </StackItem>
+    </Stack>
 
-            <Divider />
-            <MenuContent maxMenuHeight='40rem' >
-                <MenuList >
-                    <AppMenuItems />
-                </MenuList>
-            </MenuContent>
-
-            <MenuFooter>
-                <Split hasGutter>
-                    <SplitItem isFilled/>
-                    <SplitItem>
-                        <Switch label="Favorites" id="show-favorites" isChecked={showFavoriteApps} onChange={toggleShowFavoriteApps} />
-                    </SplitItem>
-                </Split>
-            </MenuFooter>
-
-        </Menu>
-    }
-
-    return <Card className="pf-u-box-shadow-md" isFullHeight>
-        <CardTitle>
-            <Title headingLevel="h3" size={TitleSizes['3x1']}>
-                Apps
-            </Title>
-        </CardTitle>
-        <CardBody>
-
-                    <AppMenu />
-        </CardBody>
-    </Card>
 }

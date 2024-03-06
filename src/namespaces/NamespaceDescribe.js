@@ -18,8 +18,14 @@ import {
     TitleSizes, 
     CardBody, 
     InputGroupItem, 
-    SplitItem 
+    SplitItem,
+    EmptyState,
+    EmptyStateVariant,
+    EmptyStateHeader,
+    EmptyStateBody,
+    EmptyStateIcon
 } from '@patternfly/react-core';
+import { CubesIcon } from '@patternfly/react-icons';
 import FadeInFadeOut from '../shared/FadeInFadeOut';
 
 function ReservationList() {
@@ -72,9 +78,18 @@ function ReservationList() {
         setParsedDescription(description.split("\n"))
     }, [description]);
 
+    const NoNamespaceLoaded = () => {
+        return <EmptyState variant={EmptyStateVariant.lg}>
+            <EmptyStateHeader titleText="No Namespace Loaded" headingLevel="h4" icon={<EmptyStateIcon icon={CubesIcon} />} />
+            <EmptyStateBody>
+                No namespace selected. Enter a namespace name in the input box above to get started.
+            </EmptyStateBody>
+        </EmptyState>
+    }
+
     const descriptionJSX = () => { 
         if ( !showResponseCard) {
-            return <React.Fragment></React.Fragment>
+            return <NoNamespaceLoaded/>
         }
         return <React.Fragment>
             <Card>

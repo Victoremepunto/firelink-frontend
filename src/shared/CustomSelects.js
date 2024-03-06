@@ -8,8 +8,10 @@ import {
 
 
 const availablePools = ['default','minimal','managed-kafka','real-managed-kafka']
-const availableDurations = ['1h','4h','8h','12h', '16h', '24h']
+const availableDurations = ['1h','4h','8h']
 const optionalDepsMethods = ["hyrbid", "all", "none"];
+const referenceEnvironments = ["insights-stage", "insights-prod", "main branch"];
+const targetEnvironments = ["insights-ephemeral", "insight-stage", "insights-prod"];
 
 const DefaultPool = availablePools[0]
 const DefaultDuration = availableDurations[0]
@@ -42,5 +44,21 @@ const OptionalDepsMethodSelectList = ({value, setValue}) => {
     return <SelectList label='Optional Dependencies Method'  value={value} setValue={setValue} options={optionalDepsMethods}/>
 }
 
+const ReferenceEnvironmentSelectList = ({value, setValue, label}) => {
+    return <SelectList label={label}  value={value} setValue={setValue} options={referenceEnvironments}/>
+}
 
-export {SelectList, PoolSelectList, DurationSelectList, OptionalDepsMethodSelectList, DefaultPool, DefaultDuration}
+const TargetEnvironmentSelectList = ({value, setValue}) => {
+    return <SelectList label='Template Parameter Value Source'  value={value} setValue={setValue} options={targetEnvironments}/>
+}
+
+export {
+    SelectList, 
+    PoolSelectList, 
+    DurationSelectList, 
+    OptionalDepsMethodSelectList, 
+    ReferenceEnvironmentSelectList,
+    TargetEnvironmentSelectList,
+    DefaultPool, 
+    DefaultDuration
+}

@@ -5,8 +5,9 @@ export const appSlice = createSlice({
   name: 'appSlice',
   initialState: {
     requester: "firelink-user",
-    darkMode: false,
-    favoriteApps: []
+    darkMode: true,
+    favoriteApps: [],
+    deployRecipes: [],
   },
   // Reducers - these are the actions that can be dispatched
   reducers: {
@@ -22,15 +23,29 @@ export const appSlice = createSlice({
         state.favoriteApps.push(action.payload)
       }
     },
+    addDeployRecipe: (state, action) => {
+      state.deployRecipes.push(action.payload)
+    },
+    removeDeployRecipe: (state, action) => {
+      state.deployRecipes = state.deployRecipes.filter(recipe => recipe.id !== action.payload.id)
+    },
     removeFavoriteApp: (state, action) => {
       state.favoriteApps = state.favoriteApps.filter(app => app !== action.payload)
     }
   }
 })
 
+export const getRecipeById = (id) => (state) => {
+  return state.appSlice.deployRecipes.find(recipe => recipe.id === id);
+}
+
 // Selectors - these are used to get data from the store
 export const getIsAppFavorite = (app) => (state) => {
   return state.appSlice.favoriteApps.includes(app);
+}
+
+export const getDeployRecipes = (state) => {
+  return state.appSlice.deployRecipes;
 }
 
 export const getDarkMode = (state) => {
@@ -68,6 +83,6 @@ export const loadRequester = () => {
 
 
 
-export const {  setRequester, setDarkMode, setFavoriteApp, removeFavoriteApp } = appSlice.actions
+export const {  setRequester, setDarkMode, setFavoriteApp, removeFavoriteApp, addDeployRecipe, removeDeployRecipe } = appSlice.actions
 
 export default appSlice.reducer

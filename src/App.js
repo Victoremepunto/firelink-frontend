@@ -31,7 +31,7 @@ import {
   getDarkMode,
   setDarkMode
 } from './store/AppSlice';
-import { setRequester } from './store/AppDeploySlice';
+import { setAppDeployRequester } from './store/AppDeploySlice';
 import { ReactSVG } from 'react-svg';
 
 
@@ -58,7 +58,7 @@ function App() {
   }, []); // Run once when the component mounts
 
   useEffect(() => {
-    dispatch(setRequester(requester));
+    dispatch(setAppDeployRequester(requester));
 }, [requester]);
 
 
@@ -85,6 +85,10 @@ function App() {
     dispatch(setDarkMode(!darkMode));
   }
 
+  const goToRecipes = () => {
+    navigate("/recipes");
+  }
+
   const headerDropDown  = <Dropdown isOpen={isOpen} onSelect={onSelect} onOpenChange={isOpen => setIsOpen(isOpen)} toggle={toggleRef => <MenuToggle ref={toggleRef} onClick={onToggleClick} isFullHeight="true" isFullWidth="true"  isExpanded={isOpen}>
     <Avatar src="/user.svg" />
   </MenuToggle>} ouiaId="BasicDropdown" shouldFocusToggleOnSelect> 
@@ -95,6 +99,10 @@ function App() {
     <Divider component="li" key="separator-a" />
     <DropdownItem value={1} key="separated action a">
     <Switch id="simple-switch" label="Dark" labelOff="Light" isChecked={darkMode} onChange={setDarkModeToggle} ouiaId="BasicSwitch" />
+    </DropdownItem>
+    <Divider component="li" key="separator-b" />
+    <DropdownItem value={5} key="separated action b" onClick={goToRecipes}>
+      Recipies
     </DropdownItem>
     <Divider component="li" key="separator-b" />
     <DropdownItem value={5} key="separated action b" onClick={deleteCookie}>

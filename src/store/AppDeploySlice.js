@@ -1,9 +1,6 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 
-// Slice - this is the state and the actions that can be dispatched
-export const appDeploySlice = createSlice({
-  name: 'appDeploySlice',
-  initialState: {
+export const emptyState = {
     //We need to store the apps along with the app_names even though we only send the app_names to the backend
     //We do this because we need other properties of the app object in the UI such as components and template params
     apps: [],
@@ -20,12 +17,15 @@ export const appDeploySlice = createSlice({
     get_dependencies: true,
     optional_deps_method: 'hybrid',
     set_image_tag: {},
-    ref_env: null,
+    ref_env: "insights-stage",
     target_env: 'insights-ephemeral',
     set_template_ref: {},
     set_parameter: {},
-    clowd_env: null,
+    clowd_env: "",
     local_config_path: null,
+    local_config_method: "merge",
+    preferred_params: {},
+    fallback_ref_env: "insights-stage",
     remove_resources: [],
     no_remove_resources: [],
     remove_dependencies: [],
@@ -36,9 +36,26 @@ export const appDeploySlice = createSlice({
     import_secrets: false,
     secrets_dir: '',
     local: true,
-  },
+}
+
+// Slice - this is the state and the actions that can be dispatched
+export const appDeploySlice = createSlice({
+  name: 'appDeploySlice',
+  initialState: emptyState,
   // Reducers - these are the actions that can be dispatched
   reducers: {
+    clearAppDeployOptions: (state) => {
+        // Stomp over the entire state property by proptery and set them to their default values
+        Object.keys(emptyState).forEach(key => {
+            state[key] = emptyState[key];
+        })
+    },
+    setAppDeployOptions: (state, action) => {
+        // Stomp over the entire state property by proptery and set them to their default values
+        Object.keys(action.payload).forEach(key => {
+            state[key] = action.payload[key];
+        })
+    },
     addOrRemoveAppName: (state, action) => {
         const index = state.app_names.indexOf(action.payload);
         if (index === -1) {
@@ -56,7 +73,7 @@ export const appDeploySlice = createSlice({
             state.apps.splice(index, 1);
         }
     },
-    setRequester: (state, action) => {
+    setAppDeployRequester: (state, action) => {
         state.requester = action.payload;
     },
     //Reducers for the other options
@@ -92,6 +109,9 @@ export const appDeploySlice = createSlice({
     },
     setRefEnv: (state, action) => {
         state.ref_env = action.payload;
+    },
+    setFallbackRefEnv: (state, action) => {
+        state.fallback_ref_env = action.payload;
     },
     setTargetEnv: (state, action) => {
         state.target_env = action.payload;
@@ -144,6 +164,12 @@ export const appDeploySlice = createSlice({
             state.no_remove_dependencies.splice(index, 1);
         }
     },
+    clearResourcesAndDependencies: (state, action) => {
+        state.remove_resources = [];
+        state.no_remove_resources = [];
+        state.remove_dependencies = [];
+        state.no_remove_dependencies = [];
+    },
     setSingleReplicas: (state, action) => {
         state.single_replicas = action.payload;
     },
@@ -175,6 +201,13 @@ export const getAppDeployApps = createSelector(
     [getAppDeploySlice],
     (opts) => opts.apps
 )
+export const getAppDeployListIsEmpty = createSelector(
+    [getAppDeploySlice],
+    (opts) => {
+        return opts.app_names.length === 0
+    }
+)
+
 export const getAppDeployComponents = createSelector(
     [getAppDeploySlice],
     (opts) => {
@@ -308,6 +341,9 @@ export const getDeploymentOptions = createSelector(
         source: opts.source,
         get_dependencies: opts.get_dependencies,
         optional_deps_method: opts.optional_deps_method,
+        local_config_method: opts.local_config_method,
+        fallback_ref_env: opts.fallback_ref_env,
+        preferred_params: opts.preferred_params,
         set_image_tag: opts.set_image_tag,
         ref_env: opts.ref_env,
         target_env: opts.target_env,
@@ -330,10 +366,12 @@ export const getDeploymentOptions = createSelector(
 
 export const { 
     addOrRemoveAppName, 
-    setRequester, 
+    setAppDeployOptions,
+    setAppDeployRequester, 
     addOrRemoveApp, 
     setDuration,
     setNoReleaseOnFail,
+    clearAppDeployOptions,
     setFrontends,
     setPool,
     setNamespace,
@@ -344,6 +382,7 @@ export const {
     setSetImageTag,
     setRefEnv,
     setTargetEnv,
+    setFallbackRefEnv,
     setTemplateRef,
     setSetParameter,
     setClowdEnv,
@@ -352,6 +391,7 @@ export const {
     setNoRemoveResources,
     setRemoveDependencies,
     setNoRemoveDependencies,
+    clearResourcesAndDependencies,
     setSingleReplicas,
     setName,
     setComponentFilter,
@@ -363,5 +403,7 @@ export const {
     deleteRemoveDependencys,
     deleteNoRemoveDependencys
 } = appDeploySlice.actions
+
+
 
 export default appDeploySlice.reducer

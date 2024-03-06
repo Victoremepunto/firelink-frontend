@@ -1,16 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     Stack,
     StackItem,
-    Card,
-    CardTitle,
-    CardBody,
-    Title,
-    TitleSizes,
-    Checkbox,
     Switch,
-    TextInput,
+    Text,
+    TextContent,
+    TextVariants,
 } from '@patternfly/react-core';
 import { 
     getAppDeployFrontends, 
@@ -22,6 +18,7 @@ import {
     setPool, 
     setDuration,
     setTargetEnv,
+    setFallbackRefEnv,
     getAppDeployTargetEnv,
     getAppDeployRefEnv,
     setRefEnv,
@@ -31,15 +28,15 @@ import {
     setOptionalDepsMethod,
     getAppDeploySingleReplicas,
     setSingleReplicas,
-    getAppDeployRemoveResources,
-    deleteRemoveResources,
-    getAppDeployNoRemoveResources,
-    deleteNoRemoveResources,
-    setRemoveResources,
-    setNoRemoveResources
 } from "../store/AppDeploySlice";
-import { PoolSelectList, DurationSelectList, OptionalDepsMethodSelectList, DefaultPool, DefaultDuration } from "../shared/CustomSelects";
-import AppDeployRemoveSelector  from "./AppDeployRemoveSelector";
+import { 
+    PoolSelectList, 
+    DurationSelectList, 
+    OptionalDepsMethodSelectList, 
+    ReferenceEnvironmentSelectList,
+    TargetEnvironmentSelectList
+} from "../shared/CustomSelects";
+import HelpTip from "../shared/HelpTip";
 
 export default function AppDeployoptionsCard() {
 
@@ -48,6 +45,8 @@ export default function AppDeployoptionsCard() {
     // Use redux for all the state we're going to send for deploy
     const frontends = useSelector(getAppDeployFrontends);
     const setStoreFrontends = (value) => { dispatch(setFrontends(value)) }
+
+    
     const noReleaseOnFail = useSelector(getAppDeployNoReleaseOnFail);
     const setStoreNoReleaseOnFail = (value) => { dispatch(setNoReleaseOnFail(value)) }
     const pool = useSelector(getAppDeployPool);
@@ -58,6 +57,8 @@ export default function AppDeployoptionsCard() {
     const setStoreTargetEnvironment = (value) => { dispatch(setTargetEnv(value)) }
     const refEnv = useSelector(getAppDeployRefEnv);
     const setStoreRefEnv = (value) => { dispatch(setRefEnv(value)) }
+    const fallbackRefEnv = useSelector(getAppDeployRefEnv);
+    const setStoreFallbackRefEnv = (value) => { dispatch(setFallbackRefEnv(value)) }
     const getDependencies = useSelector(getAppDeployGetDependencies);
     const setStoreGetDependencies = (value) => { dispatch(setGetDependencies(value)) }
     const optionDepsMethod = useSelector(getAppDeployOptionalDepsMethod);
@@ -65,55 +66,52 @@ export default function AppDeployoptionsCard() {
     const singleReplicas = useSelector(getAppDeploySingleReplicas);
     const setStoreSingleReplicas = (value) => { dispatch(setSingleReplicas(value)) }
 
-    const removeResources = useSelector(getAppDeployRemoveResources);
-    const setStoreRemoveResources = (value) => { dispatch(setRemoveResources(value)) }
-    const noRemoveResources = useSelector(getAppDeployNoRemoveResources);
-    const setStoreNoRemoveResources = (value) => { dispatch(setNoRemoveResources(value)) }
-
-    const optionalDepsMethods = ["hyrbid", "all", "none"];
-
-    return <Card isFullHeight>
-        <CardTitle>
-            <Title headingLevel="h3" size={TitleSizes.lg}>Options</Title>
-        </CardTitle>
-        <CardBody>
-            <Stack hasGutter>
+    return <Stack hasGutter>
+            <StackItem>
+                <TextContent>
+                    <Text component={TextVariants.h1}>
+                        Set Deployment Options
+                    </Text>
+                </TextContent>
+            </StackItem>
                 <StackItem>
                     <Switch label="Deploy Frontends" isChecked={frontends} onChange={() => { setStoreFrontends(!frontends) }} id="deploy-app-frontends-checkbox" name="deploy-app-frontends-checkbox" />
+                    &nbsp; <HelpTip content="By default, frontends are not deployed. Check to deploy frontends."/>
                 </StackItem>
                 <StackItem>
                     <Switch label="Release Reservation on Fail" isChecked={!noReleaseOnFail} onChange={() => { setStoreNoReleaseOnFail(!noReleaseOnFail) }} id="deploy-app-release-checkbox" name="deploy-app-release-checkbox" />
+                    &nbsp; <HelpTip content="By default, a reservation will be released if the deployment fails. Uncheck to keep the reservation."/>
                 </StackItem>
                 <StackItem>
                     <Switch label="Get Dependencies" isChecked={getDependencies} onChange={() => { setStoreGetDependencies(!getDependencies) }} id="deploy-app-get-deps-checkbox" name="deploy-app-get-deps-checkbox" />
+                    &nbsp; <HelpTip content="Recursively fetch dependencies listed in ClowdApps. Default is True."/>
                 </StackItem>
                 <StackItem>
                     <Switch label="Single Replicas" isChecked={singleReplicas} onChange={() => { setStoreSingleReplicas(!singleReplicas) }} id="deploy-app-single-replicas-checkbox" name="deploy-app-single-replicas-checkbox" />
+                    &nbsp; <HelpTip content="Be default replicas are set to '1' for all deployments."/> 
                 </StackItem>
                 <StackItem>
                     <PoolSelectList value={pool}  setValue={setStorePool}/>
                 </StackItem>
                 <StackItem>
+                    <HelpTip content="Choose how long until the deployment is automatically released."/> &nbsp;
                     <DurationSelectList value={duration}  setValue={setStoreDuration}/>
                 </StackItem>
                 <StackItem>
-                    Target Environment
-                    <TextInput value={targetEnvironment} onChange={(_event, value) => setStoreTargetEnvironment(value)} type="text" id="deploy-app-target-env"/>
+                    <HelpTip content="Choose the environment in app-interface that the ResourceTemplate parameter values should be pulled from."/> &nbsp;
+                    <TargetEnvironmentSelectList value={targetEnvironment} setValue={setStoreTargetEnvironment}/>
                 </StackItem>
                 <StackItem>
-                    Reference Environment
-                    <TextInput value={refEnv} onChange={(_event, value) => setStoreRefEnv(value)} type="text" id="deploy-app-ref-env"/>
+                    <HelpTip content="Choose the environment in app-interface that the git refs / image tag to deploy should be pulled from. Choose Main Branch to pull the HEAD of main or master."/> &nbsp;
+                    <ReferenceEnvironmentSelectList label={'Deploy Version Source'} value={refEnv} setValue={setStoreRefEnv}/>
                 </StackItem>
                 <StackItem>
+                    <HelpTip content="See Deploy Version Source. Fallback is the app-interface deploy target to pull git refs / image tag if there's no target found in Deploy Version Source."/> &nbsp;
+                    <ReferenceEnvironmentSelectList label={'Fallback Deploy Version Source'} value={fallbackRefEnv} setValue={setStoreRefEnv}/>
+                </StackItem>
+                <StackItem>
+                    <HelpTip content="Chose how ClowdApp Optional Dependencies are processed. 'Hybrid', the default behavior, will deploy optional depencies for ClowdApps you explicitely deploy. 'All' will deploy optional dependencies for all ClowdApps."/> &nbsp;
                     <OptionalDepsMethodSelectList value={optionDepsMethod}  setValue={setStoreOptionDepsMethod}/>
                 </StackItem>
-                <StackItem>
-                    <AppDeployRemoveSelector title="Remove Resources" value={removeResources} onSelect={setStoreRemoveResources} defaultValue={"all"}/>  
-                </StackItem>
-                <StackItem>
-                    <AppDeployRemoveSelector title="No Remove Resources" value={noRemoveResources} onSelect={setStoreNoRemoveResources} defaultValue={"none"}/>  
-                </StackItem>
             </Stack>
-        </CardBody>
-    </Card>
 }

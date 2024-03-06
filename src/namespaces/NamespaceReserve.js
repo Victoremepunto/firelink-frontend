@@ -40,17 +40,27 @@ export default function NamespaceReserve() {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({requester: requester, duration: duration, pool: pool, force: force})
-          }).then(response => response.json()).then((resp) => {
-            setResponse(resp);
-            
-            setDisplayResponse(true);
-            if ( resp.completed ) {
-                setIsLoading(false);
-                loadNamespaceList();
-            } else {
-                setIsLoading(false);
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
             }
-        })
+            return response.json();
+          }).then((resp) => {
+            setResponse(resp);
+            setDisplayResponse(true);
+            if (resp.completed) {
+              setIsLoading(false);
+              loadNamespaceList();
+            } else {
+              setIsLoading(false);
+            }
+          }).catch(error => {
+            console.error('Fetch error:', error);
+            setIsLoading(false);
+            setResponse({message: "Error reserving namespace. Please try again.", completed: false, namespace: ""})
+            setDisplayResponse(true);
+          });
+        
     }
 
     function loadNamespaceList() {
