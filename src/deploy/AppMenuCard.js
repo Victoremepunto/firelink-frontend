@@ -29,7 +29,7 @@ import {
     clearResourcesAndDependencies,
 } from '../store/AppDeploySlice'
 import { getFavoriteApps  } from '../store/AppSlice'
-import SelectedAppsChips  from '../store/SelectedAppsChips';
+import SelectedAppsChips  from '../shared/SelectedAppsChips';
 import AppDeployModal from './AppDeployModal';
 
 export default function AppMenuCard(props) {

@@ -50,6 +50,12 @@ export const appDeploySlice = createSlice({
             state[key] = emptyState[key];
         })
     },
+    setAppDeployOptions: (state, action) => {
+        // Stomp over the entire state property by proptery and set them to their default values
+        Object.keys(action.payload).forEach(key => {
+            state[key] = action.payload[key];
+        })
+    },
     addOrRemoveAppName: (state, action) => {
         const index = state.app_names.indexOf(action.payload);
         if (index === -1) {
@@ -360,6 +366,7 @@ export const getDeploymentOptions = createSelector(
 
 export const { 
     addOrRemoveAppName, 
+    setAppDeployOptions,
     setAppDeployRequester, 
     addOrRemoveApp, 
     setDuration,

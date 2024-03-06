@@ -13,7 +13,7 @@ import {
 
 import AppDeployModal from "./AppDeployModal";
 import AppDeploySaveRecipeModal from "./AppDeploySaveRecipeModal";
-import RecipeViewer from "../store/RecipieViewer";
+import RecipeViewer from "../shared/RecipieViewer";
 
 export default function AppDeployReview()  {
     const appDeploySlice = useSelector(getAppDeploySlice);

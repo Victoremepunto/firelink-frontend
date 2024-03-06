@@ -27,7 +27,7 @@ export const appSlice = createSlice({
       state.deployRecipes.push(action.payload)
     },
     removeDeployRecipe: (state, action) => {
-      state.deployRecipes = state.deployRecipes.filter(recipe => recipe !== action.payload)
+      state.deployRecipes = state.deployRecipes.filter(recipe => recipe.id !== action.payload.id)
     },
     removeFavoriteApp: (state, action) => {
       state.favoriteApps = state.favoriteApps.filter(app => app !== action.payload)

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import {
     getAppNames,
-} from './AppDeploySlice';
+} from '../store/AppDeploySlice';
 
 export default function SelectedAppsChips({appList}) {
 
