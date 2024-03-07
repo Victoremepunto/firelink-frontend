@@ -122,7 +122,7 @@ function ReservationList() {
                 </Split>
             </PageSection>
 
-            { namespace === "" ? <NoNamespaceLoaded /> : <PageSection  isCenterAligned={true}>
+            { namespace === "" ? <PageSection  isCenterAligned={true}><NoNamespaceLoaded /> </PageSection>: <PageSection  isCenterAligned={true}>
                 <Stack hasGutter>
                     <StackItem>
                             <NamespaceResourcesCard namespace={namespace} />
