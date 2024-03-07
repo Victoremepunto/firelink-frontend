@@ -7,7 +7,7 @@ export const listSlice = createSlice({
     namespaces: [],
     apps: [],
     namespace_resources: [],
-    namespace_top_pods: {},
+    namespace_top_pods: [],
     namespace_resources_loading: false
   },
   // Reducers - these are the actions that can be dispatched

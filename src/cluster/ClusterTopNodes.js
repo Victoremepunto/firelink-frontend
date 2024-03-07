@@ -39,7 +39,13 @@ const TopNodesCard = () => {
   const columns = ['NAME', 'CPU(cores)', 'CPU%', 'MEMORY(bytes)', 'MEMORY%'];
 
   const getSortableRowValues = node => {
-    return columns.map(column => node[column]);
+    return [
+      node['NAME'],
+      parseFloat(node['CPU(cores)'].replace(/[^\d.]/g, '')),
+      parseFloat(node['CPU%'].replace('%', '')),
+      parseFloat(node['MEMORY(bytes)'].replace(/[^\d.]/g, '')),
+      parseFloat(node['MEMORY%'].replace('%', ''))
+    ];
   };
 
   let sortedTopNodes = topNodes;
@@ -47,7 +53,7 @@ const TopNodesCard = () => {
     sortedTopNodes = [...topNodes].sort((a, b) => {
       const aValue = getSortableRowValues(a)[sortIndex];
       const bValue = getSortableRowValues(b)[sortIndex];
-      return (sortDirection === 'asc' ? 1 : -1) * aValue.localeCompare(bValue);
+      return (sortDirection === 'asc' ? 1 : -1) * (aValue - bValue);
     });
   }
 
@@ -61,36 +67,37 @@ const TopNodesCard = () => {
       <CardBody>
         {isLoading ? (
           <Skeleton height="100px" />
-        ) : ( <Stack hasGutter>
+        ) : (
+          <Stack hasGutter>
             <StackItem>
-                <ClusterResourceUsage data={topNodes} resourceType="CPU" />
+              <ClusterResourceUsage data={topNodes} resourceType="CPU" />
             </StackItem>
             <StackItem>
-                <ClusterResourceUsage data={topNodes} resourceType="RAM" />
+              <ClusterResourceUsage data={topNodes} resourceType="RAM" />
             </StackItem>
             <StackItem>
-                <Table aria-label="Top Nodes Table">
-                    <Thead>
-                    <Tr>
-                        {columns.map((column, index) => (
-                        <Th key={column} sort={{ sortBy: { index: sortIndex, direction: sortDirection }, onSort, columnIndex: index }}>
-                            {column}
-                        </Th>
-                        ))}
-                    </Tr>
-                    </Thead>
-                    <Tbody>
-                    {sortedTopNodes.map((node, index) => (
-                        <Tr key={index}>
-                        {columns.map(column => (
-                            <Td key={column} dataLabel={column}>{node[column]}</Td>
-                        ))}
-                        </Tr>
+              <Table aria-label="Top Nodes Table">
+                <Thead>
+                  <Tr>
+                    {columns.map((column, index) => (
+                      <Th key={column} sort={{ sortBy: { index: sortIndex, direction: sortDirection }, onSort, columnIndex: index }}>
+                        {column}
+                      </Th>
                     ))}
-                    </Tbody>
-                </Table>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {sortedTopNodes.map((node, index) => (
+                    <Tr key={index}>
+                      {columns.map(column => (
+                        <Td key={column} dataLabel={column}>{node[column]}</Td>
+                      ))}
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
             </StackItem>
-        </Stack>
+          </Stack>
         )}
       </CardBody>
     </Card>

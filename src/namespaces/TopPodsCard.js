@@ -20,22 +20,30 @@ import {
   TableVariant
 } from '@patternfly/react-table';
 
-const PodsTableCard = ({ podsData }) => {
+const PodsTableCard = ({ podsData = [] }) => {
   const [sortIndex, setSortIndex] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
 
   const columns = ['Name', 'CPU (cores)', 'Memory (bytes)'];
 
   const getSortableRowValues = pod => {
-    return [pod.NAME, pod['CPU(cores)'], pod['MEMORY(bytes)']];
+    return [
+      pod.NAME,
+      parseFloat(pod['CPU(cores)'].replace(/[^\d.]/g, '')),
+      parseFloat(pod['MEMORY(bytes)'].replace(/[^\d.]/g, ''))
+    ];
   };
 
   let sortedPodsData = podsData;
-  if (sortIndex !== null && podsData) {
+  if (sortIndex !== null) {
     sortedPodsData = [...podsData].sort((a, b) => {
       const aValue = getSortableRowValues(a)[sortIndex];
       const bValue = getSortableRowValues(b)[sortIndex];
-      return (sortDirection === 'asc' ? 1 : -1) * aValue.localeCompare(bValue);
+      if (typeof aValue === 'number') {
+        return (sortDirection === 'asc' ? 1 : -1) * (aValue - bValue);
+      } else {
+        return (sortDirection === 'asc' ? 1 : -1) * aValue.localeCompare(bValue);
+      }
     });
   }
 
@@ -44,9 +52,9 @@ const PodsTableCard = ({ podsData }) => {
     setSortDirection(direction);
   };
 
-  if (podsData === undefined || podsData.length <= 0) {
+  if (podsData.length <= 0) {
     return (
-      <Card  >
+      <Card>
         <CardTitle>Pods Resource Usage</CardTitle>
         <CardBody>
           <Skeleton />
@@ -59,38 +67,26 @@ const PodsTableCard = ({ podsData }) => {
     <Card>
       <CardTitle>Pods Resource Usage</CardTitle>
       <CardBody>
-        {podsData.length > 0 ? (
-          <Table aria-label="Pods Resource Usage Table" variant={TableVariant.compact}>
-            <Thead>
-              <Tr>
-                {columns.map((column, index) => (
-                  <Th key={column} sort={{ sortBy: { index: sortIndex, direction: sortDirection }, onSort, columnIndex: index }}>
-                    {column}
-                  </Th>
-                ))}
-              </Tr>
-            </Thead>
-            <Tbody>
-              {sortedPodsData.map((pod, index) => (
-                <Tr key={index}>
-                  <Td dataLabel="Name">{pod.NAME}</Td>
-                  <Td dataLabel="CPU (cores)">{pod['CPU(cores)']}</Td>
-                  <Td dataLabel="Memory (bytes)">{pod['MEMORY(bytes)']}</Td>
-                </Tr>
+        <Table aria-label="Pods Resource Usage Table" variant={TableVariant.compact}>
+          <Thead>
+            <Tr>
+              {columns.map((column, index) => (
+                <Th key={column} sort={{ sortBy: { index: sortIndex, direction: sortDirection }, onSort, columnIndex: index }}>
+                  {column}
+                </Th>
               ))}
-            </Tbody>
-          </Table>
-        ) : (
-          <EmptyState>
-            <EmptyStateIcon icon={CubesIcon} />
-            <Title headingLevel="h5" size="lg">
-              No Pods Found
-            </Title>
-            <EmptyStateBody>
-              There are no pods to display.
-            </EmptyStateBody>
-          </EmptyState>
-        )}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {sortedPodsData.map((pod, index) => (
+              <Tr key={index}>
+                <Td dataLabel="Name">{pod.NAME}</Td>
+                <Td dataLabel="CPU (cores)">{pod['CPU(cores)']}</Td>
+                <Td dataLabel="Memory (bytes)">{pod['MEMORY(bytes)']}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
       </CardBody>
     </Card>
   );
