@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardBody, CardTitle, Stack, StackItem } from '@patternfly/react-core';
+import { Card, CardBody, CardTitle, Split, SplitItem } from '@patternfly/react-core';
 import ResourceUsageProgress from '../namespaces/ResourceUsageProgress';
 
 const NamespaceResourcesCard = ({namespace}) => {
@@ -8,14 +8,14 @@ const NamespaceResourcesCard = ({namespace}) => {
     { namespace ? <Card>
       <CardTitle>Resources</CardTitle>
       <CardBody>
-        <Stack hasGutter>
-            <StackItem>
+        <Split hasGutter>
+            <SplitItem isFilled>
                 <ResourceUsageProgress namespace={namespace} resource="cpu" showDetails={true}/>
-            </StackItem>
-            <StackItem>
+            </SplitItem>
+            <SplitItem isFilled>
                 <ResourceUsageProgress namespace={namespace} resource="memory" showDetails={true} />
-            </StackItem>
-        </Stack>
+            </SplitItem>
+        </Split>
       </CardBody>
     </Card> : <div/> }
     </React.Fragment>

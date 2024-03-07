@@ -7,7 +7,8 @@ export const listSlice = createSlice({
     namespaces: [],
     apps: [],
     namespace_resources: [],
-    namespace_top_pods: {}
+    namespace_top_pods: {},
+    namespace_resources_loading: false
   },
   // Reducers - these are the actions that can be dispatched
   reducers: {
@@ -28,9 +29,17 @@ export const listSlice = createSlice({
     },
     setNamespaceTopPods: (state, action) => {
       state.namespace_top_pods = action.payload
-    }
+    },
+    setNamespaceResourcesLoading: (state, action) => {
+      state.namespace_resources_loading = action.payload
+    },
+    
   },
 })
+
+export const getNamespaceResourcesLoading = (state) => {
+  return state.listSlice.namespace_resources_loading;
+}
 
 // Selectors - these are used to get data from the store
 export const getNamespaces = (state) => {
@@ -98,13 +107,16 @@ export const loadApps = () => {
 
 export const loadNamespaceResources = (namespace) => {
     return async (dispatch) => {
+      dispatch(setNamespaceResourcesLoading(true))
       try {
         fetch(`/api/firelink/namespace/resource_metrics`)
         .then(response => response.json())
         .then(resources => {
             dispatch(setNamespaceResources(resources))
+            dispatch(setNamespaceResourcesLoading(false))
         });
       } catch (err) {
+        dispatch(setNamespaceResourcesLoading(false))
         console.log("Error loading resource metrics: ", err)
       }
     }
@@ -135,6 +147,6 @@ export const loadNamespaceTopPods = (namespace) => {
 
 
 
-export const { setNamespaceTopPods, setApps, setNamespaces, clearNamespaces, clearApps, setNamespaceResources } = listSlice.actions
+export const { setNamespaceTopPods, setNamespaceResourcesLoading, setApps, setNamespaces, clearNamespaces, clearApps, setNamespaceResources } = listSlice.actions
 
 export default listSlice.reducer

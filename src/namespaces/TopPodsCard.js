@@ -44,9 +44,9 @@ const PodsTableCard = ({ podsData }) => {
     setSortDirection(direction);
   };
 
-  if (podsData === undefined) {
+  if (podsData === undefined || podsData.length <= 0) {
     return (
-      <Card isfullHeight>
+      <Card  >
         <CardTitle>Pods Resource Usage</CardTitle>
         <CardBody>
           <Skeleton />
@@ -56,7 +56,7 @@ const PodsTableCard = ({ podsData }) => {
   }
 
   return (
-    <Card isfullHeight>
+    <Card>
       <CardTitle>Pods Resource Usage</CardTitle>
       <CardBody>
         {podsData.length > 0 ? (

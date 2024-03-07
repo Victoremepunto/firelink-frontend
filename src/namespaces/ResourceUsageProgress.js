@@ -10,17 +10,26 @@ import {
   Skeleton
 } from '@patternfly/react-core';
 import { useSelector } from 'react-redux';
-import { getNamespaceResources } from '../store/ListSlice';
+import { 
+  getNamespaceResources,
+  getNamespaceResourcesLoading 
+
+} from '../store/ListSlice';
 
 const ResourceUsageProgress = ({ namespace, resource, showDetails = false }) => {
   const data = useSelector(getNamespaceResources);
-
+  const loading = useSelector(getNamespaceResourcesLoading);
+  
+  if (loading) {
+    return <Skeleton />;
+  }
   if (!data[namespace] && showDetails) {
     return <Skeleton />;
   }
   if (!data[namespace]) {
     return <div/>;
   }
+
 
   const usage = data[namespace].usage[resource];
   const requests = data[namespace].requests[resource];

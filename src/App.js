@@ -34,7 +34,8 @@ import {
 import { setAppDeployRequester } from './store/AppDeploySlice';
 import { ReactSVG } from 'react-svg';
 import {
-  loadNamespaceResources
+  loadNamespaceResources,
+  loadNamespaces
 } from './store/ListSlice';
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
   useEffect(() => {
     dispatch(loadRequester());
     dispatch(loadNamespaceResources());
+    dispatch(loadNamespaces());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once when the component mounts
 

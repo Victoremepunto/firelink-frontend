@@ -17,7 +17,7 @@ const NamespaceDescriptionCard = ({ description }) => {
 
   if (Object.keys(description).length === 0) {
     return (
-      <Card isfullHeight>
+      <Card>
         <CardTitle>Namespace Description</CardTitle>
         <CardBody>
           <Skeleton />
@@ -27,7 +27,7 @@ const NamespaceDescriptionCard = ({ description }) => {
   }
 
   return (
-    <Card isfullHeight>
+    <Card>
       <CardTitle>Namespace Description</CardTitle>
       <CardBody>
         <DescriptionList>

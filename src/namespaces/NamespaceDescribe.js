@@ -19,7 +19,9 @@ import {
     EmptyStateBody,
     EmptyStateIcon,
     Stack,
-    StackItem
+    StackItem,
+    Grid,
+    GridItem
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import FadeInFadeOut from '../shared/FadeInFadeOut';
@@ -128,14 +130,14 @@ function ReservationList() {
                             <NamespaceResourcesCard namespace={namespace} />
                     </StackItem>
                     <StackItem>
-                        <Split hasGutter>
-                            <SplitItem>
+                        <Grid hasGutter>
+                            <GridItem span={6}>
                                 <NamespaceDescriptionCard description={description} />
-                            </SplitItem>
-                            <SplitItem>
+                            </GridItem>
+                            <GridItem span={6}>
                                 <PodsTableCard podsData={topPods} />
-                            </SplitItem>
-                        </Split>
+                            </GridItem>
+                        </Grid>
                     </StackItem>
                     </Stack>
             </PageSection>
