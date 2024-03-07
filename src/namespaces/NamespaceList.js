@@ -16,7 +16,9 @@ import {
   getIsNamespacesEmpty,
   loadNamespaces,
   clearNamespaces,
-  getNamespaces
+  getNamespaces,
+  loadNamespaceResources,
+  getNamespaceResources
 } from '../store/ListSlice';
 import FadeInFadeOut from '../shared/FadeInFadeOut';
 
@@ -35,6 +37,7 @@ function ReservationList() {
     // Your function logic here
     if ( isNamespacesEmpty ) {
       dispatch(loadNamespaces());
+      dispatch(loadNamespaceResources())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -45,6 +48,7 @@ function ReservationList() {
     if (autoRefresh) {
       interval = setInterval(() => {
         dispatch(loadNamespaces());
+        dispatch(loadNamespaceResources())
       }, 10000); 
     }
     return () => clearInterval(interval); 
@@ -94,6 +98,7 @@ function ReservationList() {
             <Button variant="primary" onClick={() => { 
               dispatch(clearNamespaces())
               dispatch(loadNamespaces())
+              dispatch(loadNamespaceResources())
               }} >
               Refresh
             </Button>

@@ -6,6 +6,8 @@ export const listSlice = createSlice({
   initialState: {
     namespaces: [],
     apps: [],
+    namespace_resources: [],
+    namespace_top_pods: {}
   },
   // Reducers - these are the actions that can be dispatched
   reducers: {
@@ -21,6 +23,12 @@ export const listSlice = createSlice({
     clearApps: (state) => {
       state.apps = []
     },
+    setNamespaceResources: (state, action) => {
+      state.namespace_resources = action.payload
+    },
+    setNamespaceTopPods: (state, action) => {
+      state.namespace_top_pods = action.payload
+    }
   },
 })
 
@@ -33,6 +41,10 @@ export const getApps = (state) => {
   return state.listSlice.apps;
 }
 
+export const getNamespaceTopPods = (state) => {
+  return state.listSlice.namespace_top_pods;
+}
+
 export const getIsNamespacesEmpty = createSelector(
   [getNamespaces],
   (namespaces) => namespaces.length === 0
@@ -42,6 +54,14 @@ export const getIsAppsEmpty = createSelector(
   [getApps],
   (apps) => apps.length === 0
 );
+
+export const getNamespaceResources = (state) => {
+  return state.listSlice.namespace_resources;
+}
+
+export const getResourcesForNamespace = (namespace) => (state) => {
+  return state.listSlice.namespace_resources[namespace]
+}
 
 export const getMyReservations = (requester) => (state) => {
   return state.listSlice.namespaces.filter(namespace => namespace.requester === requester);
@@ -76,7 +96,45 @@ export const loadApps = () => {
     }
 }
 
+export const loadNamespaceResources = (namespace) => {
+    return async (dispatch) => {
+      try {
+        fetch(`/api/firelink/namespace/resource_metrics`)
+        .then(response => response.json())
+        .then(resources => {
+            dispatch(setNamespaceResources(resources))
+        });
+      } catch (err) {
+        console.log("Error loading resource metrics: ", err)
+      }
+    }
+}
 
-export const { setApps, setNamespaces, clearNamespaces, clearApps } = listSlice.actions
+export const loadNamespaceTopPods = (namespace) => {
+  return async (dispatch) => {
+    try {
+      const response = await fetch(`/api/firelink/namespace/top_pods`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ namespace: namespace }),
+      });
+
+      if (response.ok) {
+        const top_pods = await response.json();
+        dispatch(setNamespaceTopPods(top_pods));
+      } else {
+        console.error('Error loading top pods: HTTP status', response.status);
+      }
+    } catch (err) {
+      console.error('Error loading top pods:', err);
+    }
+  }
+}
+
+
+
+export const { setNamespaceTopPods, setApps, setNamespaces, clearNamespaces, clearApps, setNamespaceResources } = listSlice.actions
 
 export default listSlice.reducer
