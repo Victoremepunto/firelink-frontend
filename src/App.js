@@ -156,8 +156,11 @@ function App() {
           Deploy
         </NavItem>
       </NavExpandable>
+      <NavItem id="cluster-info" onClick={() => navigate("/cluster")} itemId={0} isActive={useMatch("/cluster")}>
+          Cluster
+      </NavItem>
     </NavList>
-  </Nav>; 
+    </Nav>; 
 
 const sidebar = <PageSidebar isSidebarOpen={true} id="vertical-sidebar" >
 <PageSidebarBody>

@@ -13,7 +13,7 @@ import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react';
 import { createRoot } from 'react-dom/client';
 import Recipes from './recipes/Recipes';
-
+import ClusterCard from './cluster/ClusterCard';
 
 const container = document.getElementById('root');
 const root = createRoot(container); 
@@ -35,6 +35,8 @@ root.render(
             <Route key="app-deploy" path="/apps/deploy" element={<AppDeploy />} />
 
             <Route key="recipes" path="/recipes" element={<Recipes />} />
+
+            <Route key="cluster" path="/cluster" element={<ClusterCard />} />
 
           </Route>
         </Routes>
