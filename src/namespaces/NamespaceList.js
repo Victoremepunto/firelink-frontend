@@ -79,7 +79,7 @@ function ReservationList() {
           </SplitItem >
           <SplitItem isFilled></SplitItem>
           <SplitItem>
-            <Switch id="namespace-list-my-reservations"
+            <Switch id="namespace-auto-refresh"
               label="Auto Refresh"
               labelOff="Auto Refresh"
               isChecked={autoRefresh}
