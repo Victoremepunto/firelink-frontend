@@ -24,7 +24,7 @@ const TopNodesCard = () => {
   const [sortDirection, setSortDirection] = useState('asc');
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/firelink/cluster/top_nodes')
+    fetch('/api/firelink/cluster/top_nodes')
       .then(response => response.json())
       .then(data => {
         setTopNodes(data);
