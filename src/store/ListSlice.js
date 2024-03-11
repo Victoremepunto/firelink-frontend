@@ -1,58 +1,164 @@
-import { createSelector, createSlice } from '@reduxjs/toolkit'
+import {
+  createSelector,
+  createSlice,
+  createAsyncThunk,
+} from "@reduxjs/toolkit";
 
-// Slice - this is the state and the actions that can be dispatched
+// Async Thunks
+export const loadNamespaces = createAsyncThunk(
+  "listSlice/loadNamespaces",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("/api/firelink/namespace/list");
+      if (!response.ok) {
+        throw new Error("Failed to load namespaces");
+      }
+      const namespaces = await response.json();
+      return namespaces;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const loadApps = createAsyncThunk(
+  "listSlice/loadApps",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("/api/firelink/apps/list");
+      if (!response.ok) {
+        throw new Error("Failed to load apps");
+      }
+      const apps = await response.json();
+      return apps;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const loadNamespaceResources = createAsyncThunk(
+  "listSlice/loadNamespaceResources",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/firelink/namespace/resource_metrics`);
+      if (!response.ok) {
+        throw new Error("Failed to load namespace resources");
+      }
+      const resources = await response.json();
+      return resources;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const loadNamespaceTopPods = createAsyncThunk(
+  "listSlice/loadNamespaceTopPods",
+  async (namespace, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/firelink/namespace/top_pods`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ namespace }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to load top pods");
+      }
+      const topPods = await response.json();
+      return topPods;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+// Slice
 export const listSlice = createSlice({
-  name: 'listSlice',
+  name: "listSlice",
   initialState: {
     namespaces: [],
     apps: [],
-    namespace_resources: [],
-    namespace_top_pods: [],
-    namespace_resources_loading: false
+    namespaceResources: {},
+    namespaceTopPods: {},
+    loading: false,
+    error: null,
+    namespaceResourcesLoading: false,
   },
-  // Reducers - these are the actions that can be dispatched
   reducers: {
-    setNamespaces: (state, action) => {
-      state.namespaces = action.payload
-    },
-    setApps: (state, action) => {
-      state.apps = action.payload
-    },
     clearNamespaces: (state) => {
-      state.namespaces = []
+      state.namespaces = [];
     },
     clearApps: (state) => {
-      state.apps = []
+      state.apps = [];
     },
-    setNamespaceResources: (state, action) => {
-      state.namespace_resources = action.payload
-    },
-    setNamespaceTopPods: (state, action) => {
-      state.namespace_top_pods = action.payload
-    },
-    setNamespaceResourcesLoading: (state, action) => {
-      state.namespace_resources_loading = action.payload
-    },
-    
   },
-})
+  extraReducers: (builder) => {
+    builder
+      .addCase(loadNamespaces.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loadNamespaces.fulfilled, (state, action) => {
+        state.loading = false;
+        state.namespaces = action.payload;
+      })
+      .addCase(loadNamespaces.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(loadApps.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loadApps.fulfilled, (state, action) => {
+        state.loading = false;
+        state.apps = action.payload;
+      })
+      .addCase(loadApps.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(loadNamespaceResources.pending, (state) => {
+        state.loading = true;
+        state.namespaceResourcesLoading = true; // Add this line
+        state.error = null;
+      })
+      .addCase(loadNamespaceResources.fulfilled, (state, action) => {
+        state.loading = false;
+        state.namespaceResourcesLoading = false; // Add this line
+        state.namespaceResources = action.payload;
+      })
+      .addCase(loadNamespaceResources.rejected, (state, action) => {
+        state.loading = false;
+        state.namespaceResourcesLoading = false; // Add this line
+        state.error = action.payload;
+      })
+      .addCase(loadNamespaceTopPods.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loadNamespaceTopPods.fulfilled, (state, action) => {
+        state.loading = false;
+        state.namespaceTopPods = action.payload;
+      })
+      .addCase(loadNamespaceTopPods.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
+});
 
-export const getNamespaceResourcesLoading = (state) => {
-  return state.listSlice.namespace_resources_loading;
-}
-
-// Selectors - these are used to get data from the store
-export const getNamespaces = (state) => {
-  return state.listSlice.namespaces;
-}
-
-export const getApps = (state) => {
-  return state.listSlice.apps;
-}
-
-export const getNamespaceTopPods = (state) => {
-  return state.listSlice.namespace_top_pods;
-}
+// Selectors
+export const getNamespaces = (state) => state.listSlice.namespaces;
+export const getApps = (state) => state.listSlice.apps;
+export const getNamespaceResources = (state) =>
+  state.listSlice.namespaceResources;
+export const getNamespaceTopPods = (state) => state.listSlice.namespaceTopPods;
+export const getLoading = (state) => state.listSlice.loading;
+export const getError = (state) => state.listSlice.error;
 
 export const getIsNamespacesEmpty = createSelector(
   [getNamespaces],
@@ -64,89 +170,21 @@ export const getIsAppsEmpty = createSelector(
   (apps) => apps.length === 0
 );
 
-export const getNamespaceResources = (state) => {
-  return state.listSlice.namespace_resources;
-}
-
 export const getResourcesForNamespace = (namespace) => (state) => {
-  return state.listSlice.namespace_resources[namespace]
-}
+  return state.listSlice.namespaceResources[namespace];
+};
+
+export const getNamespaceResourcesLoading = (state) =>
+  state.listSlice.namespaceResourcesLoading; // Add this line
 
 export const getMyReservations = (requester) => (state) => {
-  return state.listSlice.namespaces.filter(namespace => namespace.requester === requester);
-}
+  return state.listSlice.namespaces.filter(
+    (namespace) => namespace.requester === requester
+  );
+};
 
-// Thunks - these are async actions that can be dispatched
-export const loadNamespaces = () => {
-    return async (dispatch) => {
-      try {
-        fetch('/api/firelink/namespace/list')
-        .then(response => response.json())
-        .then(namespaces => {
-            dispatch(setNamespaces(namespaces))
-        });
-      } catch (err) {
-        console.log("Error loading namespaces: ", err)
-      }
-    }
-}
+// Destructure and export actions
+export const { clearNamespaces, clearApps } = listSlice.actions;
 
-export const loadApps = () => {
-    return async (dispatch) => {
-      try {
-        fetch('/api/firelink/apps/list')
-        .then(response => response.json())
-        .then(apps => {
-            dispatch(setApps(apps))
-        });
-      } catch (err) {
-        console.log("Error loading namespaces: ", err)
-      }
-    }
-}
-
-export const loadNamespaceResources = (namespace) => {
-    return async (dispatch) => {
-      dispatch(setNamespaceResourcesLoading(true))
-      try {
-        fetch(`/api/firelink/namespace/resource_metrics`)
-        .then(response => response.json())
-        .then(resources => {
-            dispatch(setNamespaceResources(resources))
-            dispatch(setNamespaceResourcesLoading(false))
-        });
-      } catch (err) {
-        dispatch(setNamespaceResourcesLoading(false))
-        console.log("Error loading resource metrics: ", err)
-      }
-    }
-}
-
-export const loadNamespaceTopPods = (namespace) => {
-  return async (dispatch) => {
-    try {
-      const response = await fetch(`/api/firelink/namespace/top_pods`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ namespace: namespace }),
-      });
-
-      if (response.ok) {
-        const top_pods = await response.json();
-        dispatch(setNamespaceTopPods(top_pods));
-      } else {
-        console.error('Error loading top pods: HTTP status', response.status);
-      }
-    } catch (err) {
-      console.error('Error loading top pods:', err);
-    }
-  }
-}
-
-
-
-export const { setNamespaceTopPods, setNamespaceResourcesLoading, setApps, setNamespaces, clearNamespaces, clearApps, setNamespaceResources } = listSlice.actions
-
-export default listSlice.reducer
+// Export reducer
+export default listSlice.reducer;
