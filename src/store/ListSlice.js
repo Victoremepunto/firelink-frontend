@@ -21,6 +21,39 @@ export const loadNamespaces = createAsyncThunk(
   }
 );
 
+export const reserveNamespace = createAsyncThunk(
+  "listSlice/reserveNamespace",
+  async (
+    { requester, duration, pool, force },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const response = await fetch("/api/firelink/namespace/reserve", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ requester, duration, pool, force }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.completed) {
+        dispatch(loadNamespaces());
+      }
+
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 export const loadApps = createAsyncThunk(
   "listSlice/loadApps",
   async (_, { rejectWithValue }) => {
