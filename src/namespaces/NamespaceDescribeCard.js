@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Card,
   CardTitle,
@@ -10,7 +10,44 @@ import {
   Skeleton
 } from '@patternfly/react-core';
 
-const NamespaceDescriptionCard = ({ description }) => {
+const NamespaceDescriptionCard = ({namespace, onError = (error) => {}}) => {
+
+  const [description, setDescription] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getNamespaceDescription();
+  }, []);
+  useEffect(() => {
+    getNamespaceDescription();
+  }, [namespace]);
+
+  const getNamespaceDescription = async () => {
+    const ns = namespace;
+    setLoading(true);
+    setError(null);
+    try {
+      console.log("Fetching namespace description for:", ns);
+      const response = await fetch(`/api/firelink/namespace/describe/${ns}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      if ( data.completed === false ) {
+        throw new Error(`Error fetching namespace description: ${data.message}`);
+      }
+      setDescription(data.message);
+    } catch (error) {
+      console.error("Error fetching namespace description:", error);
+      console.log("Error state:", error); 
+      onError(error);
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const formatTitle = (title) => {
     return title.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
@@ -21,6 +58,28 @@ const NamespaceDescriptionCard = ({ description }) => {
         <CardTitle>Namespace Description</CardTitle>
         <CardBody>
           <Skeleton />
+        </CardBody>
+      </Card>
+    );
+  }
+
+  if (loading) {
+    return (
+      <Card>
+        <CardTitle>Namespace Description</CardTitle>
+        <CardBody>
+          <Skeleton />
+        </CardBody>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardTitle>Namespace Description</CardTitle>
+        <CardBody>
+          <div>Error fetching namespace description: {error.message}</div>
         </CardBody>
       </Card>
     );

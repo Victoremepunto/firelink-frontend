@@ -114,8 +114,8 @@ export const listSlice = createSlice({
   initialState: {
     namespaces: [],
     apps: [],
-    namespaceResources: {},
-    namespaceTopPods: {},
+    namespaceResources: [],
+    namespaceTopPods: [],
     loading: false,
     error: null,
     namespaceResourcesLoading: false,

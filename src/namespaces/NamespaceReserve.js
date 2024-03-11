@@ -28,7 +28,6 @@ import {
   DefaultDuration,
 } from "../shared/CustomSelects";
 import DescribeLink from "../shared/DescribeLink";
-
 import { useSelector, useDispatch } from "react-redux";
 import { getRequester } from "../store/AppSlice";
 import { loadNamespaces, reserveNamespace } from "../store/ListSlice";
@@ -80,11 +79,7 @@ export default function NamespaceReserve() {
       });
   }
 
-  function loadNamespaceList() {
-    dispatch(loadNamespaces());
-  }
-
-  const handleForce = (checked, event) => {
+  const handleForce = (_checked, _event) => {
     setForce(!force);
   };
 

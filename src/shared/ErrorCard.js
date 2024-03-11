@@ -15,15 +15,14 @@ import { ExclamationCircleIcon } from "@patternfly/react-icons";
 
 function ErrorCard({ error, onRetry }) {
   return (
-    <Bullseye style={{ height: "12em" }}>
-      <div style={{ width: "24rem", textAlign: "center" }}>
+    <Bullseye >
         <Card isLarge>
           <CardTitle>Error</CardTitle>
           <CardBody>
             <EmptyState>
               <EmptyStateIcon
                 icon={ExclamationCircleIcon}
-                color="var(--pf-global--danger-color--100)"
+                color="red"
               />
               <Title headingLevel="h2" size="lg">
                 Something went wrong
@@ -38,7 +37,6 @@ function ErrorCard({ error, onRetry }) {
             Please try again later or contact DevProd if the problem persists.
           </CardFooter>
         </Card>
-      </div>
     </Bullseye>
   );
 }
