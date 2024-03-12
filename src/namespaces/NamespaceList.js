@@ -33,6 +33,7 @@ function NamespaceList() {
   const namespaces = useSelector(getNamespaces);
   const loading = useSelector(getLoading);
   const error = useSelector(getError);
+  const [showReleaseModal, setShowReleaseModal] = useState(false);
 
   useEffect(() => {
     if (isNamespacesEmpty) {
@@ -58,8 +59,51 @@ function NamespaceList() {
 
   const refreshData = () => {
     dispatch(clearNamespaces());
-    //dispatch(loadNamespaces());
-    //dispatch(loadNamespaceResources());
+  };
+
+  const releaseNamespace =  async (namespace) => {
+    setShowReleaseModal(true);
+  
+    try {
+      const response = await fetch("/api/firelink/namespace/release", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ namespace: namespace }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const resp = await response.json();
+  
+      if (resp.completed) {
+        dispatch(clearNamespaces());
+        dispatch(loadNamespaces());
+      } else {
+        throw new Error(`Error releasing namespace ${namespace}: ${resp.message}`);
+      }
+    } catch (error) {
+      console.error("Error releasing namespace:", error);
+      // Handle specific error cases
+      if (error.message.includes("HTTP error")) {
+        // Handle HTTP errors
+        alert(`HTTP error occurred while releasing namespace ${namespace}`);
+      } else if (error.message.includes("Error releasing namespace")) {
+        // Handle errors from the server response
+        alert(error.message);
+      } else {
+        // Handle generic errors
+        alert(`An error occurred while releasing namespace ${namespace}`);
+      }
+    } finally {
+      dispatch(clearNamespaces());
+      dispatch(loadNamespaces());
+      setShowReleaseModal(false);
+    }
   };
 
   if (loading) {
@@ -67,6 +111,16 @@ function NamespaceList() {
       <Page>
         <PageSection>
           <Loading message="Fetching namespaces and reservations..." />
+        </PageSection>
+      </Page>
+    );
+  }
+
+  if (showReleaseModal) {
+    return (
+      <Page>
+        <PageSection>
+          <Loading message="Releasing namespace..." />
         </PageSection>
       </Page>
     );
@@ -133,6 +187,7 @@ function NamespaceList() {
             <NamespaceListTable
               namespaces={namespaces}
               showJustMyReservations={showJustMyReservations}
+              onRelease={releaseNamespace}
             />
           )}
         </PageSection>
