@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   Card,
   CardTitle,
@@ -7,7 +8,8 @@ import {
   EmptyStateIcon,
   EmptyStateBody,
   Title,
-  Skeleton
+  Skeleton,
+  EmptyStateVariant
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import {
@@ -19,10 +21,41 @@ import {
   Td,
   TableVariant
 } from '@patternfly/react-table';
+import { 
+  getNamespaceTopPods,
+  loadNamespaceTopPods
+} from '../store/ListSlice';
 
-const PodsTableCard = ({ podsData = [] }) => {
+const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
+
+  const dispatch = useDispatch();
+
   const [sortIndex, setSortIndex] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
+  const [topPods, setTopPods] = useState([]);
+  const [error, setError] = useState(null);
+
+  const topPodsFromStore = useSelector(getNamespaceTopPods);
+  
+
+  useEffect(() => {
+    if ( !namespace ) {
+      return;
+    }
+     dispatch(loadNamespaceTopPods(namespace))
+    .unwrap()
+    .catch((error) => {
+      console.error("Error loading namespace top pods:", error);
+      setError(error);
+      onError(error);
+    });
+    setTopPods(topPodsFromStore);
+
+  }, [namespace]);
+
+  useEffect(() => {
+    setTopPods(topPodsFromStore);
+  }, [topPodsFromStore]);
 
   const columns = ['Name', 'CPU (cores)', 'Memory (bytes)'];
 
@@ -34,9 +67,9 @@ const PodsTableCard = ({ podsData = [] }) => {
     ];
   };
 
-  let sortedPodsData = podsData;
+  let sortedPodsData = topPods;
   if (sortIndex !== null) {
-    sortedPodsData = [...podsData].sort((a, b) => {
+    sortedPodsData = [...topPods].sort((a, b) => {
       const aValue = getSortableRowValues(a)[sortIndex];
       const bValue = getSortableRowValues(b)[sortIndex];
       if (typeof aValue === 'number') {
@@ -52,12 +85,31 @@ const PodsTableCard = ({ podsData = [] }) => {
     setSortDirection(direction);
   };
 
-  if (podsData.length <= 0) {
+  if (!topPods || topPods.length <= 0) {
     return (
       <Card>
         <CardTitle>Pods Resource Usage</CardTitle>
         <CardBody>
           <Skeleton />
+        </CardBody>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardTitle>Pods Resource Usage</CardTitle>
+        <CardBody>
+          <EmptyState variant={EmptyStateVariant.full}>
+            <EmptyStateIcon icon={CubesIcon} />
+            <Title headingLevel="h2" size="lg">
+              Error loading pods resource usage
+            </Title>
+            <EmptyStateBody>
+              An error occurred while loading pods resource usage.
+            </EmptyStateBody>
+          </EmptyState>
         </CardBody>
       </Card>
     );

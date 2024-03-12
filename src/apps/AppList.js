@@ -1,109 +1,117 @@
-import React from 'react';
-import {useState, useEffect} from 'react';
-import {Switch, Title, TitleSizes} from '@patternfly/react-core';
-import Loading from '../shared/Loading';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
-import { TextInput, Page, PageSection, PageSectionVariants } from '@patternfly/react-core';
-import { Gallery } from '@patternfly/react-core';
-import { Split, SplitItem } from '@patternfly/react-core';
-import AppListItem from './AppListItem';
-import FadeInFadeOut from '../shared/FadeInFadeOut';
-
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useEffect } from "react";
 import {
-    getIsAppsEmpty,
-    loadApps,
-    clearApps,
-    getApps
-} from '../store/ListSlice';
-
-function AppListJSX({AppList, ShowFavorites}) {
-    const isAppsEmpty = useSelector(getIsAppsEmpty);
-    if ( isAppsEmpty ) {
-        return <Loading message="Fetching app list..." />
-    } else {
-        return <Gallery hasGutter>
-            {AppList.map((app, index) => {
-                const key = `app-list-item-${app.name}-${index}`;
-                return <AppListItem app={app} key={key} showFavorites={ShowFavorites}/>
-            })}
-        </Gallery>
-    }
-}
+  Switch,
+  Title,
+  TitleSizes,
+  TextInput,
+  Page,
+  PageSection,
+  PageSectionVariants,
+  Gallery,
+  Split,
+  SplitItem,
+  Button,
+} from "@patternfly/react-core";
+import Loading from "../shared/Loading";
+import AppListItem from "./AppListItem";
+import FadeInFadeOut from "../shared/FadeInFadeOut";
+import ErrorCard from "../shared/ErrorCard";
+import { useSelector, useDispatch } from "react-redux";
+import { loadApps, getApps, getLoading, getError } from "../store/ListSlice";
 
 function AppList() {
+  const dispatch = useDispatch();
+  const apps = useSelector(getApps);
+  const loading = useSelector(getLoading);
+  const error = useSelector(getError);
 
-    //Get the global state
-    const dispatch = useDispatch();
-    const apps = useSelector(getApps);
-    const isAppsEmpty = useSelector(getIsAppsEmpty);
-    const [filteredApps, setFilteredApps] = useState(apps);
+  const [filteredApps, setFilteredApps] = useState(apps);
+  const [filter, setFilter] = useState("");
+  const [showFavorites, setShowFavorites] = useState(false);
 
-    //App list filter text
-    const [filter, setFilter] = useState('')
-    const [showFavorites, setShowFavorites] = useState(false)
+  useEffect(() => {
+    dispatch(loadApps());
+  }, [dispatch]);
 
-    //Filter app list when filter is updated
-    useEffect(() => {
-        let tmpFilteredApps = apps
+  useEffect(() => {
+    setFilteredApps(
+      filter === ""
+        ? apps
+        : apps.filter((app) => app.name.includes(filter))
+    );
+  }, [apps, filter]);
 
-        if (filter === '') {
-            setFilteredApps(tmpFilteredApps)
-            
-        } else {
-            setFilteredApps(tmpFilteredApps.filter(app => app.name.includes(filter)))
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filter])
+  const handleRefresh = () => {
+    dispatch(loadApps());
+  };
 
-    useEffect(() => {
-        setFilteredApps(apps)
-    } ,[apps])
-
-    useEffect(() => {
-        if (isAppsEmpty) {
-            dispatch(loadApps());
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-  
+  if (loading) {
     return <Page>
-        <PageSection variant={PageSectionVariants.light}>
-            <Split hasGutter>
-                <SplitItem>
-                    <Title headingLevel="h1" size={TitleSizes['3xl']}>
-                        Apps
-                    </Title>
-                </SplitItem>
-                <SplitItem isFilled/>
-                <SplitItem>
-                    <Switch  isReversed="true" id="app-list-favorites" label="Show Favorites" labelOff="Show Favorites" isChecked={showFavorites} onChange={() => setShowFavorites(!showFavorites)}/>
-                </SplitItem>
-                <SplitItem>
-                    <TextInput
-                        value={filter}
-                        type="text"
-                        placeholder="Filter apps"
-                        onChange={(_event, value) => setFilter(value)}
-                        aria-label="text input app list filter"/>
-                </SplitItem>
-                <SplitItem>
-                    <Button variant="primary" onClick={() => { 
-                        dispatch(clearApps());
-                        dispatch(loadApps());
-                    }} >
-                            Refresh
-                    </Button>
-                </SplitItem>
-            </Split>
-        </PageSection>
         <PageSection>
-            <FadeInFadeOut>
-                <AppListJSX AppList={filteredApps} ShowFavorites={showFavorites}/>
-            </FadeInFadeOut>
+            <Loading message="Fetching app list..." />;
+        </PageSection>
+    </Page>;
+  } 
+
+  if (error) {
+    return <Page>
+        <PageSection>
+            <ErrorCard error={error} onRetry={handleRefresh} />;
         </PageSection>
     </Page> 
+  }
 
-};
+  return (
+    <Page>
+      <PageSection variant={PageSectionVariants.light}>
+        <Split hasGutter>
+          <SplitItem>
+            <Title headingLevel="h1" size={TitleSizes["3xl"]}>
+              Apps
+            </Title>
+          </SplitItem>
+          <SplitItem isFilled />
+          <SplitItem>
+            <Switch
+              isReversed="true"
+              id="app-list-favorites"
+              label="Show Favorites"
+              labelOff="Show Favorites"
+              isChecked={showFavorites}
+              onChange={() => setShowFavorites(!showFavorites)}
+            />
+          </SplitItem>
+          <SplitItem>
+            <TextInput
+              value={filter}
+              type="text"
+              placeholder="Filter apps"
+              onChange={(event) => setFilter(event.target.value)}
+              aria-label="text input app list filter"
+            />
+          </SplitItem>
+          <SplitItem>
+            <Button variant="primary" onClick={handleRefresh}>
+              Refresh
+            </Button>
+          </SplitItem>
+        </Split>
+      </PageSection>
+      <PageSection>
+        <FadeInFadeOut>
+          <Gallery hasGutter>
+            {filteredApps.map((app, index) => (
+              <AppListItem
+                app={app}
+                key={`app-list-item-${app.name}-${index}`}
+                showFavorites={showFavorites}
+              />
+            ))}
+          </Gallery>
+        </FadeInFadeOut>
+      </PageSection>
+    </Page>
+  );
+}
 
 export default AppList;
