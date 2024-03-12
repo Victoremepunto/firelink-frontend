@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Button,
@@ -24,9 +24,7 @@ import {
 } from "@patternfly/react-core";
 import { CubesIcon } from "@patternfly/react-icons";
 import {
-  loadNamespaceTopPods,
   getNamespaceTopPods,
-  getResourcesForNamespace,
 } from "../store/ListSlice";
 import { useDispatch, useSelector } from "react-redux";
 import NamespaceDescriptionCard from "./NamespaceDescribeCard";
@@ -35,13 +33,9 @@ import NamespaceResourcesCard from "./NamespaceResourcesCard";
 import ErrorCard from "../shared/ErrorCard";
 
 function NamespaceDescribe() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  
   const { namespaceParam } = useParams();
-  const topPods = useSelector(getNamespaceTopPods);
-  const [description, setDescription] = useState({});
-  const [loading, setLoading] = useState(false);
   const [namespace, setNamespace] = useState("");
   const [namespaceInput, setNamespaceInput] = useState("");
   const [error, setError] = useState(null);
@@ -72,6 +66,12 @@ function NamespaceDescribe() {
   );
 
   const ToolBar = () => {
+    const inputRef = useRef(null);
+    useEffect(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, [namespaceInput]);
     return (
       <PageSection variant={PageSectionVariants.light}>
         <Split>
@@ -89,6 +89,7 @@ function NamespaceDescribe() {
                   value={namespaceInput}
                   onChange={(_evt, value) => setNamespaceInput(value)}
                   default="test"
+                  ref={inputRef}
                 />
               </InputGroupItem>
               <InputGroupItem>
