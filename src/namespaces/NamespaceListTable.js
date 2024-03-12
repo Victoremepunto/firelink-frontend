@@ -9,7 +9,7 @@ import {
   ActionsColumn,
 } from "@patternfly/react-table";
 
-import { Tooltip, TextContent, Text, Truncate } from "@patternfly/react-core";
+import { Tooltip, Truncate } from "@patternfly/react-core";
 
 import FilterDropdown from "../shared/FilterDropdown";
 
@@ -22,7 +22,6 @@ import CheckCircleIcon from "@patternfly/react-icons/dist/esm/icons/check-circle
 import TimesCircleIcon from "@patternfly/react-icons/dist/esm/icons/times-circle-icon";
 
 import { useSelector, useDispatch } from "react-redux";
-import { loadNamespaces, clearNamespaces } from "../store/ListSlice";
 import { getRequester } from "../store/AppSlice";
 
 import Loading from "../shared/Loading";
@@ -263,5 +262,5 @@ export default function NamespaceListTable({
         </Table>
       )}
     </React.Fragment>
-  );
+  )
 }
