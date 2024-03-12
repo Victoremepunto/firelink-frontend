@@ -23,10 +23,6 @@ import {
   GridItem,
 } from "@patternfly/react-core";
 import { CubesIcon } from "@patternfly/react-icons";
-import {
-  getNamespaceTopPods,
-} from "../store/ListSlice";
-import { useDispatch, useSelector } from "react-redux";
 import NamespaceDescriptionCard from "./NamespaceDescribeCard";
 import PodsTableCard from "./TopPodsCard";
 import NamespaceResourcesCard from "./NamespaceResourcesCard";
@@ -34,7 +30,7 @@ import ErrorCard from "../shared/ErrorCard";
 
 function NamespaceDescribe() {
   const navigate = useNavigate();
-  
+
   const { namespaceParam } = useParams();
   const [namespace, setNamespace] = useState("");
   const [namespaceInput, setNamespaceInput] = useState("");
@@ -50,7 +46,7 @@ function NamespaceDescribe() {
   const buttonClickHandler = () => {
     setError(null);
     navigate(`/namespace/describe/${namespaceInput}`);
-  }
+  };
 
   const NoNamespaceLoaded = () => (
     <EmptyState variant={EmptyStateVariant.lg}>
@@ -141,10 +137,7 @@ function NamespaceDescribe() {
                 />
               </GridItem>
               <GridItem span={6}>
-                <PodsTableCard 
-                  namespace={namespace}
-                  onError={setError}
-                />
+                <PodsTableCard namespace={namespace} onError={setError} />
               </GridItem>
             </Grid>
           </StackItem>

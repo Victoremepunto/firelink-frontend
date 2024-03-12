@@ -219,7 +219,7 @@ export default function AppDeploy() {
                 <StackItem>
                   <TextContent>
                     <Text component={TextVariants.h1}>
-                      Preserve CPU & RAM for Apps or Comononts
+                      Preserve CPU & RAM for Apps or Components
                     </Text>
                   </TextContent>
                 </StackItem>

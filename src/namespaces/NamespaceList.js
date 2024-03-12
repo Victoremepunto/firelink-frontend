@@ -58,8 +58,8 @@ function NamespaceList() {
 
   const refreshData = () => {
     dispatch(clearNamespaces());
-    dispatch(loadNamespaces());
-    dispatch(loadNamespaceResources());
+    //dispatch(loadNamespaces());
+    //dispatch(loadNamespaceResources());
   };
 
   if (loading) {
