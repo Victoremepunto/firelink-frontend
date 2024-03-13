@@ -49,7 +49,7 @@ function App() {
 
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
 
   const onSelect = () => {
     setIsOpen(!isOpen);
