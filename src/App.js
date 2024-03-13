@@ -23,6 +23,7 @@ import {
   Switch,
   Avatar,
   Button,
+  MastheadToggle
 } from "@patternfly/react-core";
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,6 +37,7 @@ import { setAppDeployRequester } from "./store/AppDeploySlice";
 import { ReactSVG } from "react-svg";
 import { loadNamespaceResources, loadNamespaces } from "./store/ListSlice";
 import { ExternalLinkAltIcon } from "@patternfly/react-icons";
+import { BarsIcon } from "@patternfly/react-icons";
 
 function App() {
   const navigate = useNavigate();
@@ -46,6 +48,9 @@ function App() {
   const darkMode = useSelector(getDarkMode);
 
   const [isOpen, setIsOpen] = React.useState(false);
+
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
   const onSelect = () => {
     setIsOpen(!isOpen);
   };
@@ -159,6 +164,11 @@ function App() {
 
   const header = (
     <Masthead>
+      <MastheadToggle>
+        <Button variant="plain" onClick={() => {setSidebarOpen(!sidebarOpen)}} aria-label="Global navigation">
+          <BarsIcon />
+        </Button>
+      </MastheadToggle>
       <MastheadMain>
         <MastheadBrand
           component="a"
@@ -175,7 +185,7 @@ function App() {
 
   const navBar = (
     <Nav aria-label="Default global nav">
-      <NavList>
+      <NavList> 
         <NavExpandable
           title="Namespaces"
           id="namespaces-nav-list"
@@ -237,7 +247,7 @@ function App() {
   );
 
   const sidebar = (
-    <PageSidebar isSidebarOpen={true} id="vertical-sidebar">
+    <PageSidebar isSidebarOpen={sidebarOpen} id="vertical-sidebar">
       <PageSidebarBody>{navBar}</PageSidebarBody>
     </PageSidebar>
   );
