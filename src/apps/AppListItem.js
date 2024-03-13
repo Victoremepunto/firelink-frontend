@@ -110,7 +110,7 @@ export default function AppListItem({ app, showFavorites }) {
         <CardTitle>
           <Split hasGutter>
             <SplitItem>
-                <div style={{background: background, width: "2.5em", height: "2.5em", borderRadius: "10%", marginRight: "1em", color: "black"}}>
+                <div style={{background: background, width: "2.5em", height: "2.5em", borderRadius: "10%", marginRight: "1em", color: "black", padding: "0.1em"}}>
                     <Title headingLevel="h3" size={TitleSizes["3x1"]} >
                         {appIconName() }
                     </Title>
