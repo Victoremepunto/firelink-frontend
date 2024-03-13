@@ -1,0 +1,13 @@
+docs_dir: ./docs
+site_name: Firelink Documentation
+
+markdown_extensions: 
+  - toc:
+      permalink: "#"
+
+nav:
+- Home: index.md
+- Namespaces: namespaces.md
+- Apps: apps.md
+- Cluster: cluster.md
+- User Menu: user_menu.md
