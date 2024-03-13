@@ -35,9 +35,7 @@ function AppList() {
 
   useEffect(() => {
     setFilteredApps(
-      filter === ""
-        ? apps
-        : apps.filter((app) => app.name.includes(filter))
+      filter === "" ? apps : apps.filter((app) => app.name.includes(filter))
     );
   }, [apps, filter]);
 
@@ -46,19 +44,23 @@ function AppList() {
   };
 
   if (loading) {
-    return <Page>
+    return (
+      <Page>
         <PageSection>
-            <Loading message="Fetching app list..." />;
+          <Loading message="Fetching app list..." />
         </PageSection>
-    </Page>;
-  } 
+      </Page>
+    );
+  }
 
   if (error) {
-    return <Page>
+    return (
+      <Page>
         <PageSection>
-            <ErrorCard error={error} onRetry={handleRefresh} />;
+          <ErrorCard error={error} onRetry={handleRefresh} />
         </PageSection>
-    </Page> 
+      </Page>
+    );
   }
 
   return (

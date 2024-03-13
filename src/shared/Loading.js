@@ -25,7 +25,7 @@ function Loading(message = "") {
         </Card>
       </div>
     </Bullseye>
-  );
+  )
 }
 
 export default Loading;

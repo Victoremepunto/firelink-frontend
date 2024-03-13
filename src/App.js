@@ -144,7 +144,7 @@ function App() {
   );
 
   const handleReportIssueButton = () => {
-    window.open("https://issues.redhat.com/browse/RHCLOUD-31468", "_blank");
+    window.open("https://issues.redhat.com/secure/CreateIssueDetails!init.jspa?pid=12325059&issuetype=17&labels=platform-devprod&customfield_12311140=RHCLOUD-31468", "_blank");
   };
 
   const headerToolbar = (
