@@ -147,13 +147,22 @@ function App() {
     window.open("https://issues.redhat.com/secure/CreateIssueDetails!init.jspa?pid=12325059&issuetype=17&labels=platform-devprod&customfield_12311140=RHCLOUD-31468", "_blank");
   };
 
+  const handleDocsButton = () => {
+    window.open("https://backstage.stage.devshift.net/docs/default/Component/firelink-frontend", "_blank");
+  }
+
   const headerToolbar = (
     <Toolbar id="vertical-toolbar" isFullHeight="true">
       <ToolbarContent>
         <ToolbarGroup align={{ default: "alignRight" }}>
+        <ToolbarItem>
+            <Button variant="plain" onClick={handleDocsButton}>
+              Documentation
+            </Button>
+          </ToolbarItem>
           <ToolbarItem>
             <Button variant="plain" onClick={handleReportIssueButton}>
-              <ExternalLinkAltIcon /> Feedback
+              Feedback
             </Button>
           </ToolbarItem>
           <ToolbarItem>{headerDropDown}</ToolbarItem>
