@@ -108,19 +108,26 @@ export default function AppListItem({ app, showFavorites }) {
     >
       <Card isLarge={true} isRounded={true} className="pf-u-box-shadow-lg" >
         <CardTitle>
-          <Split hasGutter>
-            <SplitItem>
-                <div style={{background: background, width: "2.5em", height: "2.5em", borderRadius: "10%", marginRight: "1em", color: "black", padding: "0.1em"}}>
-                    <Title headingLevel="h3" size={TitleSizes["3x1"]} >
-                        {appIconName() }
-                    </Title>
-                </div>
-            </SplitItem>
+          <Split>
+              <SplitItem isFilled></SplitItem>
+              <SplitItem>
+                  <div style={{background: background, width: "2.5em", height: "2.5em", borderRadius: "10%", marginRight: "1em", color: "black", padding: "0.1em"}}>
+                      <Title headingLevel="h3" size={TitleSizes["3x1"]} >
+                          {appIconName() }
+                      </Title>
+                  </div>
+              </SplitItem>
+              <SplitItem isFilled>  </SplitItem>
+            </Split>
+        </CardTitle>
+        <CardTitle>
+          <Split>
             <SplitItem>
               <Title headingLevel="h3" size={TitleSizes["3x1"]}>
                 <Truncate content={app.friendly_name}></Truncate>
               </Title>
             </SplitItem>
+            <SplitItem isFilled></SplitItem>
             <SplitItem>
               <StarIcon
                 onClick={toggleFavorite}
@@ -151,7 +158,7 @@ export default function AppListItem({ app, showFavorites }) {
             <SplitItem isFilled></SplitItem>
             <SplitItem>
               <Button
-                variant="plain"
+                variant="secondary"
                 onClick={() => navigate(`/apps/deploy/${app.name}`)}
                 isDisabled={!mouseHovering}
               >
