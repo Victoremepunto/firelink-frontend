@@ -10,12 +10,11 @@ import {
   GalleryItem,
   Split,
   SplitItem,
-  Accordion,
   TitleSizes,
   Title,
-  AccordionItem,
-  AccordionContent,
-  AccordionToggle,
+  StackItem,
+  Stack,
+  Tooltip,
 } from "@patternfly/react-core";
 import { useNavigate } from "react-router-dom";
 import { StarIcon } from "@patternfly/react-icons";
@@ -25,6 +24,7 @@ import {
   setFavoriteApp,
   removeFavoriteApp,
 } from "../store/AppSlice";
+import { ExternalLinkAltIcon } from "@patternfly/react-icons";
 
 function AppComponentListLinks(components) {
   return components.map((component, index) => {
@@ -32,7 +32,7 @@ function AppComponentListLinks(components) {
     return (
       <li key={`link-id-${component}-${index}`}>
         <a href={link} target="_blank" rel="noreferrer">
-          {component.name}
+        <ExternalLinkAltIcon /> {component.name}
         </a>
       </li>
     );
@@ -50,6 +50,10 @@ export default function AppListItem({ app, showFavorites }) {
 
   const dispatch = useDispatch();
 
+    const developerPortalLink = () => {
+        window.open(`https://backstage.stage.devshift.net/catalog/default/component/${app.name}-app/`, "_blank");
+    }
+
   const toggleFavorite = () => {
     if (isFavorite) {
       dispatch(removeFavoriteApp(app.name));
@@ -64,6 +68,34 @@ export default function AppListItem({ app, showFavorites }) {
     }
   }
 
+  function stringToGradient(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue1 = hash % 360;
+    const hue2 = (hash * 2) % 360;
+    return `linear-gradient(135deg, hsl(${hue1}, 100%, 85%), hsl(${hue2}, 100%, 85%))`;
+  }
+  
+
+  const background =    stringToGradient(app.friendly_name);
+
+
+  const appIconName = () => {
+    // If the name has multiple words return the first letter of every word, max of 3 letters returned
+    if (app.friendly_name.split(" ").length > 1) {
+      return app.friendly_name
+        .split(" ")
+        .map((word) => word[0])
+        .join("")
+        .substring(0, 3);
+    }
+
+    // If the name has only one word return the first 3 letters of the name
+    return app.friendly_name.substring(0, 3);
+  }
+
   return (
     <GalleryItem
       onMouseOver={() => {
@@ -74,16 +106,21 @@ export default function AppListItem({ app, showFavorites }) {
       }}
       key={key}
     >
-      <Card isLarge={true} isRounded={true} className="pf-u-box-shadow-lg">
+      <Card isLarge={true} isRounded={true} className="pf-u-box-shadow-lg" >
         <CardTitle>
-          <Split>
-            <SplitItem isFilled></SplitItem>
+          <Split hasGutter>
+            <SplitItem>
+                <div style={{background: background, width: "2.5em", height: "2.5em", borderRadius: "10%", marginRight: "1em", color: "black"}}>
+                    <Title headingLevel="h3" size={TitleSizes["3x1"]} >
+                        {appIconName() }
+                    </Title>
+                </div>
+            </SplitItem>
             <SplitItem>
               <Title headingLevel="h3" size={TitleSizes["3x1"]}>
                 <Truncate content={app.friendly_name}></Truncate>
               </Title>
             </SplitItem>
-            <SplitItem isFilled></SplitItem>
             <SplitItem>
               <StarIcon
                 onClick={toggleFavorite}
@@ -96,28 +133,25 @@ export default function AppListItem({ app, showFavorites }) {
           </Split>
         </CardTitle>
         <CardBody>
-          <Accordion>
-            <AccordionItem>
-              <AccordionToggle
-                onClick={() => {
-                  setExpanded(!expanded);
-                }}
-                isExpanded={expanded}
-              >
-                Dependencies
-              </AccordionToggle>
-              <AccordionContent isHidden={!expanded}>
-                <ul>{compos}</ul>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+          <Stack>
+            <StackItem>
+              <Button variant="link" onClick={developerPortalLink}>
+                <ExternalLinkAltIcon /> Developer Portal
+              </Button>
+            </StackItem>
+            <StackItem>
+              <Tooltip content={<ul>{compos}</ul>} position="right">
+                <Button variant="link" >Resource Templates</Button>
+              </Tooltip>
+            </StackItem>
+          </Stack>
         </CardBody>
         <CardFooter>
           <Split>
             <SplitItem isFilled></SplitItem>
             <SplitItem>
               <Button
-                variant="primary"
+                variant="plain"
                 onClick={() => navigate(`/apps/deploy/${app.name}`)}
                 isDisabled={!mouseHovering}
               >
