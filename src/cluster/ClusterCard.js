@@ -11,6 +11,7 @@ import {
 } from "@patternfly/react-core";
 import TopNodesCard from "./ClusterTopNodes";
 import ErrorCard from "../shared/ErrorCard";
+import Loading from "../shared/Loading";
 
 const ClusterCard = () => {
   const [topNodes, setTopNodes] = useState([]);
@@ -55,6 +56,16 @@ const ClusterCard = () => {
     return <ErrorCard error={error} onRetry={loadTopNodes} />;
   }
 
+  if (isLoading) {
+    return (
+      <Page>
+        <PageSection>
+          <Loading message="Loading cluster metrics..." />
+        </PageSection>
+      </Page>
+    );
+  }
+
   return (
     <Page>
       <PageSection variant={PageSectionVariants.light}>
@@ -66,12 +77,14 @@ const ClusterCard = () => {
           </SplitItem>
           <SplitItem isFilled />
           <SplitItem>
-            <Button variant="primary" onClick={loadTopNodes}>Refresh</Button>
+            <Button variant="primary" onClick={loadTopNodes}>
+              Refresh
+            </Button>
           </SplitItem>
         </Split>
       </PageSection>
       <PageSection hasOverflowScroll>
-        <TopNodesCard topNodes={topNodes} isLoading={isLoading}/>
+        <TopNodesCard topNodes={topNodes} />
       </PageSection>
     </Page>
   );

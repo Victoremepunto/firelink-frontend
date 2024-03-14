@@ -30,7 +30,9 @@ function AppList() {
   const [showFavorites, setShowFavorites] = useState(false);
 
   useEffect(() => {
-    dispatch(loadApps());
+    if (apps.length === 0) {
+      dispatch(loadApps());
+    }
   }, [dispatch]);
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import { Table, Thead, Tbody, Tr, Th, Td } from "@patternfly/react-table";
 import ClusterResourceUsage from "./ClusterResourceUsage";
 import Loading from "../shared/Loading";
 
-const TopNodesCard = ({ topNodes, isLoading }) => {
+const TopNodesCard = ({ topNodes }) => {
 
   const [sortIndex, setSortIndex] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
@@ -41,12 +41,6 @@ const TopNodesCard = ({ topNodes, isLoading }) => {
     setSortIndex(index);
     setSortDirection(direction);
   };
-
-  if (isLoading) {
-    return (
-      <Loading message="Loading cluster metrics..." />
-    );
-  }
 
   return (
     <Card>
