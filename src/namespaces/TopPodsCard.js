@@ -35,7 +35,7 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [nextRefresh, setNextRefresh] = useState(10);
-  const openshiftConsoleBaseUrl = process.env.REACT_APP_OPENSHIFT_CONSOLE_BASE_URL || 'https://console-openshift-console.apps.crc-eph.r9lp.p1.openshiftapps.com';
+  const openshiftConsoleBaseUrl = process.env.OPENSHIFT_CONSOLE_BASE_URL || 'https://console-openshift-console.apps.crc-eph.r9lp.p1.openshiftapps.com';
 
   const topPodsFromStore = useSelector(getNamespaceTopPods);
 

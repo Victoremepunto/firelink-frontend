@@ -44,5 +44,10 @@ parameters:
   - name: FRONTEND_SERVICE
     description: Frontend Service
     required: true
+  - name: OPENSHIFT_CONSOLE_BASE_URL 
+    description: OpenShift Console Base URL
+    default: 'https://console-openshift-console.apps.crc-eph.r9lp.p1.openshiftapps.com'
+    required: false
+
 
 
