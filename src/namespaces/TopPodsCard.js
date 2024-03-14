@@ -14,6 +14,9 @@ import {
   EmptyStateVariant,
   Split,
   SplitItem,
+  Stack,
+  StackItem,
+  TextInput,
 } from "@patternfly/react-core";
 import { CubesIcon, SyncIcon } from "@patternfly/react-icons";
 import {
@@ -32,9 +35,11 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
   const [sortIndex, setSortIndex] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
   const [topPods, setTopPods] = useState([]);
+  const [filteredPods, setFilteredPods] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [nextRefresh, setNextRefresh] = useState(10);
+  const [filterText, setFilterText] = useState("");
   const openshiftConsoleBaseUrl = process.env.OPENSHIFT_CONSOLE_BASE_URL || 'https://console-openshift-console.apps.crc-eph.r9lp.p1.openshiftapps.com';
 
   const topPodsFromStore = useSelector(getNamespaceTopPods);
@@ -80,6 +85,13 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
     setTopPods(topPodsFromStore);
   }, [topPodsFromStore]);
 
+  useEffect(() => {
+    const filtered = topPods.filter((pod) =>
+      pod.NAME.toLowerCase().includes(filterText.toLowerCase())
+    );
+    setFilteredPods(filtered);
+  }, [filterText, topPods]);
+
   const columns = ["Name", "CPU (cores)", "Memory (bytes)"];
 
   const getSortableRowValues = (pod) => {
@@ -90,9 +102,9 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
     ];
   };
 
-  let sortedPodsData = topPods;
+  let sortedPodsData = filteredPods;
   if (sortIndex !== null) {
-    sortedPodsData = [...topPods].sort((a, b) => {
+    sortedPodsData = [...filteredPods].sort((a, b) => {
       const aValue = getSortableRowValues(a)[sortIndex];
       const bValue = getSortableRowValues(b)[sortIndex];
       if (typeof aValue === "number") {
@@ -110,12 +122,16 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
     setSortDirection(direction);
   };
 
+  const handleFilterChange = (_e, value) => {
+    setFilterText(value);
+  };
+
   if (!topPods || topPods.length <= 0) {
     return (
       <Card>
         <CardTitle>
           Pods Resource Usage
-          {isLoading && <Spinner size="md" />}
+          {isLoading ? <Spinner size="md" /> : <div />}
         </CardTitle>
         <CardBody>
           <Skeleton />
@@ -153,47 +169,60 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
         </Split>
       </CardTitle>
       <CardBody>
-        <Table
-          aria-label="Pods Resource Usage Table"
-          variant={TableVariant.compact}
-        >
-          <Thead>
-            <Tr>
-              {columns.map((column, index) => (
-                <Th
-                  key={column}
-                  sort={{
-                    sortBy: { index: sortIndex, direction: sortDirection },
-                    onSort,
-                    columnIndex: index,
-                  }}
-                >
-                  {column}
-                </Th>
-              ))}
-            </Tr>
-          </Thead>
-          <Tbody>
-            {sortedPodsData.map((pod, index) => {
-              const [namespace, podName] = pod.NAME.split('/');
-              return (
-                <Tr key={index}>
-                  <Td dataLabel="Name">
-                    <a
-                      href={`${openshiftConsoleBaseUrl}/k8s/ns/${namespace}/pods/${podName}/logs`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+        <Stack>
+          <StackItem>
+            <TextInput
+              type="text"
+              value={filterText}
+              onChange={handleFilterChange}
+              aria-label="Filter pods"
+              placeholder="Filter by pod name..."
+            />
+          </StackItem>
+          <StackItem>
+            <Table
+              aria-label="Pods Resource Usage Table"
+              variant={TableVariant.compact}
+            >
+              <Thead>
+                <Tr>
+                  {columns.map((column, index) => (
+                    <Th
+                      key={column}
+                      sort={{
+                        sortBy: { index: sortIndex, direction: sortDirection },
+                        onSort,
+                        columnIndex: index,
+                      }}
                     >
-                      {podName}
-                    </a>
-                  </Td>
-                  <Td dataLabel="CPU (cores)">{pod["CPU(cores)"]}</Td>
-                  <Td dataLabel="Memory (bytes)">{pod["MEMORY(bytes)"]}</Td>
+                      {column}
+                    </Th>
+                  ))}
                 </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
+              </Thead>
+              <Tbody>
+                {sortedPodsData.map((pod, index) => {
+                  const [namespace, podName] = pod.NAME.split('/');
+                  return (
+                    <Tr key={index}>
+                      <Td dataLabel="Name">
+                        <a
+                          href={`${openshiftConsoleBaseUrl}/k8s/ns/${namespace}/pods/${podName}/logs`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {podName}
+                        </a>
+                      </Td>
+                      <Td dataLabel="CPU (cores)">{pod["CPU(cores)"]}</Td>
+                      <Td dataLabel="Memory (bytes)">{pod["MEMORY(bytes)"]}</Td>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </StackItem>
+        </Stack>
       </CardBody>
     </Card>
   );
