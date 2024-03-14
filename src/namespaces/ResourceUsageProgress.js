@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Progress,
   ProgressVariant,
@@ -7,33 +7,50 @@ import {
   Text,
   TextContent,
   TextVariants,
-  Skeleton
+  Skeleton,
+  Spinner
 } from '@patternfly/react-core';
-import { useSelector } from 'react-redux';
-import { 
-  getNamespaceResources,
-  getNamespaceResourcesLoading 
-
-} from '../store/ListSlice';
 
 const ResourceUsageProgress = ({ namespace, resource, showDetails = false }) => {
-  const data = useSelector(getNamespaceResources);
-  const loading = useSelector(getNamespaceResourcesLoading);
-  
-  if (loading) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true); // New state variable for tracking initial load
+
+  const fetchData = async () => {
+    if (initialLoad) {
+      setLoading(true);
+    }
+    try {
+      const response = await fetch(`/api/firelink/namespace/resource_metrics/${namespace}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const newData = await response.json();
+      setData(newData);
+    } catch (error) {
+      console.error('Error fetching resource metrics:', error);
+    } finally {
+      setLoading(false);
+      setInitialLoad(false); // Set initial load to false after the first fetch
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
+  }, [namespace]);
+
+  if (loading && initialLoad) { // Only show the skeleton during the initial load
     return <Skeleton />;
   }
-  if (!data[namespace] && showDetails) {
-    return <Skeleton />;
-  }
-  if (!data[namespace]) {
-    return <div/>;
+  if (!data) {
+    return <div />;
   }
 
-
-  const usage = data[namespace].usage[resource];
-  const requests = data[namespace].requests[resource];
-  const limits = data[namespace].limits[resource];
+  const usage = data.usage[resource];
+  const requests = data.requests[resource];
+  const limits = data.limits[resource];
 
   let variant = ProgressVariant.success;
   if (usage > requests) {
@@ -61,7 +78,10 @@ const ResourceUsageProgress = ({ namespace, resource, showDetails = false }) => 
     <div>
       {showDetails && (
         <TextContent>
-          <Text component={TextVariants.h6}>{resource.toUpperCase()}</Text>
+          <Text component={TextVariants.h6}>
+            {resource.toUpperCase()}
+            {loading && !initialLoad && <Spinner size="md" />} {/* Only show spinner during auto-refresh */}
+          </Text>
         </TextContent>
       )}
       <Tooltip content={tooltipContent}>
