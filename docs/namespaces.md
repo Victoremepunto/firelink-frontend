@@ -4,7 +4,7 @@ The Namespaces menu contains the List, Describe, and Reserve features.
 
 ## List
 
-<img src="images/namespaces.png"/>
+![Namespaces](images/namespaces.png)
 
 [The Namespace List](https://firelink.apps.crc-eph.r9lp.p1.openshiftapps.com/namespace/list) allows you to view the namespaces on the ephemeral cluster along with relavent information. The columns are:
 
@@ -29,12 +29,12 @@ The graph will be green if you are within your requests. It will be yellow if yo
 Resource metric usage is expesnive to calculate, so values are cached for 2 minutes. If you encounter a cache miss it may take up to 5 seconds for the resource graphs to appear.
 
 ## Reserve
-<img src="images/reserve.png"/>
+![Reserve](images/reserve.png)
 
 [Reserve](https://firelink.apps.crc-eph.r9lp.p1.openshiftapps.com/namespace/reserve) allows you to reserve a namespace. You can set a few basic options such as the duration of the reservation or the pool. The "Allow Multiple Reservations" switch will allow you to reserve a new namespace even if you already have one reserved.
 
 ## Describe
-<img src="images/describe.png"/>
+![Describe](images/describe.png)
 
 [Describe](https://firelink.apps.crc-eph.r9lp.p1.openshiftapps.com/namespace/describe) provides information useful for understanding your namespace and deployments. The Resource Utilization chart at the top shows the CPU and Memory resource utilization figures versus the requests and limits. It works via the same system as the resource utilization graphs on the Namespace List described above.
 
