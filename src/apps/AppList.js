@@ -99,7 +99,7 @@ function AppList() {
           </SplitItem>
         </Split>
       </PageSection>
-      <PageSection>
+      <PageSection hasOverflowScroll={true}>
         <FadeInFadeOut>
           <Gallery hasGutter>
             {filteredApps.map((app, index) => (

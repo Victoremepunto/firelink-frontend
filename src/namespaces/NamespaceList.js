@@ -178,7 +178,7 @@ function NamespaceList() {
             </SplitItem>
           </Split>
         </PageSection>
-        <PageSection>
+        <PageSection hasOverflowScroll={true}>
           {isNamespacesEmpty ? (
             <FadeInFadeOut>
               <Loading message="Fetching namespaces and reservations..." />;
