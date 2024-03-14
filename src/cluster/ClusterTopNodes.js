@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardBody,
@@ -8,44 +8,12 @@ import {
 } from "@patternfly/react-core";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@patternfly/react-table";
 import ClusterResourceUsage from "./ClusterResourceUsage";
-import ErrorCard from "../shared/ErrorCard";
+import Loading from "../shared/Loading";
 
-const fetchTopNodes = async () => {
-  try {
-    const response = await fetch("/api/firelink/cluster/top_nodes");
-    if (!response.ok) {
-      console.log("HTTP error! status: ", response.status);
-      throw new Error(`Something went wrong loading the cluster resource metrics.`);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching top nodes:", error);
-    throw error;
-  }
-};
+const TopNodesCard = ({ topNodes }) => {
 
-const TopNodesCard = () => {
-  const [topNodes, setTopNodes] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [sortIndex, setSortIndex] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
-
-  useEffect(() => {
-    const getTopNodes = async () => {
-      try {
-        const data = await fetchTopNodes();
-        setTopNodes(data);
-        setIsLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setIsLoading(false);
-      }
-    };
-
-    getTopNodes();
-  }, []);
 
   const columns = ["NAME", "CPU(cores)", "CPU%", "MEMORY(bytes)", "MEMORY%"];
 
@@ -74,29 +42,9 @@ const TopNodesCard = () => {
     setSortDirection(direction);
   };
 
-  const handleRetry = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await fetchTopNodes();
-      setTopNodes(data);
-      setIsLoading(false);
-    } catch (error) {
-      setError(error.message);
-      setIsLoading(false);
-    }
-  };
-
-  if (error) {
-    return <ErrorCard error={error} onRetry={handleRetry} />;
-  }
-
   return (
     <Card>
       <CardBody>
-        {isLoading ? (
-          <Skeleton height="100px" />
-        ) : (
           <Stack hasGutter>
             <StackItem>
               <ClusterResourceUsage data={topNodes} resourceType="CPU" />
@@ -139,7 +87,6 @@ const TopNodesCard = () => {
               </Table>
             </StackItem>
           </Stack>
-        )}
       </CardBody>
     </Card>
   );

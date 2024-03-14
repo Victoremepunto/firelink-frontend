@@ -30,7 +30,9 @@ function AppList() {
   const [showFavorites, setShowFavorites] = useState(false);
 
   useEffect(() => {
-    dispatch(loadApps());
+    if (apps.length === 0) {
+      dispatch(loadApps());
+    }
   }, [dispatch]);
 
   useEffect(() => {
@@ -99,7 +101,7 @@ function AppList() {
           </SplitItem>
         </Split>
       </PageSection>
-      <PageSection>
+      <PageSection hasOverflowScroll={true}>
         <FadeInFadeOut>
           <Gallery hasGutter>
             {filteredApps.map((app, index) => (

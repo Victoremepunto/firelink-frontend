@@ -123,7 +123,7 @@ function NamespaceDescribe() {
   return (
     <Page>
       <ToolBar />
-      <PageSection isCenterAligned={true}>
+      <PageSection isCenterAligned={true} hasOverflowScroll={true}>
         <Stack hasGutter>
           <StackItem>
             <NamespaceResourcesCard namespace={namespace} />
