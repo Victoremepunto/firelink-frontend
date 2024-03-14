@@ -1,5 +1,7 @@
 # Firelink
-### An app store for Ephemeral, powered by Bonfire.
+An app store for Ephemeral, powered by Bonfire.
+
+![Home](images/home.png)
 
 ## About
 [Firelink](https://firelink.apps.crc-eph.r9lp.p1.openshiftapps.com/) is a web app that helps you perform multiple ephemeral environment tasks such as:
