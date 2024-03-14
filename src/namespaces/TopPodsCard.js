@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Card,
   CardTitle,
@@ -9,9 +9,13 @@ import {
   EmptyStateBody,
   Title,
   Skeleton,
-  EmptyStateVariant
-} from '@patternfly/react-core';
-import { CubesIcon } from '@patternfly/react-icons';
+  Spinner,
+  Button,
+  EmptyStateVariant,
+  Split,
+  SplitItem,
+} from "@patternfly/react-core";
+import { CubesIcon, SyncIcon } from "@patternfly/react-icons";
 import {
   Table,
   Thead,
@@ -19,51 +23,69 @@ import {
   Tr,
   Th,
   Td,
-  TableVariant
-} from '@patternfly/react-table';
-import { 
-  getNamespaceTopPods,
-  loadNamespaceTopPods
-} from '../store/ListSlice';
+  TableVariant,
+} from "@patternfly/react-table";
+import { getNamespaceTopPods, loadNamespaceTopPods } from "../store/ListSlice";
 
 const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
-
   const dispatch = useDispatch();
-
   const [sortIndex, setSortIndex] = useState(null);
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortDirection, setSortDirection] = useState("asc");
   const [topPods, setTopPods] = useState([]);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [nextRefresh, setNextRefresh] = useState(10);
 
   const topPodsFromStore = useSelector(getNamespaceTopPods);
-  
 
   useEffect(() => {
-    if ( !namespace ) {
+    const interval = setInterval(() => {
+      setNextRefresh((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (nextRefresh === 0) {
+      fetchData();
+      setNextRefresh(10);
+    }
+  }, [nextRefresh]);
+
+  const fetchData = () => {
+    if (!namespace) {
       return;
     }
-     dispatch(loadNamespaceTopPods(namespace))
-    .unwrap()
-    .catch((error) => {
-      console.error("Error loading namespace top pods:", error);
-      setError(error);
-      onError(error);
-    });
-    setTopPods(topPodsFromStore);
+    setIsLoading(true);
+    dispatch(loadNamespaceTopPods(namespace))
+      .unwrap()
+      .then(() => {
+        setIsLoading(false);
+        setTopPods(topPodsFromStore);
+      })
+      .catch((error) => {
+        console.error("Error loading namespace top pods:", error);
+        setIsLoading(false);
+        setError(error);
+        onError(error);
+      });
+  };
 
+  useEffect(() => {
+    fetchData();
   }, [namespace]);
 
   useEffect(() => {
     setTopPods(topPodsFromStore);
   }, [topPodsFromStore]);
 
-  const columns = ['Name', 'CPU (cores)', 'Memory (bytes)'];
+  const columns = ["Name", "CPU (cores)", "Memory (bytes)"];
 
-  const getSortableRowValues = pod => {
+  const getSortableRowValues = (pod) => {
     return [
       pod.NAME,
-      parseFloat(pod['CPU(cores)'].replace(/[^\d.]/g, '')),
-      parseFloat(pod['MEMORY(bytes)'].replace(/[^\d.]/g, ''))
+      parseFloat(pod["CPU(cores)"].replace(/[^\d.]/g, "")),
+      parseFloat(pod["MEMORY(bytes)"].replace(/[^\d.]/g, "")),
     ];
   };
 
@@ -72,10 +94,12 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
     sortedPodsData = [...topPods].sort((a, b) => {
       const aValue = getSortableRowValues(a)[sortIndex];
       const bValue = getSortableRowValues(b)[sortIndex];
-      if (typeof aValue === 'number') {
-        return (sortDirection === 'asc' ? 1 : -1) * (aValue - bValue);
+      if (typeof aValue === "number") {
+        return (sortDirection === "asc" ? 1 : -1) * (aValue - bValue);
       } else {
-        return (sortDirection === 'asc' ? 1 : -1) * aValue.localeCompare(bValue);
+        return (
+          (sortDirection === "asc" ? 1 : -1) * aValue.localeCompare(bValue)
+        );
       }
     });
   }
@@ -88,7 +112,13 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
   if (!topPods || topPods.length <= 0) {
     return (
       <Card>
-        <CardTitle>Pods Resource Usage</CardTitle>
+        <CardTitle>
+          Pods Resource Usage
+          {isLoading && <Spinner size="md" />}
+          <Button variant="plain" onClick={fetchData}>
+            <SyncIcon />
+          </Button>
+        </CardTitle>
         <CardBody>
           <Skeleton />
         </CardBody>
@@ -117,13 +147,29 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
 
   return (
     <Card>
-      <CardTitle>Pods Resource Usage</CardTitle>
+      <CardTitle>
+        <Split>
+          <SplitItem>Pods Resource Usage</SplitItem>
+          <SplitItem isFilled />
+          <SplitItem>{isLoading ? <Spinner size="md" /> : <div />}</SplitItem>
+        </Split>
+      </CardTitle>
       <CardBody>
-        <Table aria-label="Pods Resource Usage Table" variant={TableVariant.compact}>
+        <Table
+          aria-label="Pods Resource Usage Table"
+          variant={TableVariant.compact}
+        >
           <Thead>
             <Tr>
               {columns.map((column, index) => (
-                <Th key={column} sort={{ sortBy: { index: sortIndex, direction: sortDirection }, onSort, columnIndex: index }}>
+                <Th
+                  key={column}
+                  sort={{
+                    sortBy: { index: sortIndex, direction: sortDirection },
+                    onSort,
+                    columnIndex: index,
+                  }}
+                >
                   {column}
                 </Th>
               ))}
@@ -133,8 +179,8 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
             {sortedPodsData.map((pod, index) => (
               <Tr key={index}>
                 <Td dataLabel="Name">{pod.NAME}</Td>
-                <Td dataLabel="CPU (cores)">{pod['CPU(cores)']}</Td>
-                <Td dataLabel="Memory (bytes)">{pod['MEMORY(bytes)']}</Td>
+                <Td dataLabel="CPU (cores)">{pod["CPU(cores)"]}</Td>
+                <Td dataLabel="Memory (bytes)">{pod["MEMORY(bytes)"]}</Td>
               </Tr>
             ))}
           </Tbody>
