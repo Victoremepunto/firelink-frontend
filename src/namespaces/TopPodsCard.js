@@ -116,9 +116,6 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
         <CardTitle>
           Pods Resource Usage
           {isLoading && <Spinner size="md" />}
-          <Button variant="plain" onClick={fetchData}>
-            <SyncIcon />
-          </Button>
         </CardTitle>
         <CardBody>
           <Skeleton />
