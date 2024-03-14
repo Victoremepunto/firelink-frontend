@@ -25,7 +25,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { getRequester } from "../store/AppSlice";
 
 import Loading from "../shared/Loading";
-import ResourceUsageProgress from "./ResourceUsageProgress";
+import ResourceUsageMini from "./ResourceUsageMini";
 
 function filterNamespaces(namespaces, filter) {
   return namespaces.filter((namespace) => {
@@ -226,13 +226,13 @@ export default function NamespaceListTable({
                   {namespace.clowdapps === "none" ? "" : namespace.clowdapps}
                 </Td>
                 <Td textCenter dataLabel={columnNames.cpu}>
-                  <ResourceUsageProgress
+                  <ResourceUsageMini
                     namespace={namespace.namespace}
                     resource="cpu"
                   />
                 </Td>
                 <Td textCenter dataLabel={columnNames.memory}>
-                  <ResourceUsageProgress
+                  <ResourceUsageMini
                     namespace={namespace.namespace}
                     resource="memory"
                   />

@@ -30,7 +30,11 @@ import {
 import DescribeLink from "../shared/DescribeLink";
 import { useSelector, useDispatch } from "react-redux";
 import { getRequester } from "../store/AppSlice";
-import { loadNamespaces, reserveNamespace } from "../store/ListSlice";
+import { 
+  loadNamespaces, 
+  clearNamespaces,
+  reserveNamespace 
+} from "../store/ListSlice";
 import FadeInFadeOut from "../shared/FadeInFadeOut";
 
 export default function NamespaceReserve() {
@@ -63,6 +67,7 @@ export default function NamespaceReserve() {
       .unwrap()
       .then((resp) => {
         setResponse(resp);
+        dispatch(loadNamespaces());
         setDisplayResponse(true);
         setIsLoading(false);
       })

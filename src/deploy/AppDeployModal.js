@@ -6,8 +6,11 @@ import { Spinner } from "@patternfly/react-core";
 import CheckCircle from "@patternfly/react-icons/dist/js/icons/check-circle-icon";
 import TimesCircle from "@patternfly/react-icons/dist/js/icons/times-circle-icon";
 import InfoCircle from "@patternfly/react-icons/dist/js/icons/info-circle-icon";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getDeploymentOptions } from "../store/AppDeploySlice";
+import {
+  clearNamespaces
+} from "../store/ListSlice";
 
 const DEPLOY_EVENT = "deploy-app";
 const ERROR_EVENT = "error-deploy-app";
@@ -25,6 +28,8 @@ export default function AppDeployModal({
   disabled,
   buttonVariant,
 }) {
+  const dispatch = useDispatch();
+
   const deploymentOptions = useSelector(getDeploymentOptions);
   const initialResponse = { message: "Initiating deployment connection..." };
 
@@ -85,6 +90,7 @@ export default function AppDeployModal({
       timeoutActive.current = false;
       setWsResponses((state) => [...state, response]);
       setCanCloseModal(true);
+      dispatch(clearNamespaces());
       socket.current.disconnect();
     });
 
