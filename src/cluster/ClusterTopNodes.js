@@ -8,6 +8,7 @@ import {
 } from "@patternfly/react-core";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@patternfly/react-table";
 import ClusterResourceUsage from "./ClusterResourceUsage";
+import Loading from "../shared/Loading";
 
 const TopNodesCard = ({ topNodes, isLoading }) => {
 
@@ -41,12 +42,15 @@ const TopNodesCard = ({ topNodes, isLoading }) => {
     setSortDirection(direction);
   };
 
+  if (isLoading) {
+    return (
+      <Loading message="Loading cluster metrics..." />
+    );
+  }
+
   return (
     <Card>
       <CardBody>
-        {isLoading ? (
-          <Skeleton height="100px" />
-        ) : (
           <Stack hasGutter>
             <StackItem>
               <ClusterResourceUsage data={topNodes} resourceType="CPU" />
@@ -89,7 +93,6 @@ const TopNodesCard = ({ topNodes, isLoading }) => {
               </Table>
             </StackItem>
           </Stack>
-        )}
       </CardBody>
     </Card>
   );
