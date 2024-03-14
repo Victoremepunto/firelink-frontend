@@ -35,6 +35,7 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [nextRefresh, setNextRefresh] = useState(10);
+  const openshiftConsoleBaseUrl = process.env.REACT_APP_OPENSHIFT_CONSOLE_BASE_URL || 'https://console-openshift-console.apps.crc-eph.r9lp.p1.openshiftapps.com';
 
   const topPodsFromStore = useSelector(getNamespaceTopPods);
 
@@ -176,13 +177,24 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
             </Tr>
           </Thead>
           <Tbody>
-            {sortedPodsData.map((pod, index) => (
-              <Tr key={index}>
-                <Td dataLabel="Name">{pod.NAME}</Td>
-                <Td dataLabel="CPU (cores)">{pod["CPU(cores)"]}</Td>
-                <Td dataLabel="Memory (bytes)">{pod["MEMORY(bytes)"]}</Td>
-              </Tr>
-            ))}
+            {sortedPodsData.map((pod, index) => {
+              const [namespace, podName] = pod.NAME.split('/');
+              return (
+                <Tr key={index}>
+                  <Td dataLabel="Name">
+                    <a
+                      href={`${openshiftConsoleBaseUrl}/k8s/ns/${namespace}/pods/${podName}/logs`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {podName}
+                    </a>
+                  </Td>
+                  <Td dataLabel="CPU (cores)">{pod["CPU(cores)"]}</Td>
+                  <Td dataLabel="Memory (bytes)">{pod["MEMORY(bytes)"]}</Td>
+                </Tr>
+              );
+            })}
           </Tbody>
         </Table>
       </CardBody>
