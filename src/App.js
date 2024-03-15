@@ -36,7 +36,6 @@ import {
 import { setAppDeployRequester } from "./store/AppDeploySlice";
 import { ReactSVG } from "react-svg";
 import { loadNamespaceResources, loadNamespaces } from "./store/ListSlice";
-import { ExternalLinkAltIcon } from "@patternfly/react-icons";
 import { BarsIcon } from "@patternfly/react-icons";
 
 function App() {
@@ -50,6 +49,7 @@ function App() {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
+
 
   const onSelect = () => {
     setIsOpen(!isOpen);
@@ -69,11 +69,15 @@ function App() {
     dispatch(setAppDeployRequester(requester));
   }, [requester]);
 
-  if (darkMode) {
-    document.documentElement.classList.add("pf-v5-theme-dark");
-  } else {
-    document.documentElement.classList.remove("pf-v5-theme-dark");
-  }
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("pf-v5-theme-dark");
+    } else {
+      document.documentElement.classList.remove("pf-v5-theme-dark");
+    }
+  }, [darkMode]);
+
+
 
   const deleteCookie = () => {
     var cookies = document.cookie.split(";");

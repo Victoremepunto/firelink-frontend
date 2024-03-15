@@ -10,7 +10,6 @@ import {
   Title,
   Skeleton,
   Spinner,
-  Button,
   EmptyStateVariant,
   Split,
   SplitItem,
@@ -18,7 +17,7 @@ import {
   StackItem,
   TextInput,
 } from "@patternfly/react-core";
-import { CubesIcon, SyncIcon } from "@patternfly/react-icons";
+import { CubesIcon } from "@patternfly/react-icons";
 import {
   Table,
   Thead,
@@ -30,8 +29,10 @@ import {
 } from "@patternfly/react-table";
 import { getNamespaceTopPods, loadNamespaceTopPods } from "../store/ListSlice";
 
+
 const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
   const dispatch = useDispatch();
+  
   const [sortIndex, setSortIndex] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
   const [topPods, setTopPods] = useState([]);
@@ -40,7 +41,11 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [nextRefresh, setNextRefresh] = useState(10);
   const [filterText, setFilterText] = useState("");
-  const openshiftConsoleBaseUrl = process.env.OPENSHIFT_CONSOLE_BASE_URL || 'https://console-openshift-console.apps.crc-eph.r9lp.p1.openshiftapps.com';
+
+
+  const openshiftConsoleBaseUrl =
+    process.env.OPENSHIFT_CONSOLE_BASE_URL ||
+    "https://console-openshift-console.apps.crc-eph.r9lp.p1.openshiftapps.com";
 
   const topPodsFromStore = useSelector(getNamespaceTopPods);
 
@@ -202,7 +207,7 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
               </Thead>
               <Tbody>
                 {sortedPodsData.map((pod, index) => {
-                  const [namespace, podName] = pod.NAME.split('/');
+                  const [namespace, podName] = pod.NAME.split("/");
                   return (
                     <Tr key={index}>
                       <Td dataLabel="Name">

@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 import {
   List,
@@ -23,8 +24,21 @@ import Cluster from "@patternfly/react-icons/dist/esm/icons/cluster-icon";
 import CloudUpload from "@patternfly/react-icons/dist/esm/icons/cloud-upload-alt-icon";
 import Code from "@patternfly/react-icons/dist/esm/icons/code-icon";
 import FadeInFadeOut from "./shared/FadeInFadeOut";
+import { getDarkMode } from "./store/AppSlice";
 
 export default function Root() {
+  const darkMode = useSelector(getDarkMode);
+
+  const [logo, setLogo] = React.useState("/logo.png");
+
+  React.useEffect(() => {
+    if (darkMode) {
+      setLogo("/logo-dark.png");
+    } else {
+      setLogo("/logo.png");
+    }
+  }, [darkMode]);
+
   const Pillars = () => {
     return (
       <React.Fragment>
@@ -132,9 +146,13 @@ export default function Root() {
     <Page>
       <PageSection variant={PageSectionVariants.light}>
         <Split hasGutter>
-            <SplitItem>
-                <Brand alt="" src="/logo.png" style={{maxHeight: "3.8em", width: "auto"}}/>
-            </SplitItem>
+          <SplitItem>
+            <Brand
+              alt=""
+              src={logo}
+              style={{ maxHeight: "3.8em", width: "auto" }}
+            />
+          </SplitItem>
           <SplitItem>
             <Stack>
               <StackItem>
