@@ -90,7 +90,6 @@ export default function AppDeployModal({
       timeoutActive.current = false;
       setWsResponses((state) => [...state, response]);
       setCanCloseModal(true);
-      dispatch(clearNamespaces());
       socket.current.disconnect();
     });
 
@@ -119,6 +118,7 @@ export default function AppDeployModal({
   const close = () => {
     setShowModal(false);
     timeoutActive.current = false; // Ensure the timeout is disabled when the modal is closed
+    dispatch(clearNamespaces());
   };
 
   const getButtonLabel = () => {
