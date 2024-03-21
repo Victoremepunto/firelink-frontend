@@ -19,7 +19,6 @@ import {
   setPool,
   setDuration,
   setTargetEnv,
-  setFallbackRefEnv,
   getAppDeployTargetEnv,
   getAppDeployRefEnv,
   setRefEnv,
@@ -69,9 +68,6 @@ export default function AppDeployoptionsCard() {
     dispatch(setRefEnv(value));
   };
   const fallbackRefEnv = useSelector(getAppDeployRefEnv);
-  const setStoreFallbackRefEnv = (value) => {
-    dispatch(setFallbackRefEnv(value));
-  };
   const getDependencies = useSelector(getAppDeployGetDependencies);
   const setStoreGetDependencies = (value) => {
     dispatch(setGetDependencies(value));
