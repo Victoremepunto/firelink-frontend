@@ -51,7 +51,7 @@ export default function AppListItem({ app, showFavorites }) {
   const dispatch = useDispatch();
 
     const developerPortalLink = () => {
-        window.open(`https://backstage.stage.devshift.net/catalog/default/component/${app.name}-app/`, "_blank");
+        window.open(`https://inscope.corp.redhat.com/catalog/default/component/${app.name}-app/`, "_blank");
     }
 
   const toggleFavorite = () => {
