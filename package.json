@@ -1,6 +1,6 @@
 {
   "name": "firelink-ui",
-  "version": "0.1.0",
+  "version": "0.1.0.1",
   "private": true,
   "dependencies": {
     "@patternfly/react-core": "^5.2.0",

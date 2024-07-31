@@ -152,7 +152,7 @@ function App() {
   };
 
   const handleDocsButton = () => {
-    window.open("https://backstage.stage.devshift.net/docs/default/Component/firelink-frontend", "_blank");
+    window.open("https://inscope.corp.redhat.com/docs/default/component/firelink-app", "_blank");
   }
 
   const headerToolbar = (
