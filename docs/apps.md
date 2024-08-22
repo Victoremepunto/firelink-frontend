@@ -32,4 +32,4 @@ By default Firelink will provide you a curated list of common option. Click the 
 
 ![Review](images/review.png)
 
-After you've set all of the defploy options you can click Deploy to deploy your apps to the ephemeral cluster. You can click Save to save your deployment as a Recipe that you can access from the User Menu.
+After you've set all of the deploy options you can click Deploy to deploy your apps to the ephemeral cluster. You can click Save to save your deployment as a Recipe that you can access from the User Menu.

@@ -36,7 +36,7 @@ Resource metric usage is expesnive to calculate, so values are cached for 2 minu
 ## Describe
 ![Describe](images/describe.png)
 
-[Describe](https://firelink.apps.crc-eph.r9lp.p1.openshiftapps.com/namespace/describe) provides information useful for understanding your namespace and deployments. The Resource Utilization chart at the top shows the CPU and Memory resource utilization figures versus the requests and limits. It works via the same system as the resource utilization graphs on the Namespace List described above.
+[Describe](https://firelink.devshift.net/namespace/describe) provides information useful for understanding your namespace and deployments. The Resource Utilization chart at the top shows the CPU and Memory resource utilization figures versus the requests and limits. It works via the same system as the resource utilization graphs on the Namespace List described above.
 
 The Pod Resources Usage shows you the pods in your namespace along with their resource utilization. You can sort the table by clicking on the column headers.
 
