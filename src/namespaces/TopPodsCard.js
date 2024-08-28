@@ -50,6 +50,7 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
   const topPodsFromStore = useSelector(getNamespaceTopPods);
 
   useEffect(() => {
+    //fetchData();
     const interval = setInterval(() => {
       setNextRefresh((prev) => prev - 1);
     }, 1000);
@@ -72,7 +73,6 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
       .unwrap()
       .then(() => {
         setIsLoading(false);
-        setTopPods(topPodsFromStore);
       })
       .catch((error) => {
         console.error("Error loading namespace top pods:", error);
@@ -92,18 +92,18 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
 
   useEffect(() => {
     const filtered = topPods.filter((pod) =>
-      pod.NAME.toLowerCase().includes(filterText.toLowerCase())
+      pod.name.toLowerCase().includes(filterText.toLowerCase())
     );
     setFilteredPods(filtered);
   }, [filterText, topPods]);
 
-  const columns = ["Name", "CPU (cores)", "Memory (bytes)"];
+  const columns = ["Name", "CPU (cores)", "Memory (GB)"];
 
   const getSortableRowValues = (pod) => {
     return [
-      pod.NAME,
-      parseFloat(pod["CPU(cores)"].replace(/[^\d.]/g, "")),
-      parseFloat(pod["MEMORY(bytes)"].replace(/[^\d.]/g, "")),
+      pod.name,
+      pod.cpu,
+      pod.ram,
     ];
   };
 
@@ -130,6 +130,7 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
   const handleFilterChange = (_e, value) => {
     setFilterText(value);
   };
+
 
   if (!topPods || topPods.length <= 0) {
     return (
@@ -170,7 +171,6 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
         <Split>
           <SplitItem>Pods Resource Usage</SplitItem>
           <SplitItem isFilled />
-          <SplitItem>{isLoading ? <Spinner size="md" /> : <div />}</SplitItem>
         </Split>
       </CardTitle>
       <CardBody>
@@ -207,20 +207,22 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
               </Thead>
               <Tbody>
                 {sortedPodsData.map((pod, index) => {
-                  const [namespace, podName] = pod.NAME.split("/");
                   return (
                     <Tr key={index}>
                       <Td dataLabel="Name">
                         <a
-                          href={`${openshiftConsoleBaseUrl}/k8s/ns/${namespace}/pods/${podName}/logs`}
+                          href={`${openshiftConsoleBaseUrl}/k8s/ns/${namespace}/pods/${pod.name}/logs`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          {podName}
+                          {pod.name}
                         </a>
                       </Td>
-                      <Td dataLabel="CPU (cores)">{pod["CPU(cores)"]}</Td>
-                      <Td dataLabel="Memory (bytes)">{pod["MEMORY(bytes)"]}</Td>
+                      <Td dataLabel="cpu">{pod.cpu.toFixed(2)}</Td>
+                      <Td dataLabel="Memory (bytes)">{
+                        //only 2 decimal places
+                        pod.ram.toFixed(2)
+                        }</Td>
                     </Tr>
                   );
                 })}

@@ -8,15 +8,57 @@ import {
   SplitItem,
   Title,
   TitleSizes,
+  Card,
+  CardBody,
+  Stack,
+  StackItem,
 } from "@patternfly/react-core";
 import TopNodesCard from "./ClusterTopNodes";
 import ErrorCard from "../shared/ErrorCard";
 import Loading from "../shared/Loading";
+import ClusterResourceUsage from "./ClusterResourceUsage";
 
 const ClusterCard = () => {
   const [topNodes, setTopNodes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cpuUsage, setCpuUsage] = useState(null);
+  const [memoryUsage, setMemoryUsage] = useState(null);
+
+  
+  const fetchClusterMemoryUsage = async () => {
+    try {
+      const response = await fetch("/api/firelink/cluster/memory_usage");
+      if (!response.ok) {
+        console.log("HTTP error! status: ", response.status);
+        throw new Error(
+          `Something went wrong loading the cluster memory usage metrics.`
+        );
+      }
+      const data = await response.json();
+      setMemoryUsage(data);
+    } catch (error) {
+      console.error("Error fetching cluster memory usage:", error);
+      throw error;
+    }
+  }
+
+  const fetchClusterCPUUsage = async () => {
+    try {
+      const response = await fetch("/api/firelink/cluster/cpu_usage");
+      if (!response.ok) {
+        console.log("HTTP error! status: ", response.status);
+        throw new Error(
+          `Something went wrong loading the cluster CPU usage metrics.`
+        );
+      }
+      const data = await response.json();
+      setCpuUsage(data);
+    } catch (error) {
+      console.error("Error fetching cluster CPU usage:", error);
+      throw error;
+    }
+  };
 
   const fetchTopNodes = async () => {
     try {
@@ -50,6 +92,8 @@ const ClusterCard = () => {
 
   useEffect(() => {
     loadTopNodes();
+    fetchClusterCPUUsage();
+    fetchClusterMemoryUsage();
   }, []);
 
   if (error) {
@@ -84,7 +128,21 @@ const ClusterCard = () => {
         </Split>
       </PageSection>
       <PageSection hasOverflowScroll>
-        <TopNodesCard topNodes={topNodes} />
+        <Card>
+          <CardBody>
+            <Stack hasGutter>
+              <StackItem>
+                <ClusterResourceUsage data={cpuUsage} resourceType="CPU" />
+              </StackItem>
+              <StackItem>
+                <ClusterResourceUsage data={memoryUsage} resourceType="RAM" />
+              </StackItem>
+              <StackItem>
+                <TopNodesCard topNodes={topNodes} />
+              </StackItem>
+            </Stack>
+          </CardBody>
+        </Card>
       </PageSection>
     </Page>
   );

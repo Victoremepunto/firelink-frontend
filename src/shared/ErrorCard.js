@@ -28,13 +28,13 @@ function ErrorCard({ error, onRetry }) {
                 Something went wrong
               </Title>
               <EmptyStateBody>{error}</EmptyStateBody>
-              <Button variant="primary" onClick={onRetry}>
+              <Button variant="primary" onClick={() => onRetry() }>
                 Retry
               </Button>
             </EmptyState>
           </CardBody>
           <CardFooter>
-            Please try again later or contact DevProd if the problem persists.
+            Please try again later or contact Engineering Productivity if the problem persists.
           </CardFooter>
         </Card>
     </Bullseye>
