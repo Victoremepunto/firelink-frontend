@@ -84,7 +84,6 @@ export default function AppDeploy() {
 
   useEffect(() => {
     if (isAppsEmpty) {
-      console.log("Loading apps");
       dispatch(loadApps())
         .unwrap()
         .catch((error) => {

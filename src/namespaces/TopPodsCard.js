@@ -50,7 +50,7 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
   const topPodsFromStore = useSelector(getNamespaceTopPods);
 
   useEffect(() => {
-    fetchData();
+    //fetchData();
     const interval = setInterval(() => {
       setNextRefresh((prev) => prev - 1);
     }, 1000);
@@ -73,7 +73,6 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
       .unwrap()
       .then(() => {
         setIsLoading(false);
-        setTopPods(topPodsFromStore);
       })
       .catch((error) => {
         console.error("Error loading namespace top pods:", error);
@@ -132,6 +131,7 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
     setFilterText(value);
   };
 
+
   if (!topPods || topPods.length <= 0) {
     return (
       <Card>
@@ -171,7 +171,6 @@ const PodsTableCard = ({ namespace, onError = (_error) => {} }) => {
         <Split>
           <SplitItem>Pods Resource Usage</SplitItem>
           <SplitItem isFilled />
-          <SplitItem>{isLoading ? <Spinner size="md" /> : <div />}</SplitItem>
         </Split>
       </CardTitle>
       <CardBody>

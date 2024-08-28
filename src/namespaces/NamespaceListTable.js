@@ -74,6 +74,7 @@ export default function NamespaceListTable({
 
   const [filter, setFilter] = useState(defaultFilter);
 
+
   useEffect(() => {
     if (showJustMyReservations) {
       let tmpFilter = { ...defaultFilter };
@@ -83,7 +84,7 @@ export default function NamespaceListTable({
       setFilteredNamespaces(filterNamespaces(namespaces, filter));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showJustMyReservations]);
+  }, [showJustMyReservations,namespaces]);
 
   useEffect(() => {
     setFilteredNamespaces(filterNamespaces(namespaces, filter));
@@ -131,6 +132,23 @@ export default function NamespaceListTable({
     }
     return <Td> </Td>;
   };
+
+  const calculateExpiresIn = (expiresIn) => {
+    //If expiresIn doesn't look like a date, return it as is
+    if (!expiresIn.includes("T")) {
+      return expiresIn;
+    }
+    const expiresInDate = new Date(expiresIn);
+    const now = new Date();
+    const diff = expiresInDate - now;
+    const diffHours = diff / (1000 * 60 * 60);
+    // If it is above an hour show hours and minutes 
+    if (diffHours > 1) {
+      return `${Math.floor(diffHours)}h ${Math.floor((diffHours % 1) * 60)}m`;
+    }
+    // If it is below an hour show minutes
+    return `${Math.floor(diff / (1000 * 60))}m`;
+  }
 
   return (
     <React.Fragment>
@@ -253,7 +271,7 @@ export default function NamespaceListTable({
                   {namespace.pool_type}
                 </Td>
                 <Td textCenter dataLabel={columnNames.expiresIn}>
-                  {namespace.expires_in === "TBD" ? "" : namespace.expires_in}
+                  {namespace.expires_in === "TBD" ? "" : calculateExpiresIn(namespace.expires_in)}
                 </Td>
                 {actionRow(namespace, requester)}
               </Tr>

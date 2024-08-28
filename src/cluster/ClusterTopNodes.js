@@ -9,14 +9,24 @@ import {
 import { Table, Thead, Tbody, Tr, Th, Td } from "@patternfly/react-table";
 import ClusterResourceUsage from "./ClusterResourceUsage";
 import Loading from "../shared/Loading";
+import ClusterResourceUsageMini from "./ClusterResourceUsageMini";
+
+const SmallProgress = ({ value }) => {
+  return (
+    <StackItem>
+      <ClusterResourceUsage data={value} />
+    </StackItem>
+  );
+};
 
 const TopNodesCard = ({ topNodes }) => {
-
   const [sortIndex, setSortIndex] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
 
-  const columns = ["NAME", "CPU(cores)", "CPU%", "MEMORY(bytes)", "MEMORY%"];
-
+  const openshiftConsoleBaseUrl =
+    process.env.OPENSHIFT_CONSOLE_BASE_URL ||
+    "https://console-openshift-console.apps.crc-eph.r9lp.p1.openshiftapps.com";
+  
   const getSortableRowValues = (node) => {
     return [
       node["NAME"],
@@ -43,52 +53,34 @@ const TopNodesCard = ({ topNodes }) => {
   };
 
   return (
-    <Card>
-      <CardBody>
-          <Stack hasGutter>
-            <StackItem>
-              <ClusterResourceUsage data={topNodes} resourceType="CPU" />
-            </StackItem>
-            <StackItem>
-              <ClusterResourceUsage data={topNodes} resourceType="RAM" />
-            </StackItem>
-            <StackItem>
-              <Table aria-label="Top Nodes Table">
-                <Thead>
-                  <Tr>
-                    {columns.map((column, index) => (
-                      <Th
-                        key={column}
-                        sort={{
-                          sortBy: {
-                            index: sortIndex,
-                            direction: sortDirection,
-                          },
-                          onSort,
-                          columnIndex: index,
-                        }}
-                      >
-                        {column}
-                      </Th>
-                    ))}
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {sortedTopNodes.map((node, index) => (
-                    <Tr key={index}>
-                      {columns.map((column) => (
-                        <Td key={column} dataLabel={column}>
-                          {node[column]}
-                        </Td>
-                      ))}
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </StackItem>
-          </Stack>
-      </CardBody>
-    </Card>
+    <Table aria-label="Top Nodes Table">
+      <Thead>
+        <Tr>
+          <Td>Node</Td>
+          <Td>CPU</Td>
+          <Td>Memory</Td>
+          <Td>Storage</Td>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {topNodes.map((node, index) => (
+          <Tr key={index}>
+            <Td>
+              <a target="_blank" href={`https://console-openshift-console.apps.crcd01ue1.zmsj.p1.openshiftapps.com/k8s/cluster/nodes/${node["node"]}`}>{node["node"]}</a>
+            </Td>
+            <Td>
+              <ClusterResourceUsageMini metrics={node["cpu"]} />
+            </Td>
+            <Td>
+              <ClusterResourceUsageMini metrics={node["memory"]} />
+            </Td>
+            <Td>
+              <ClusterResourceUsageMini metrics={node["ephemeral_storage"]} />
+            </Td>
+          </Tr>
+        ))}
+      </Tbody>
+    </Table>
   );
 };
 

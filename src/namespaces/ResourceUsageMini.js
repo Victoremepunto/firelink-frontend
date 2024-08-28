@@ -20,9 +20,7 @@ const ResourceUsageMini = ({ namespace, resource, showDetails = false }) => {
   const data = useSelector(getNamespaceResources);
   const loading = useSelector(getNamespaceResourcesLoading);
   
-  if (loading) {
-    return <Skeleton />;
-  }
+
   if (!data[namespace] && showDetails) {
     return <Skeleton />;
   }

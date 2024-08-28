@@ -80,7 +80,6 @@ const ResourceUsageProgress = ({ namespace, resource, showDetails = false }) => 
         <TextContent>
           <Text component={TextVariants.h6}>
             {resource.toUpperCase()}
-            {loading && !initialLoad && <Spinner size="md" />} {/* Only show spinner during auto-refresh */}
           </Text>
         </TextContent>
       )}

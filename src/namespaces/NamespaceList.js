@@ -28,7 +28,7 @@ import ErrorCard from "../shared/ErrorCard";
 function NamespaceList() {
   const dispatch = useDispatch();
   const [showJustMyReservations, setShowJustMyReservations] = useState(false);
-  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(true);
   const isNamespacesEmpty = useSelector(getIsNamespacesEmpty);
   const namespaces = useSelector(getNamespaces);
   const loading = useSelector(getLoading);
@@ -36,11 +36,10 @@ function NamespaceList() {
   const [showReleaseModal, setShowReleaseModal] = useState(false);
 
   useEffect(() => {
-    if (isNamespacesEmpty) {
-      dispatch(loadNamespaces());
-      dispatch(loadNamespaceResources());
-    }
-  }, [dispatch, isNamespacesEmpty]);
+    dispatch(loadNamespaces());
+    dispatch(loadNamespaceResources());
+  }, [dispatch]);
+
 
   useEffect(() => {
     let interval;
@@ -58,7 +57,8 @@ function NamespaceList() {
   }
 
   const refreshData = () => {
-    dispatch(clearNamespaces());
+    console.log("Refreshing namespaces and reservations...");
+    dispatch(loadNamespaces());
   };
 
   const releaseNamespace =  async (namespace) => {
@@ -106,7 +106,7 @@ function NamespaceList() {
     }
   };
 
-  if (loading) {
+  if (loading && !autoRefresh) {
     return (
       <Page>
         <PageSection>
@@ -130,11 +130,13 @@ function NamespaceList() {
     return (
       <Page>
         <PageSection>
-          <ErrorCard error={error} onRetry={refreshData} />
+          <ErrorCard error={error} onRetry={() => refreshData()} />
         </PageSection>
       </Page>
     )
   }
+
+
 
   return (
     <React.Fragment>
@@ -147,18 +149,7 @@ function NamespaceList() {
               </Title>
             </SplitItem>
             <SplitItem isFilled></SplitItem>
-            <SplitItem>
-              <Switch
-                id="namespace-auto-refresh"
-                label="Auto Refresh"
-                labelOff="Auto Refresh"
-                isChecked={autoRefresh}
-                isReversed
-                onChange={() => {
-                  setAutoRefresh(!autoRefresh);
-                }}
-              />
-            </SplitItem>
+
             <SplitItem>
               <Switch
                 id="namespace-list-my-reservations"
@@ -171,17 +162,13 @@ function NamespaceList() {
                 }}
               />
             </SplitItem>
-            <SplitItem>
-              <Button variant="primary" onClick={refreshData}>
-                Refresh
-              </Button>
-            </SplitItem>
+
           </Split>
         </PageSection>
         <PageSection hasOverflowScroll={true}>
           {isNamespacesEmpty ? (
             <FadeInFadeOut>
-              <Loading message="Fetching namespaces and reservations..." />;
+              <Loading message="Fetching namespaces and reservations..." />
             </FadeInFadeOut>
           ) : (
             <NamespaceListTable
