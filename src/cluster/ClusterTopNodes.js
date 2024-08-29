@@ -11,14 +11,6 @@ import ClusterResourceUsage from "./ClusterResourceUsage";
 import Loading from "../shared/Loading";
 import ClusterResourceUsageMini from "./ClusterResourceUsageMini";
 
-const SmallProgress = ({ value }) => {
-  return (
-    <StackItem>
-      <ClusterResourceUsage data={value} />
-    </StackItem>
-  );
-};
-
 const TopNodesCard = ({ topNodes }) => {
   const [sortIndex, setSortIndex] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
@@ -66,7 +58,7 @@ const TopNodesCard = ({ topNodes }) => {
         {topNodes.map((node, index) => (
           <Tr key={index}>
             <Td>
-              <a target="_blank" href={`https://console-openshift-console.apps.crcd01ue1.zmsj.p1.openshiftapps.com/k8s/cluster/nodes/${node["node"]}`}>{node["node"]}</a>
+              <a target="_blank" href={`${openshiftConsoleBaseUrl}/k8s/cluster/nodes/${node["node"]}`}>{node["node"]}</a>
             </Td>
             <Td>
               <ClusterResourceUsageMini metrics={node["cpu"]} />
