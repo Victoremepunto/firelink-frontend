@@ -1,16 +1,21 @@
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import io from "socket.io-client";
-import { Button, Modal, ModalVariant } from "@patternfly/react-core";
+import {
+  Button,
+  Modal,
+  ModalVariant,
+  Text,
+  Grid,
+  GridItem,
+} from "@patternfly/react-core";
 import { Spinner } from "@patternfly/react-core";
 import CheckCircle from "@patternfly/react-icons/dist/js/icons/check-circle-icon";
 import TimesCircle from "@patternfly/react-icons/dist/js/icons/times-circle-icon";
 import InfoCircle from "@patternfly/react-icons/dist/js/icons/info-circle-icon";
 import { useSelector, useDispatch } from "react-redux";
 import { getDeploymentOptions } from "../store/AppDeploySlice";
-import {
-  clearNamespaces
-} from "../store/ListSlice";
+import { clearNamespaces } from "../store/ListSlice";
 
 const DEPLOY_EVENT = "deploy-app";
 const ERROR_EVENT = "error-deploy-app";
@@ -22,6 +27,20 @@ const TIMEOUT = 60000; // 60 seconds timeout
 const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 const host = window.location.host;
 const SERVER = `${protocol}${host}`;
+
+const ResponseEntry = ({ response }) => {
+  const interpolateLink = (text, consoleUrl) => {
+    // Regular expression to find the pattern 'ephemeral-??????'
+    const pattern = /ephemeral-\w{6}/;
+
+    // Replace the found pattern with the interpolated link
+    return text.replace(pattern, (match) => {
+      return `<a href="/namespace/describe/${match}">${match}</a>`;
+    });
+  };
+
+  return <div dangerouslySetInnerHTML={{ __html: interpolateLink(response) }} />
+};
 
 export default function AppDeployModal({
   buttonLabel,
@@ -146,11 +165,14 @@ export default function AppDeployModal({
         <div style={{ height: "14rem", overflow: "auto" }}>
           <ul>
             {wsResponses.map((response, index) => (
-              <li key={`response-id-${index}`}>
-                &nbsp; &nbsp; &nbsp;{" "}
-                <StatusIcon index={index} response={response} /> &nbsp;{" "}
-                {response.message}
-              </li>
+              <Grid hasGutter>
+                <GridItem span={1}>
+                  <StatusIcon index={index} response={response} />
+                </GridItem>
+                <GridItem span={11}>
+                  <ResponseEntry response={response.message} />
+                </GridItem>
+              </Grid>
             ))}
           </ul>
         </div>
