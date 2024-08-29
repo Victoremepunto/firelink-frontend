@@ -166,7 +166,6 @@ export default function NamespaceListTable({
               <Th textCenter>{columnNames.name} </Th>
               <Th textCenter>{columnNames.reserved}</Th>
               <Th textCenter>{columnNames.status}</Th>
-              <Th textCenter>{columnNames.clowdapps}</Th>
               <Th textCenter>{columnNames.cpu}</Th>
               <Th textCenter>{columnNames.memory}</Th>
               <Th textCenter>{columnNames.requester}</Th>
@@ -239,9 +238,6 @@ export default function NamespaceListTable({
                   ) : (
                     <TimesCircleIcon style={{ color: "red" }} />
                   )}
-                </Td>
-                <Td textCenter dataLabel={columnNames.clowdapps}>
-                  {namespace.clowdapps === "none" ? "" : namespace.clowdapps}
                 </Td>
                 <Td textCenter dataLabel={columnNames.cpu}>
                   <ResourceUsageMini
