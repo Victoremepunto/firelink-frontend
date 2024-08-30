@@ -25,7 +25,10 @@ const ClusterCard = () => {
   const [cpuUsage, setCpuUsage] = useState(null);
   const [memoryUsage, setMemoryUsage] = useState(null);
 
-  
+  const openshiftConsoleBaseUrl =
+  process.env.OPENSHIFT_CONSOLE_BASE_URL ||
+  "https://console-openshift-console.apps.crc-eph.r9lp.p1.openshiftapps.com";
+
   const fetchClusterMemoryUsage = async () => {
     try {
       const response = await fetch("/api/firelink/cluster/memory_usage");
@@ -90,6 +93,10 @@ const ClusterCard = () => {
     }
   };
 
+  const openDashboard = () => {
+    window.open(`${openshiftConsoleBaseUrl}/monitoring/dashboards/dashboard-k8s-resources-cluster`, "_blank");
+  }
+
   useEffect(() => {
     loadTopNodes();
     fetchClusterCPUUsage();
@@ -113,13 +120,18 @@ const ClusterCard = () => {
   return (
     <Page>
       <PageSection variant={PageSectionVariants.light}>
-        <Split>
+        <Split hasGutter>
           <SplitItem>
             <Title headingLevel="h1" size={TitleSizes["3xl"]}>
               Cluster Metrics
             </Title>
           </SplitItem>
           <SplitItem isFilled />
+          <SplitItem>
+            <Button variant="primary" onClick={openDashboard}>
+              Dashboard
+            </Button>
+          </SplitItem>
           <SplitItem>
             <Button variant="primary" onClick={loadTopNodes}>
               Refresh
