@@ -19,7 +19,7 @@ COPY . ./
 RUN npm run build
 
 # Stage 2: Serve the app
-FROM quay.io/cloudservices/caddy-ubi:latest
+FROM quay.io/cloudservices/caddy-ubi:ec1577c
 
 ENV CADDY_TLS_MODE http_port 8000
 
